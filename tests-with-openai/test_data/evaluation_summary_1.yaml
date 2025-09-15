@@ -110,7 +110,7 @@ per_template:
 micro:
   number_of_error_samples: 0
   number_of_success_samples: 1
-  answer_f1:
+  answer_recall:
       max: 1.0
       mean: 1.0
       median: 1.0
@@ -122,7 +122,7 @@ micro:
       median: 1.0
       min: 1.0
       sum: 1.0
-  answer_recall:
+  answer_f1:
       max: 1.0
       mean: 1.0
       median: 1.0
@@ -207,11 +207,11 @@ micro:
     min: 6.601679801940918
     sum: 6.601679801940918
 macro:
-  answer_f1:
+  answer_recall:
       mean: 1.0
   answer_precision:
       mean: 1.0
-  answer_recall:
+  answer_f1:
       mean: 1.0
   answer_relevance:
       mean: 0.9
