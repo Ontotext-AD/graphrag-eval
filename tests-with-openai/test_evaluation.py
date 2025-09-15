@@ -14,7 +14,10 @@ from graphrag_eval.steps.retrieval_answer import (
     RagasResponseContextRecallEvaluator,
     RagasResponseContextPrecisionEvaluator,
 )
-
+from graphrag_eval.steps.retrieval_evaluation_using_context_texts import (
+    RagasContextPrecisionEvaluator,
+    RagasContextRecallEvaluator,
+)
 
 def test_run_evaluation_and_compute_aggregates(monkeypatch):
     def get_chat_responses(path: Path) -> dict:
@@ -50,6 +53,26 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
     )
     monkeypatch.setattr(
         RagasResponseContextPrecisionEvaluator,
+        "evaluate",
+        lambda *_: RagasResult(
+            status="processed",
+            score=0.9,
+            details="precision reason",
+            cost=Money(currency="USD", amount=0.0007)
+        )
+    )
+    monkeypatch.setattr(
+        RagasContextRecallEvaluator,
+        "evaluate",
+        lambda *_: RagasResult(
+            status="processed",
+            score=0.9,
+            details="recall reason",
+            cost=Money(currency="USD", amount=0.0007)
+        )
+    )
+    monkeypatch.setattr(
+        RagasContextPrecisionEvaluator,
         "evaluate",
         lambda *_: RagasResult(
             status="processed",

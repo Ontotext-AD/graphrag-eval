@@ -7,7 +7,6 @@
       args:
         query: transformers Substation OSLO
         k: 2
-        status: success
       output: |-
         [
           {
