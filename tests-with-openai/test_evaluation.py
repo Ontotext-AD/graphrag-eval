@@ -122,10 +122,6 @@ def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch):
     expected_evaluation_results = yaml.safe_load(
         (Path(__file__).parent / "test_data" / "evaluation_3.yaml").read_text(encoding="utf-8")
     )
-    from pprint import pprint
-    pprint(evaluation_results[0]["reference_steps"][0][0])
-    print("----")
-    pprint(len(expected_evaluation_results[0]["reference_steps"][0]))
     assert expected_evaluation_results == evaluation_results
     expected_aggregates = yaml.safe_load(
         (Path(__file__).parent / "test_data" / "evaluation_summary_3.yaml").read_text(encoding="utf-8")
