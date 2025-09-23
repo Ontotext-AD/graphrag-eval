@@ -15,22 +15,22 @@ Apache-2.0 License. See [LICENSE](LICENSE) file for details.
 
 To evaluate only steps:
 ```bash
-pip install qa-eval
+pip install graphrag-eval
 ```
 or add the following dependency in your `pyproject.toml` file:
 ```toml
-qa-eval = "*"
+graphrag-eval = "*"
 ```
 
 To evaluate answer relevance and answer correctness:
 
 ```bash
-pip install 'qa-eval[openai]'
+pip install 'graphrag-eval[openai]'
 ```
 
 or add the following dependency in your `pyproject.toml` file:
 ```toml
-qa-eval = {version = "*", extras = ["openai"]}
+graphrag-eval = {version = "*", extras = ["openai"]}
 ```
 
 ## Maintainers
@@ -301,7 +301,7 @@ If an error occurs during generating a response to a question, the expected targ
 ### Example Usage Code
 
 ```python
-from qa_eval import run_evaluation, compute_aggregates
+from graphrag_eval import run_evaluation, compute_aggregates
 
 reference_qas: list[dict] = [] # read your corpus
 chat_responses: dict = {} # call your implementation to get the response
