@@ -266,7 +266,7 @@ Below is an example response from the question-answering system for a single que
           },
           "id": "call_3",
           "status": "success",
-          "output": "[\n  {\n    \"id\": 1,\n    \"text\": \"Transformer OSLO T1 is in Substation Oslo.\"\n  },\n  {\n    \"id\": 2,\n    \"text\": \"Transformer OSLO T2 is in Substation Oslo.\"\n  }\n]"
+          "output": "[\n  {\n    \"id\": \"http://example.com/resource/doc/1\",\n    \"text\": \"Transformer OSLO T1 is in Substation Oslo.\"\n  },\n  {\n    \"id\": \"http://example.com/resource/doc/2\",\n    \"text\": \"Transformer OSLO T2 is in Substation Oslo.\"\n  }\n]"
         },
         {
             "name": "autocomplete_search",
