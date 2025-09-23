@@ -898,19 +898,21 @@ macro:
     mean: 25.911653497483996
 ```
 
-### Retrieval Evaluation
+### SPARQL queries comparison
+
+The algoritm iterates over all of the subsets of the actual result in which the number of column is equal to the number of columns in the reference result.
+For each subset it tries to find a permutation in columns in which the two results match.
 If we define:
 
 m1 := Number of columns in the reference result
 
 m2 := Number of columns in the actual result
 
-n := Number of rows
+n := Number of rows in the actual result
 
 The solution has time complexity in the average case of О(n\*m1!\*binomial(m2, m1))
 
-The algoritm iterates over all of the subsets of the actual result in which the number of column is equal to the number of columns in the reference result.
-For each subset it tries to find a permutation in columns in which the two results match.
+
 
 ### Retrieval Evaluation
 
