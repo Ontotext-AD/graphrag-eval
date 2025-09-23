@@ -899,6 +899,20 @@ macro:
 ```
 
 ### Retrieval Evaluation
+If we define:
+
+m1 := Number of columns in the reference result
+
+m2 := Number of columns in the actual result
+
+n := Number of rows
+
+The solution has time complexity in the average case of О(n\*m1!\*binomial(m2, m1))
+
+The algoritm iterates over all of the subsets of the actual result in which the number of column is equal to the number of columns in the reference result.
+For each subset it tries to find a permutation in columns in which the two results match.
+
+### Retrieval Evaluation
 
 The following metrics are based on the ids of retrieved documents.
 
