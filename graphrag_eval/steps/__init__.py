@@ -8,18 +8,7 @@ from .sparql import compare_sparql_results
 def compare_steps_outputs(reference: dict, actual: dict) -> float:
     ref_output = reference.get("output")
     act_output = actual["output"]
-    if reference["name"] == actual["name"] == "retrieval":
-        if ref_output is None:
-            # We do not know how to compare actual to reference. For matching,
-            # assume it is the only retrieval step in both.
-            return 1.0
-        else:
-            ref_contexts_ids = [c["id"] for c in json.loads(ref_output)]
-            act_contexts_ids = [c["id"] for c in json.loads(act_output)]
-            k = actual["args"]["k"]
-            return recall_at_k(ref_contexts_ids, act_contexts_ids, k)
-    assert ref_output, \
-        "Reference step output is mandatory except for retrieval steps"
+    assert ref_output, "Reference step output is mandatory"
     if reference.get("output_media_type") == "application/sparql-results+json":
         return compare_sparql_results(
             json.loads(ref_output),
@@ -29,6 +18,11 @@ def compare_steps_outputs(reference: dict, actual: dict) -> float:
         )
     if reference.get("output_media_type") == "application/json":
         return float(json.loads(ref_output) == json.loads(act_output))
+    if reference["name"] == actual["name"] == "retrieval":
+        ref_contexts_ids = [c["id"] for c in json.loads(ref_output)]
+        act_contexts_ids = [c["id"] for c in json.loads(act_output)]
+        k = actual["args"]["k"]
+        return recall_at_k(ref_contexts_ids, act_contexts_ids, k)
     return float(ref_output == act_output)
 
 
@@ -121,25 +115,23 @@ def evaluate_steps(
 
 
 def get_steps_evaluation_result_dict(reference: dict, target: dict) -> dict:
-    act_steps = target["steps"]
     eval_result = {}
+    act_steps = target.get("steps", [])
     eval_result["actual_steps"] = act_steps
+    for act_step in act_steps:
+        if act_step["name"] == "retrieval":
+            from .retrieval_evaluation_using_answer import \
+                get_retrieval_evaluation_dict
+            result = get_retrieval_evaluation_dict(
+                question_text=reference["question_text"],
+                reference_answer=reference.get("reference_answer"),
+                actual_answer=target.get("actual_answer"),
+                actual_contexts=json.loads(act_step["output"])
+            )
+            act_step.update(result)
     if "reference_steps" in reference:
         ref_steps = reference["reference_steps"]
         matches = get_steps_matches(ref_steps, act_steps)
         steps_score = evaluate_steps(ref_steps, act_steps, matches)
         eval_result["steps_score"] = steps_score
-        for ref_group_idx, ref_match_idx, act_idx, _ in matches:
-            ref_step = ref_steps[ref_group_idx][ref_match_idx]
-            act_step = act_steps[act_idx]
-            if ref_step["name"] == "retrieval":
-                from .retrieval_evaluation_using_answer import \
-                    get_retrieval_evaluation_dict
-                res = get_retrieval_evaluation_dict(
-                    question_text=reference["question_text"],
-                    reference_answer=reference.get("reference_answer"),
-                    actual_answer=target.get("actual_answer"),
-                    actual_contexts=json.loads(act_step["output"])
-                )
-                act_step.update(res)
     return eval_result
