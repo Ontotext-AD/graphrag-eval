@@ -93,11 +93,11 @@ retrieval_expected_step = {
     },
     "output": (
         "[\n"
-        "  {\"id\": \"1\"},\n"
-        "  {\"id\": \"3\"},\n"
-        "  {\"id\": \"5\"},\n"
-        "  {\"id\": \"7\"},\n"
-        "  {\"id\": \"9\"}\n"
+        "  {\"id\": \"http://example.com/resource/doc/1\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/3\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/5\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/7\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/9\"}\n"
         "]"
     ),
 }
@@ -111,16 +111,16 @@ retrieval_actual_step = {
     "status": "success",
     "output": (
         "[\n"
-        "  {\"id\": \"1\"},\n"
-        "  {\"id\": \"2\"},\n"
-        "  {\"id\": \"3\"},\n"
-        "  {\"id\": \"4\"},\n"
-        "  {\"id\": \"5\"},\n"
-        "  {\"id\": \"6\"},\n"
-        "  {\"id\": \"7\"},\n"
-        "  {\"id\": \"8\"},\n"
-        "  {\"id\": \"9\"},\n"
-        "  {\"id\": \"10\"}\n"
+        "  {\"id\": \"http://example.com/resource/doc/1\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/2\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/3\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/4\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/5\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/6\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/7\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/8\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/9\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/10\"}\n"
         "]"
     ),
 }
