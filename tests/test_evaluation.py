@@ -169,14 +169,14 @@ def test_get_steps_matches():
         ],
     ]
     actual_calls = [
-        {"name": "step_b", "output": "result_b_2", "status": "success", "id": "http://example.com/resource/doc/1"},
-        {"name": "step_b", "error": "error", "status": "error", "id": "http://example.com/resource/doc/2"},
-        {"name": "step_a", "output": "result_a", "status": "success", "id": "http://example.com/resource/doc/3"},
-        {"name": "step_b", "output": "result_b_1", "status": "success", "id": "http://example.com/resource/doc/4"},
+        {"name": "step_b", "output": "result_b_2", "status": "success", "id": "1"},
+        {"name": "step_b", "error": "error", "status": "error", "id": "2"},
+        {"name": "step_a", "output": "result_a", "status": "success", "id": "3"},
+        {"name": "step_b", "output": "result_b_1", "status": "success", "id": "4"},
     ]
     assert evaluate_steps(expected_calls, actual_calls) == 1
-    assert expected_calls[-1][0]["matches"] == "http://example.com/resource/doc/4"
-    assert expected_calls[-1][1]["matches"] == "http://example.com/resource/doc/1"
+    assert expected_calls[-1][0]["matches"] == "4"
+    assert expected_calls[-1][1]["matches"] == "1"
 
     expected_calls = [
         [
@@ -189,13 +189,13 @@ def test_get_steps_matches():
         ],
     ]
     actual_calls = [
-        {"name": "step_b", "output": "result_b_24", "status": "success", "id": "http://example.com/resource/doc/1"},
-        {"name": "step_b", "error": "error", "status": "error", "id": "http://example.com/resource/doc/2"},
-        {"name": "step_a", "output": "result_a", "status": "success", "id": "http://example.com/resource/doc/3"},
-        {"name": "step_b", "output": "result_b_1", "status": "success", "id": "http://example.com/resource/doc/4"},
+        {"name": "step_b", "output": "result_b_24", "status": "success", "id": "1"},
+        {"name": "step_b", "error": "error", "status": "error", "id": "2"},
+        {"name": "step_a", "output": "result_a", "status": "success", "id": "3"},
+        {"name": "step_b", "output": "result_b_1", "status": "success", "id": "4"},
     ]
     assert evaluate_steps(expected_calls, actual_calls) == 0.5
-    assert expected_calls[-1][0]["matches"] == "http://example.com/resource/doc/4"
+    assert expected_calls[-1][0]["matches"] == "4"
     assert "matches" not in expected_calls[-1][1]
 
 
