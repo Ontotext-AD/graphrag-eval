@@ -51,11 +51,11 @@
     2. **OSLO T1** (IRI: `urn:uuid:f1769dd6-9aeb-11e5-91da-b8763fd99c5f`)
   answer_relevance: 0.9
   answer_relevance_cost: 0.0007
-  answer_relevance_reason: reason
+  answer_relevance_reason: answer relevance reason
   answer_reference_claims_count: 2
   answer_actual_claims_count: 2
   answer_matching_claims_count: 2
-  answer_correctness_reason: reason
+  answer_correctness_reason: answer correctness reason
   answer_recall: 1.0
   answer_precision: 1.0
   answer_f1: 1.0

@@ -23,7 +23,7 @@ def test_get_retrieval_evaluation_dict_success(monkeypatch):
         lambda *_: RagasResult(
             status="processed",
             score=0.9,
-            details="recall reason",
+            details="retrieval context recall reason",
             cost=Money(currency="USD", amount=0.0007)
         )
     )
@@ -33,7 +33,7 @@ def test_get_retrieval_evaluation_dict_success(monkeypatch):
         lambda *_: RagasResult(
             status="processed",
             score=0.6,
-            details="precision reason",
+            details="retrieval context precision reason",
             cost=Money(currency="USD", amount=0.0003)
         )
     )
@@ -43,10 +43,10 @@ def test_get_retrieval_evaluation_dict_success(monkeypatch):
     )
     assert approx(eval_result_dict) == {
         "retrieval_context_recall": 0.9,
-        "retrieval_context_recall_reason": "recall reason",
+        "retrieval_context_recall_reason": "retrieval context recall reason",
         "retrieval_context_recall_cost": 0.0007,
         "retrieval_context_precision": 0.6,
-        "retrieval_context_precision_reason": "precision reason",
+        "retrieval_context_precision_reason": "retrieval context precision reason",
         "retrieval_context_precision_cost": 0.0003,
         "retrieval_context_f1": 0.72,
         "retrieval_context_f1_cost": 0.0010,
@@ -60,7 +60,7 @@ def test_get_retrieval_evaluation_dict_recall_success_precision_error(monkeypatc
         lambda *_: RagasResult(
             status="processed",
             score=0.9,
-            details="recall reason",
+            details="retrieval context recall reason",
             cost=Money(currency="USD", amount=0.0007)
         )
     )
@@ -69,7 +69,7 @@ def test_get_retrieval_evaluation_dict_recall_success_precision_error(monkeypatc
         "evaluate",
         lambda *_: namedtuple("RagasResult", ["status", "details", "cost"])(
             status="error",
-            details="precision error",
+            details="retrieval context precision error",
             cost=Money(currency="USD", amount=0.0003)
         )
     )
@@ -79,9 +79,9 @@ def test_get_retrieval_evaluation_dict_recall_success_precision_error(monkeypatc
     )
     assert eval_result_dict == {
         "retrieval_context_recall": 0.9,
-        "retrieval_context_recall_reason": "recall reason",
+        "retrieval_context_recall_reason": "retrieval context recall reason",
         "retrieval_context_recall_cost": 0.0007,
-        "retrieval_context_precision_error": "precision error"
+        "retrieval_context_precision_error": "retrieval context precision error"
     }
 
 
@@ -91,7 +91,7 @@ def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
         "evaluate",
         lambda *_: namedtuple("RagasResult", ["status", "details", "cost"])(
             status="error",
-            details="recall error",
+            details="retrieval context recall error",
             cost=Money(currency="USD", amount=0.0003)
         )
     )
@@ -100,7 +100,7 @@ def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
         "evaluate",
         lambda *_: namedtuple("RagasResult", ["status", "details", "cost"])(
             status="error",
-            details="precision error",
+            details="retrieval context precision error",
             cost=Money(currency="USD", amount=0.0003)
         )
     )
@@ -109,6 +109,6 @@ def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
         actual_contexts=[context_1_dict],
     )
     assert eval_result_dict == {
-        "retrieval_context_recall_error": "recall error",
-        "retrieval_context_precision_error": "precision error",
+        "retrieval_context_recall_error": "retrieval context recall error",
+        "retrieval_context_precision_error": "retrieval context precision error",
     }
