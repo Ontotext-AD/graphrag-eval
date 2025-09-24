@@ -77,14 +77,14 @@
     retrieval_answer_precision_cost: 0.0007
     retrieval_answer_f1: 0.9
     retrieval_answer_f1_cost: 0.0014
-    retrieval_recall: 0.9
-    retrieval_recall_reason: recall reason
-    retrieval_recall_cost: 0.0007
-    retrieval_precision: 0.9
-    retrieval_precision_reason: precision reason
-    retrieval_precision_cost: 0.0007
-    retrieval_f1: 0.9
-    retrieval_f1_cost: 0.0014
+    retrieval_context_recall: 0.9
+    retrieval_context_recall_reason: recall reason
+    retrieval_context_recall_cost: 0.0007
+    retrieval_context_precision: 0.9
+    retrieval_context_precision_reason: precision reason
+    retrieval_context_precision_cost: 0.0007
+    retrieval_context_f1: 0.9
+    retrieval_context_f1_cost: 0.0014
   - name: autocomplete_search
     args:
       query: OSLO

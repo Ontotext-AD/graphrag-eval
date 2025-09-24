@@ -28,6 +28,6 @@ result_dict = get_retrieval_evaluation_dict(
     ]
 )
 pprint(result_dict)
-assert "retrieval_recall" in result_dict
-assert "retrieval_precision" in result_dict
-assert "retrieval_f1" in result_dict
+assert "retrieval_context_recall" in result_dict
+assert "retrieval_context_precision" in result_dict
+assert "retrieval_context_f1" in result_dict

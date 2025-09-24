@@ -17,27 +17,27 @@ def _evaluate(
         result = evauator.evaluate(entry)
         if result.status == "processed":
             result_dict = {
-                f"retrieval_{metric}": result.score,                
+                f"retrieval_context_{metric}": result.score,                
             }
             if result.details:
-                result_dict[f"retrieval_{metric}_reason"] = result.details
+                result_dict[f"retrieval_context_{metric}_reason"] = result.details
             if result.cost is not None:
-                result_dict[f"retrieval_{metric}_cost"] = result.cost.amount
+                result_dict[f"retrieval_context_{metric}_cost"] = result.cost.amount
             return result_dict
         else:
             return {
-                f"retrieval_{metric}_error": result.details,
+                f"retrieval_context_{metric}_error": result.details,
             }
     except Exception as e:
         return {
-            f"retrieval_{metric}_error": str(e),
+            f"retrieval_context_{metric}_error": str(e),
         }
 
 def get_f1_dict(
     input_dict: dict[str, float | str],
 ) -> dict[str, float | str]:
-    recall = input_dict.get("retrieval_recall")
-    precision = input_dict.get("retrieval_precision")
+    recall = input_dict.get("retrieval_context_recall")
+    precision = input_dict.get("retrieval_context_precision")
     result = {}
     if recall is not None and precision is not None:
         if precision == 0 or recall == 0:
@@ -45,13 +45,13 @@ def get_f1_dict(
         else:
             f1 = 2 * precision * recall / (precision + recall)
         result.update({
-            "retrieval_f1": f1
+            "retrieval_context_f1": f1
         })
-    recall_cost = input_dict.get("retrieval_recall_cost")
-    precision_cost = input_dict.get("retrieval_precision_cost")
+    recall_cost = input_dict.get("retrieval_context_recall_cost")
+    precision_cost = input_dict.get("retrieval_context_precision_cost")
     if recall_cost is not None and precision_cost is not None:
         result.update({
-            "retrieval_f1_cost": recall_cost + precision_cost
+            "retrieval_context_f1_cost": recall_cost + precision_cost
         })
     return result
 

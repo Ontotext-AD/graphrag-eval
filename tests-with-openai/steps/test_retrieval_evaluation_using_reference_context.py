@@ -42,14 +42,14 @@ def test_get_retrieval_evaluation_dict_success(monkeypatch):
         actual_contexts=[context_1_dict],
     )
     assert approx(eval_result_dict) == {
-        "retrieval_recall": 0.9,
-        "retrieval_recall_reason": "recall reason",
-        "retrieval_recall_cost": 0.0007,
-        "retrieval_precision": 0.6,
-        "retrieval_precision_reason": "precision reason",
-        "retrieval_precision_cost": 0.0003,
-        "retrieval_f1": 0.72,
-        "retrieval_f1_cost": 0.0010,
+        "retrieval_context_recall": 0.9,
+        "retrieval_context_recall_reason": "recall reason",
+        "retrieval_context_recall_cost": 0.0007,
+        "retrieval_context_precision": 0.6,
+        "retrieval_context_precision_reason": "precision reason",
+        "retrieval_context_precision_cost": 0.0003,
+        "retrieval_context_f1": 0.72,
+        "retrieval_context_f1_cost": 0.0010,
     }
 
 
@@ -78,10 +78,10 @@ def test_get_retrieval_evaluation_dict_recall_success_precision_error(monkeypatc
         actual_contexts=[context_1_dict],
     )
     assert eval_result_dict == {
-        "retrieval_recall": 0.9,
-        "retrieval_recall_reason": "recall reason",
-        "retrieval_recall_cost": 0.0007,
-        "retrieval_precision_error": "precision error"
+        "retrieval_context_recall": 0.9,
+        "retrieval_context_recall_reason": "recall reason",
+        "retrieval_context_recall_cost": 0.0007,
+        "retrieval_context_precision_error": "precision error"
     }
 
 
@@ -109,6 +109,6 @@ def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
         actual_contexts=[context_1_dict],
     )
     assert eval_result_dict == {
-        "retrieval_recall_error": "recall error",
-        "retrieval_precision_error": "precision error",
+        "retrieval_context_recall_error": "recall error",
+        "retrieval_context_precision_error": "precision error",
     }
