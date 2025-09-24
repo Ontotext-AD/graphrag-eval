@@ -7,6 +7,8 @@ from langevals_ragas.context_recall import (
     RagasContextRecallEvaluator,
 )
 
+from graphrag_eval.util import get_f1_dict
+
 
 def _evaluate(
     entry: RagasContextRecallEntry | RagasContextPrecisionEntry,
@@ -33,28 +35,6 @@ def _evaluate(
             f"retrieval_context_{metric}_error": str(e),
         }
 
-def get_f1_dict(
-    input_dict: dict[str, float | str],
-) -> dict[str, float | str]:
-    recall = input_dict.get("retrieval_context_recall")
-    precision = input_dict.get("retrieval_context_precision")
-    result = {}
-    if recall is not None and precision is not None:
-        if precision == 0 or recall == 0:
-            f1 = 0.0
-        else:
-            f1 = 2 * precision * recall / (precision + recall)
-        result.update({
-            "retrieval_context_f1": f1
-        })
-    recall_cost = input_dict.get("retrieval_context_recall_cost")
-    precision_cost = input_dict.get("retrieval_context_precision_cost")
-    if recall_cost is not None and precision_cost is not None:
-        result.update({
-            "retrieval_context_f1_cost": recall_cost + precision_cost
-        })
-    return result
-
 
 def get_retrieval_evaluation_dict(
     reference_contexts: list[dict[str, str]],
@@ -75,5 +55,5 @@ def get_retrieval_evaluation_dict(
     result.update(_evaluate(entry, evaluator, "recall"))
     evaluator = RagasContextPrecisionEvaluator(settings=settings_dict)
     result.update(_evaluate(entry, evaluator, "precision"))
-    result.update(get_f1_dict(result))
+    result.update(get_f1_dict(result, "retrieval_context"))
     return result
