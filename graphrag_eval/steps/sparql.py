@@ -112,7 +112,6 @@ def compare_values(
 
     if len(reference_vars) < len(actual_vars):
         for combination in itertools.combinations(actual_vars, len(reference_vars)):
-            # We don't want to waste time comparing literals to uris
             if compare_values(
                 reference_vars,
                 reference_var_to_values,
