@@ -1,3 +1,5 @@
+import pytest
+
 from graphrag_eval import (
     compare_steps_outputs,
     match_group_by_output,
@@ -89,7 +91,15 @@ retrieval_expected_step = {
         "question": "Why is the sky blue?",
         "k": 5
     },
-    "output": [1, 3, 5, 7, 9],
+    "output": (
+        "[\n"
+        "  {\"id\": \"http://example.com/resource/doc/1\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/3\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/5\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/7\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/9\"}\n"
+        "]"
+    ),
 }
 retrieval_actual_step = {
     "name": "retrieval",
@@ -99,7 +109,20 @@ retrieval_actual_step = {
     },
     "id": "call_4",
     "status": "success",
-    "output": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "output": (
+        "[\n"
+        "  {\"id\": \"http://example.com/resource/doc/1\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/2\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/3\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/4\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/5\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/6\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/7\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/8\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/9\"},\n"
+        "  {\"id\": \"http://example.com/resource/doc/10\"}\n"
+        "]"
+    ),
 }
 retrieval_error_step = {
     "name": "retrieval",
@@ -134,6 +157,35 @@ def test_compare_outputs_strings():
 def test_retrieval_evaluation():
     assert compare_steps_outputs(retrieval_expected_step, retrieval_expected_step) == 1.0
     assert compare_steps_outputs(retrieval_expected_step, retrieval_actual_step) == 0.6
+
+
+def test_compare_steps_outputs_retrieval_step_missing_output_raises_error():
+    retrieval_expected_step_no_output = {
+        "name": "retrieval",
+        "args": {
+            "query": "Why is the sky blue?",
+            "k": 5
+        },
+    }
+    with pytest.raises(AssertionError) as e:
+        compare_steps_outputs(
+            retrieval_expected_step_no_output,
+            retrieval_actual_step
+        )
+
+
+def test_compare_steps_outputs_calculation_step_missing_output_raises_error():
+    calculation_expected_step_no_output = {
+        "name": "calculation",
+        "args": {
+            "x": 5, "y": 10
+        },
+    }
+    with pytest.raises(AssertionError) as e:
+        compare_steps_outputs(
+            calculation_expected_step_no_output,
+            calculation_actual_step
+        )
 
 
 def test_match_group_by_output():
