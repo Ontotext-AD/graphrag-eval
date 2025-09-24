@@ -86,10 +86,40 @@ def get_var_to_values(
     return dict(var_to_values)
 
 
-def parse_dict2table(
+def dict2lines(
     reference_vars: Union[list[str], tuple[str, ...]],
     reference_var_to_values: dict[str, list],
 ) -> list[str]:
+    """Converts a dictionary of lists (columns) into a list of row strings.
+
+    This function takes a dictionary where keys are column headers and values are
+    lists of column data. It transforms this column-oriented data into a list
+    of rows, where each row is a single string formed by concatenating the
+    string representation of its cell values.
+
+    It assumes that all lists in the `reference_var_to_values` dictionary
+    have the same length.
+
+    Args:
+        reference_vars: An ordered list or tuple of keys that defines the
+            column order for the output rows.
+        reference_var_to_values: A dictionary mapping column names (keys) to
+            lists of their corresponding values.
+
+    Returns:
+        A list of strings, where each string is a concatenation of the values
+        for a single row, ordered according to `reference_vars`.
+
+    Example:
+        >>> columns = ['name', 'age', 'city']
+        >>> data = {
+        ...     'name': ['Alice', 'Bob'],
+        ...     'age': [30, 25],
+        ...     'city': ['New York', 'Los Angeles']
+        ... }
+        >>> dict2lines(columns, data)
+        ['Alice30New York', 'Bob25Los Angeles']
+    """
     result = []
     num_rows = len(reference_var_to_values[reference_vars[0]])
     for row_idx in range(num_rows):
@@ -122,9 +152,9 @@ def compare_values(
                 return True
         return False
 
-    table = parse_dict2table(reference_vars, reference_var_to_values)
+    table = dict2lines(reference_vars, reference_var_to_values)
     for permutation in itertools.permutations(actual_vars):
-        actual_table = parse_dict2table(permutation, actual_var_to_values)
+        actual_table = dict2lines(permutation, actual_var_to_values)
         if (results_are_ordered and table == actual_table) or (
             not results_are_ordered and Counter(table) == Counter(actual_table)
         ):

@@ -951,8 +951,9 @@ macro:
 
 ### SPARQL queries comparison
 
-The algorithm iterates over all of the subsets of the columns of the actual result in which the number of columns is equal to the number of columns in the reference result.
-For each subset it tries to find a permutation in columns in which the two results match. In the case two results have different number of rows in the result the output is considered false. Optional columns are ignored. Also support for floating-point numbers exist but for special types like duration is not yet added.
+The algorithm iterates over all subsets of columns in the actual result of the same size as in the reference result.
+For each subset, it compares the set of columns (skipping optional columns).
+It matches floating-point numbers up to a 1e-8 precision. It does not do this for special types such as duration.
 
 The average time complexity is О(nr\*nc_ref!\*binomial(nc_act, nc_ref)), where
 
