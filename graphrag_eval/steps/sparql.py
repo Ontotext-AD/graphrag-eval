@@ -86,21 +86,6 @@ def get_var_to_values(
     return dict(var_to_values)
 
 
-def get_var_to_type(
-    vars_: list[str],
-    bindings: list[dict],
-) -> dict[str, str]:
-    types = {}
-    for var in vars_:
-        for binding in bindings:
-            if var in binding:
-                types[var] = binding[var]["type"]
-            else:
-                types[var] = None
-            break
-    return types
-
-
 def parse_dict2table(
     reference_vars: Union[list[str], tuple[str, ...]],
     reference_var_to_values: dict[str, list],
@@ -117,39 +102,10 @@ def parse_dict2table(
     return result
 
 
-def check_object_types_match(
-    reference_vars: list[str],
-    reference_var_to_values: dict[str, list],
-    actual_vars: Union[list[str], tuple[str, ...]],
-    actual_var_to_values: dict[str, list],
-) -> bool:
-    for i, reference_var in enumerate(reference_vars):
-        if not isinstance(
-            reference_var_to_values[reference_var][0],
-            type(actual_var_to_values[actual_vars[i]][0]),
-        ):
-            return False
-    return True
-
-
-def check_types_match(
-    reference_vars: list[str],
-    reference_var_to_type: dict[str, str],
-    actual_vars: Union[list[str], tuple[str, ...]],
-    actual_var_to_type: dict[str, str],
-) -> bool:
-    for i, reference_var in enumerate(reference_vars):
-        if reference_var_to_type[reference_var] != actual_var_to_type[actual_vars[i]]:
-            return False
-    return True
-
-
 def compare_values(
     reference_vars: list[str],
-    reference_var_to_type: dict[str, str],
     reference_var_to_values: dict[str, list],
     actual_vars: Union[list[str], tuple[str, ...]],
-    actual_var_to_type: dict[str, str],
     actual_var_to_values: dict[str, list],
     results_are_ordered: bool,
 ) -> bool:
@@ -157,17 +113,10 @@ def compare_values(
     if len(reference_vars) < len(actual_vars):
         for combination in itertools.combinations(actual_vars, len(reference_vars)):
             # We don't want to waste time comparing literals to uris
-            if check_types_match(
+            if compare_values(
                 reference_vars,
-                reference_var_to_type,
-                combination,
-                actual_var_to_type,
-            ) and compare_values(
-                reference_vars,
-                reference_var_to_type,
                 reference_var_to_values,
                 combination,
-                actual_var_to_type,
                 actual_var_to_values,
                 results_are_ordered,
             ):
@@ -176,11 +125,6 @@ def compare_values(
 
     table = parse_dict2table(reference_vars, reference_var_to_values)
     for permutation in itertools.permutations(actual_vars):
-        # We want compare values of the same type
-        if not check_object_types_match(
-            reference_vars, reference_var_to_values, permutation, actual_var_to_values
-        ):
-            continue
         actual_table = parse_dict2table(permutation, actual_var_to_values)
         if (results_are_ordered and table == actual_table) or (
             not results_are_ordered and Counter(table) == Counter(actual_table)
@@ -229,18 +173,11 @@ def compare_sparql_results(
         actual_vars, actual_bindings
     )
 
-    reference_var_to_type: dict[str, str] = get_var_to_type(
-        required_vars, reference_bindings
-    )
-    actual_var_to_type: dict[str, str] = get_var_to_type(actual_vars, actual_bindings)
-
     return float(
         compare_values(
             required_vars,
-            reference_var_to_type,
             reference_var_to_values,
             actual_vars,
-            actual_var_to_type,
             actual_var_to_values,
             results_are_ordered,
         )
