@@ -86,7 +86,7 @@ def get_var_to_values(
     return dict(var_to_values)
 
 
-def dict2lines(
+def convert_table_dict2lines(
     reference_vars: Union[list[str], tuple[str, ...]],
     reference_var_to_values: dict[str, list],
 ) -> list[str]:
@@ -152,9 +152,9 @@ def compare_values(
                 return True
         return False
 
-    table = dict2lines(reference_vars, reference_var_to_values)
+    table = convert_table_dict2lines(reference_vars, reference_var_to_values)
     for permutation in itertools.permutations(actual_vars):
-        actual_table = dict2lines(permutation, actual_var_to_values)
+        actual_table = convert_table_dict2lines(permutation, actual_var_to_values)
         if (results_are_ordered and table == actual_table) or (
             not results_are_ordered and Counter(table) == Counter(actual_table)
         ):
