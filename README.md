@@ -558,6 +558,12 @@ Aggregates are:
     - `once_per_sample`: how many times each step was executed, counted only once per question
     - `empty_results`: how many times the step was executed and returned empty results
     - `errors`: how many times the step was executed and resulted in error
+  - `retrieval_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_precision` for all successful questions in this template
+  - `retrieval_precision_cost`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_precision_cost` for all successful questions in this template
+  - `retrieval_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_recall` for all successful questions in this template
+  - `retrieval_recall_cost`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_recall_cost` for all successful questions in this template
+  - `retrieval_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_f1` for all successful questions in this template
+  - `retrieval_f1_cost`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_f1_cost` for all successful questions in this template
 - `micro`: statistics across questions, regardless of template. It includes:
   - `number_of_error_samples`: total number of questions, which resulted in error response
   - `number_of_success_samples`: total number of questions, which resulted in successful response
@@ -570,6 +576,12 @@ Aggregates are:
   - `answer_f1`: `sum`, `mean`, `median`, `min` and `max` for `answer_f1` of all successful questions
   - `answer_relevance`: `sum`, `mean`, `median`, `min` and `max` statistics for `answer_relevance` of all successful questions
   - `answer_relevance_cost`: `sum`, `mean`, `median`, `min` and `max` statistics for `answer_relevance_cost` of all successful questions
+  - `retrieval_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_precision` of all successful questions
+  - `retrieval_precision_cost`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_precision_cost` of all successful questions
+  - `retrieval_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_recall` of all successful questions
+  - `retrieval_recall_cost`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_recall_cost` of all successful questions
+  - `retrieval_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_f1` of all successful questions
+  - `retrieval_f1_cost`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_f1_cost` of all successful questions
   - `steps_score`: `sum`, `mean`, `median`, `min` and `max` for `steps_score` of all successful questions
 - `macro`: averages across templates, i.e., the mean of each metric per template, averaged. It includes:
   - `input_tokens`: `mean` for `input_tokens`
@@ -581,6 +593,12 @@ Aggregates are:
   - `answer_f1`: `mean` for `answer_f1`
   - `answer_relevance`: `mean` for `answer_relevance`
   - `answer_relevance_cost`: `mean` for `answer_relevance_cost`
+  - `retrieval_precision`: `mean` for `retrieval_precision`
+  - `retrieval_precision_cost`: `mean` for `retrieval_precision_cost`
+  - `retrieval_recall`: `mean` for `retrieval_recall`
+  - `retrieval_recall_cost`: `mean` for `retrieval_recall_cost`
+  - `retrieval_f1`: `mean` for `retrieval_f1`
+  - `retrieval_f1_cost`: `mean` for `retrieval_f1_cost`
   - `steps_score`: `mean` for `steps_score`
 
 #### Example Aggregates
