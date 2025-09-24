@@ -98,11 +98,9 @@ def get_steps_matches(
 
 def evaluate_steps(
     reference_steps_groups: list[list[dict]],
-    actual_steps: list[dict],
-    matches: list[tuple[int, int, int, float]] | None = None
+    actual_steps: list[dict]
 ) -> float:
-    if matches is None:
-        matches = get_steps_matches(reference_steps_groups, actual_steps)
+    matches = get_steps_matches(reference_steps_groups, actual_steps)
     matches_by_group = defaultdict(list)
     scores_by_group = defaultdict(float)
     for ref_group_idx, ref_match_idx, actual_idx, score in matches:
@@ -131,7 +129,6 @@ def get_steps_evaluation_result_dict(reference: dict, target: dict) -> dict:
             act_step.update(result)
     if "reference_steps" in reference:
         ref_steps = reference["reference_steps"]
-        matches = get_steps_matches(ref_steps, act_steps)
-        steps_score = evaluate_steps(ref_steps, act_steps, matches)
+        steps_score = evaluate_steps(ref_steps, act_steps)
         eval_result["steps_score"] = steps_score
     return eval_result
