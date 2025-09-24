@@ -1,6 +1,6 @@
 import math
 
-from graphrag_eval.steps.retrieval_evaluation_using_context_ids import (
+from graphrag_eval.steps.retrieval_context_ids import (
     recall_at_k, 
     average_precision
 )

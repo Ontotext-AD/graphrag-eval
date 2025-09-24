@@ -1,6 +1,6 @@
 from pprint import pprint
 
-from qa_eval.steps.retrieval_evaluation_using_answer import (
+from graphrag_eval.steps.retrieval_answer import (
     get_retrieval_evaluation_dict
 )
 

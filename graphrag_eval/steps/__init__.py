@@ -1,7 +1,7 @@
 import json
 from collections import defaultdict
 
-from .retrieval_evaluation_using_context_ids import recall_at_k
+from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
 
 
@@ -118,8 +118,7 @@ def get_steps_evaluation_result_dict(reference: dict, target: dict) -> dict:
     eval_result["actual_steps"] = act_steps
     for act_step in act_steps:
         if act_step["name"] == "retrieval":
-            from .retrieval_evaluation_using_answer import \
-                get_retrieval_evaluation_dict
+            from .retrieval_answer import get_retrieval_evaluation_dict
             result = get_retrieval_evaluation_dict(
                 question_text=reference["question_text"],
                 reference_answer=reference.get("reference_answer"),

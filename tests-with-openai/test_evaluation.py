@@ -10,7 +10,10 @@ from graphrag_eval import (
     compute_aggregates,
     run_evaluation,
 )
-from graphrag_eval.steps import retrieval_evaluation_using_answer
+from graphrag_eval.steps.retrieval_answer import (
+    RagasResponseContextRecallEvaluator,
+    RagasResponseContextPrecisionEvaluator,
+)
 
 
 def test_run_evaluation_and_compute_aggregates(monkeypatch):
@@ -36,7 +39,7 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
         )
     )
     monkeypatch.setattr(
-        retrieval_evaluation_using_answer.RagasResponseContextRecallEvaluator,
+        RagasResponseContextRecallEvaluator,
         "evaluate",
         lambda *_: RagasResult(
             status="processed",
@@ -46,7 +49,7 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
         )
     )
     monkeypatch.setattr(
-        retrieval_evaluation_using_answer.RagasResponseContextPrecisionEvaluator,
+        RagasResponseContextPrecisionEvaluator,
         "evaluate",
         lambda *_: RagasResult(
             status="processed",
