@@ -3,7 +3,7 @@ from pytest import approx
 
 from langevals_ragas.lib.common import RagasResult, Money
 
-from graphrag_eval.steps.retrieval_evaluation_using_context_texts import (
+from graphrag_eval.steps.retrieval_context_texts import (
     RagasContextPrecisionEvaluator,
     RagasContextRecallEvaluator,
     get_retrieval_evaluation_dict,

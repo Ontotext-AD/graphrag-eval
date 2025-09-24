@@ -14,7 +14,7 @@ from graphrag_eval.steps.retrieval_answer import (
     RagasResponseContextRecallEvaluator,
     RagasResponseContextPrecisionEvaluator,
 )
-from graphrag_eval.steps.retrieval_evaluation_using_context_texts import (
+from graphrag_eval.steps.retrieval_context_texts import (
     RagasContextPrecisionEvaluator,
     RagasContextRecallEvaluator,
 )
