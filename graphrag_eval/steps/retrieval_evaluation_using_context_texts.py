@@ -15,9 +15,6 @@ def _evaluate(
 ) -> dict:
     try:
         result = evauator.evaluate(entry)
-        print(type(result))
-        print(result)
-        print(result.cost)
         if result.status == "processed":
             result_dict = {
                 f"retrieval_{metric}": result.score,                
