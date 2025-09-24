@@ -77,6 +77,7 @@ A reference corpus is a list of templates, each of which contains:
   - `question_text`: The natural language query passed to the LLM
   - `reference_steps`: (optional) A list of expected steps grouped by expected order of execution, where all steps in a group can be executed in any order relative to each other, but after all steps in the previous group and before all steps in the next group.
   - `reference_answer`: (optional) The expected answer to the question
+
 The assumption is that the final answer to the question is derived from the outputs of the steps, which are executed last (last level).
 
 Each step includes:
@@ -254,6 +255,16 @@ Below is an example response from the question-answering system for a single que
     "elapsed_sec": 46.48961806297302,
     "actual_steps": [
         {
+          "name": "retrieval",
+          "args": {
+            "query": "transformers Substation OSLO",
+            "k": 2
+          },
+          "id": "call_3",
+          "status": "success",
+          "output": "[\n  {\n    \"id\": \"http://example.com/resource/doc/1\",\n    \"text\": \"Transformer OSLO T1 is in Substation Oslo.\"\n  },\n  {\n    \"id\": \"http://example.com/resource/doc/2\",\n    \"text\": \"Transformer OSLO T2 is in Substation Oslo.\"\n  }\n]"
+        },
+        {
             "name": "autocomplete_search",
             "args": {
                 "query": "STAVANGER",
@@ -364,6 +375,31 @@ The output is a list of statistics for each question from the reference Q&A data
   answer_relevance: 0.9
   answer_relevance_cost: 0.0007
   actual_steps:
+  - name: retrieval
+    id: call_3
+    args:
+      query: transformers Substation OSLO
+      k: 2
+    status: success
+    output: |-
+      [
+        {
+          "id": "http://example.com/resource/doc/1",
+          "text": "Transformer OSLO T1 is in Substation Oslo."
+        },
+        {
+          "id": "http://example.com/resource/doc/2",
+          "text": "Transformer OSLO T2 is in Substation Oslo."
+        }
+      ]
+    retrieval_answer_recall: 1.0
+    retrieval_answer_recall_reason: The context contains all the transformers listed in the reference answer
+    retrieval_answer_recall_cost: 0.0007
+    retrieval_answer_precision: 1.0
+    retrieval_answer_precision_reason: The context contains only transformers listed in the reference answer
+    retrieval_answer_precision_cost: 0.0003
+    retrieval_answer_f1: 1.0
+    retrieval_answer_f1_cost: 0.001    
   - name: autocomplete_search
     args:
       query: OSLO
@@ -470,11 +506,26 @@ The output is a list of statistics for each question from the reference Q&A data
 - `answer_relevance_error`: (optional) error message if answer relevance evaluation failed
 - `answer_relevance_cost`: The LLM use cost of computing `answer_relevance`, in US dollars
 - `actual_steps`: (optional) copy of the steps in the evaluation target, if specified there
-- `steps_score`: a real number between 0 and 1, computed by comparing the results of the last steps that were executed to the reference's last group of steps. If there is no match in the actual steps, then the score is `0`. Otherwise, it is calculated as the number of the matched steps on the last group divided by the total number of steps in the last group.
+- `steps_score`: a real number between 0 and 1, computed by comparing the results of the last executed steps to the output of the reference's last group of steps.
+    - If there is no match in the actual steps, then the score is `0.0`
+    - If the executed step's name is "retrieval" and the last reference group contains a retrieval step, then the score is the [recall at k](#context-recallk) of the retrieved document ids with respect to the reference.
+    - Otherwise, the score is the number of the matched steps on the last group divided by the total number of steps in the last group.
 - `input_tokens`: input tokens usage
 - `output_tokens`: output tokens usage
 - `total_tokens`: total tokens usage
 - `elapsed_sec`: elapsed seconds
+
+All `actual_steps` with `name` "retrieval" contain:
+- `retrieval_answer_recall`: (optional) recall of the retrieved context with respect to the reference answer, if evaluation succeeds
+- `retrieval_answer_recall_reason`: (optional) LLM reasoning in evaluating `retrieval_answer_recall`
+- `retrieval_answer_recall_error`: (optional) error message if `retrieval_answer_recall` evaluation fails
+- `retrieval_answer_recall_cost`: cost of evaluating `retrieval_answer_recall`, in US dollars
+- `retrieval_answer_precision`: (optional) precision of the retrieved context with respect to the reference answer, if evaluation succeeds
+- `retrieval_answer_precision_reason`: (optional) LLM reasoning in evaluating `retrieval_answer_precision`
+- `retrieval_answer_precision_error`: (optional) error message if `retrieval_answer_precision` evaluation fails
+- `retrieval_answer_precision_cost`: cost of evaluating `retrieval_answer_precision`, in US dollars
+- `retrieval_answer_f1`: (optional) F1 score of the retrieved context with respect to the reference answer, if `retrieval_answer_recall_error` and `retrieval_answer_precision` succeed
+- `retrieval_answer_f1_cost`: The sum of `retrieval_answer_recall_cost` and `retrieval_answer_precision_cost`
 
 #### Aggregates Keys
 
@@ -911,16 +962,16 @@ The average time complexity is О(nr\*nc_ref!\*binomial(nc_act, nc_ref)), where
 
 ### Retrieval Evaluation
 
-The following metrics are based on the ids of retrieved documents.
+The following metrics are based on the content of retrieved documents.
 
-#### Recall@k Metric
+#### Context Recall@k
 
 The fraction of relevant items among the top *k* recommendations. It answers the question: "Of all items the user cares about, how many did we inclide in the first k spots?"
 * **Formula**:
     $`
     \frac{\text{Number of relevant items in top k}}{\text{Number of relevant items}}
     `$
-* **Calculation**: Count the number of relevant items in the top `k` retrieved results; divide that by the *total* number of relevant items.
+* **Calculation**: Count the number of relevant items in the top `k` retrieved results; divide that by the first 'k' relevant items.
 * **Example**: Suppose there are 4 relevant documents for a given query. Suppose our system retrieves 3 of them in the top 5 results (`k=5`). Recall@5 is `3 / 4 = 0.75`.
 
 ```python
@@ -931,7 +982,7 @@ recall_at_k(
 )  # => 0.75
 ```
 
-#### Average Precision (AP) Metric
+#### Context Precision@k
 
 Evaluates a ranked list of recommendations by looking at the precision at the position of each correctly retrieved item. It rewards systems for placing relevant items higher up in the list. It's more sophisticated than just looking at precision at a single cutoff because it considers the entire ranking.
 * **Formula**:
