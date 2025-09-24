@@ -1,6 +1,6 @@
 from pprint import pprint
 
-from qa_eval.steps.retrieval_evaluation_using_context_texts import (
+from graphrag_eval.steps.retrieval_context_texts import (
     get_retrieval_evaluation_dict
 )
 
@@ -29,10 +29,5 @@ result_dict = get_retrieval_evaluation_dict(
 )
 pprint(result_dict)
 assert "retrieval_recall" in result_dict
-#assert "retrieval_recall_reason" in result_dict
-#assert "retrieval_recall_cost" in result_dict
 assert "retrieval_precision" in result_dict
-#assert "retrieval_precision_reason" in result_dict
-#assert "retrieval_precision_cost" in result_dict
 assert "retrieval_f1" in result_dict
-#assert "retrieval_f1_cost" in result_dict
