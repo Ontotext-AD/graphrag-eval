@@ -84,7 +84,7 @@ Each step includes:
 
 - `name`: The type of step being performed (e.g., `sparql_query`)
 - `args`: Arguments of the step (e.g., arguments to a tool used in the step, such as a SPARQL query)
-- `output`: (optional) The expected output from the step. Optional for steps whose `name` is `"retrieval"`
+- `output`: The expected output from the step.
 - `output_media_type`: (optional, missing or one of `application/sparql-results+json`, `application/json`) Indicates how the output of a step must be processed
 - `ordered`: (optional, defaults to `false`) For SPARQL query results, whether results order matters. `true` means that the actual result rows must be ordered as the reference result; `false` means that result rows are matched as a set.
 - `required_columns`: (optional) - required only for SPARQL query results; list of binding names, which are required for SPARQL query results to match
