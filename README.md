@@ -949,7 +949,19 @@ macro:
     mean: 25.911653497483996
 ```
 
-### Retrieval Metrics
+### SPARQL queries comparison
+
+The algorithm iterates over all subsets of columns in the actual result of the same size as in the reference result.
+For each subset, it compares the set of columns (skipping optional columns).
+It matches floating-point numbers up to a 1e-8 precision. It does not do this for special types such as duration.
+
+The average time complexity is О(nr\*nc_ref!\*binomial(nc_act, nc_ref)), where
+
+* *nr* is the number of rows in the actual result
+* *nc_ref* is the number of columns in the reference result
+* *nc_act* is the number of columns in the actual result
+
+### Retrieval Evaluation
 
 The following metrics are based on the content of retrieved documents.
 

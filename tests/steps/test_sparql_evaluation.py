@@ -789,14 +789,30 @@ def test_compare_sparql_results_equal_binding_values_numerical_values() -> None:
         "results": {
             "bindings": [
                 {
-                    "weight": {"type": "literal", "value": 40.123456789},
+                    "weight": {
+                        "type": "literal",
+                        "value": "40.123456789",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#float",
+                    },
                     "personName": {"type": "literal", "value": "Neli"},
-                    "Age": {"type": "literal", "value": 100},
+                    "Age": {
+                        "type": "literal",
+                        "value": "100",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+                    },
                 },
                 {
-                    "weight": {"type": "literal", "value": 41.123456789},
+                    "weight": {
+                        "type": "literal",
+                        "value": "41.123456789",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#float",
+                    },
                     "personName": {"type": "literal", "value": "Reni"},
-                    "Age": {"type": "literal", "value": 101},
+                    "Age": {
+                        "type": "literal",
+                        "value": "101",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+                    },
                 },
             ]
         },
@@ -806,14 +822,30 @@ def test_compare_sparql_results_equal_binding_values_numerical_values() -> None:
         "results": {
             "bindings": [
                 {
-                    "x": {"type": "literal", "value": 41.12345678},
+                    "x": {
+                        "type": "literal",
+                        "value": "41.12345678",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#float",
+                    },
                     "y": {"type": "literal", "value": "Reni"},
-                    "z": {"type": "literal", "value": 101.0},
+                    "z": {
+                        "type": "literal",
+                        "value": "101",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+                    },
                 },
                 {
-                    "x": {"type": "literal", "value": 40.12345678},
+                    "x": {
+                        "type": "literal",
+                        "value": "40.12345678",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#float",
+                    },
                     "y": {"type": "literal", "value": "Neli"},
-                    "z": {"type": "literal", "value": 100.0},
+                    "z": {
+                        "type": "literal",
+                        "value": "100",
+                        "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+                    },
                 },
             ]
         },
