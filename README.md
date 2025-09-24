@@ -392,6 +392,14 @@ The output is a list of statistics for each question from the reference Q&A data
           "text": "Transformer OSLO T2 is in Substation Oslo."
         }
       ]
+    retrieval_answer_recall: 1.0
+    retrieval_answer_recall_reason: The context contains all the transformers listed in the reference answer
+    retrieval_answer_recall_cost: 0.0007
+    retrieval_answer_precision: 1.0
+    retrieval_answer_precision_reason: The context contains only transformers listed in the reference answer
+    retrieval_answer_precision_cost: 0.0003
+    retrieval_answer_f1: 1.0
+    retrieval_answer_f1_cost: 0.001    
   - name: autocomplete_search
     args:
       query: OSLO
@@ -508,13 +516,15 @@ The output is a list of statistics for each question from the reference Q&A data
 - `elapsed_sec`: elapsed seconds
 
 All `actual_steps` with `name` "retrieval" contain:
-- `retrieval_answer_recall`: recall of the actually retrieved context when evaluated using the reference answer
-- `retrieval_answer_recall_error`: error of evaluating `retrieval_answer_recall`
+- `retrieval_answer_recall`: (optional) recall of the retrieved context with respect to the reference answer, if evaluation succeeds
+- `retrieval_answer_recall_reason`: (optional) LLM reasoning in evaluating `retrieval_answer_recall`
+- `retrieval_answer_recall_error`: (optional) error message if `retrieval_answer_recall` evaluation fails
 - `retrieval_answer_recall_cost`: cost of evaluating `retrieval_answer_recall`, in US dollars
-- `retrieval_answer_precision`: precision of the actually retrieved context when evaluated using the reference answer
-- `retrieval_answer_precision_error`: error of evaluating `retrieval_answer_precision`
+- `retrieval_answer_precision`: (optional) precision of the retrieved context with respect to the reference answer, if evaluation succeeds
+- `retrieval_answer_precision_reason`: (optional) LLM reasoning in evaluating `retrieval_answer_precision`
+- `retrieval_answer_precision_error`: (optional) error message if `retrieval_answer_precision` evaluation fails
 - `retrieval_answer_precision_cost`: cost of evaluating `retrieval_answer_precision`, in US dollars
-- `retrieval_answer_f1`: F1 score of the actually retrieved context when evaluated using the reference answer
+- `retrieval_answer_f1`: (optional) F1 score of the retrieved context with respect to the reference answer, if `retrieval_answer_recall_error` and `retrieval_answer_precision` succeed
 - `retrieval_answer_f1_cost`: The sum of `retrieval_answer_recall_cost` and `retrieval_answer_precision_cost`
 
 #### Aggregates Keys
