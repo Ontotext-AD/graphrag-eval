@@ -901,7 +901,8 @@ macro:
 ### SPARQL queries comparison
 
 The algoritm iterates over all of the subsets of the actual result in which the number of column is equal to the number of columns in the reference result.
-For each subset it tries to find a permutation in columns in which the two results match.
+For each subset it tries to find a permutation in columns in which the two results match. In the case two results have different number of result the output is considered false. Optional columns are skipped. Also support for floating-point numbers exist but for special types like duration is not yet added.
+
 If we define:
 
 m1 := Number of columns in the reference result
@@ -911,8 +912,6 @@ m2 := Number of columns in the actual result
 n := Number of rows in the actual result
 
 The solution has time complexity in the average case of О(n\*m1!\*binomial(m2, m1))
-
-
 
 ### Retrieval Evaluation
 
