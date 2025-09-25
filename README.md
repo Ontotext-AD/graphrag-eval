@@ -84,7 +84,7 @@ Each step includes:
 
 - `name`: The type of step being performed (e.g., `sparql_query`)
 - `args`: Arguments of the step (e.g., arguments to a tool used in the step, such as a SPARQL query)
-- `output`: The expected output from the step
+- `output`: The expected output from the step.
 - `output_media_type`: (optional, missing or one of `application/sparql-results+json`, `application/json`) Indicates how the output of a step must be processed
 - `ordered`: (optional, defaults to `false`) For SPARQL query results, whether results order matters. `true` means that the actual result rows must be ordered as the reference result; `false` means that result rows are matched as a set.
 - `required_columns`: (optional) - required only for SPARQL query results; list of binding names, which are required for SPARQL query results to match
@@ -100,7 +100,22 @@ The example corpus below illustrates a minimal but realistic Q&A dataset, showin
     question_text: List all transformers within Substation OSLO
     reference_answer: OSLO T1, OSLO T2
     reference_steps:
-    - - name: sparql_query
+    - - name: retrieval
+        args:
+          query: transformers Substation OSLO
+          k: 2
+        output: |-
+          [
+            {
+              "id": "http://example.com/resource/doc/1",
+              "text": "Transformer OSLO T1 is in Substation Oslo."
+            },
+            {
+              "id": "http://example.com/resource/doc/2",
+              "text": "Transformer OSLO T2 is in Substation Oslo."
+            }
+          ]
+      - name: sparql_query
         args:
           query: |2
 
@@ -334,7 +349,23 @@ The output is a list of statistics for each question from the reference Q&A data
   question_text: List all transformers within Substation OSLO
   reference_answer: OSLO T1, OSLO T2
   reference_steps:
-  - - name: sparql_query
+  - - name: retrieval
+      args:
+        query: transformers Substation OSLO
+        k: 2
+      matches: call_3
+      output: |-
+        [
+          {
+            "id": "http://example.com/resource/doc/1",
+            "text": "Transformer OSLO T1 is in Substation Oslo."
+          },
+          {
+            "id": "http://example.com/resource/doc/2",
+            "text": "Transformer OSLO T2 is in Substation Oslo."
+          }
+        ]
+  - name: sparql_query
       args:
         query: |2
 
@@ -399,7 +430,7 @@ The output is a list of statistics for each question from the reference Q&A data
     retrieval_answer_precision_reason: The context contains only transformers listed in the reference answer
     retrieval_answer_precision_cost: 0.0003
     retrieval_answer_f1: 1.0
-    retrieval_answer_f1_cost: 0.001    
+    retrieval_answer_f1_cost: 0.001
   - name: autocomplete_search
     args:
       query: OSLO
@@ -524,8 +555,14 @@ All `actual_steps` with `name` "retrieval" contain:
 - `retrieval_answer_precision_reason`: (optional) LLM reasoning in evaluating `retrieval_answer_precision`
 - `retrieval_answer_precision_error`: (optional) error message if `retrieval_answer_precision` evaluation fails
 - `retrieval_answer_precision_cost`: cost of evaluating `retrieval_answer_precision`, in US dollars
-- `retrieval_answer_f1`: (optional) F1 score of the retrieved context with respect to the reference answer, if `retrieval_answer_recall_error` and `retrieval_answer_precision` succeed
+- `retrieval_answer_f1`: (optional) F1 score of the retrieved context with respect to the reference answer, if `retrieval_answer_recall` and `retrieval_answer_precision` succeed
 - `retrieval_answer_f1_cost`: The sum of `retrieval_answer_recall_cost` and `retrieval_answer_precision_cost`
+- `retrieval_context_recall`: (optional) recall of the retrieved context with respect to the reference answer, if evaluation succeeds
+- `retrieval_context_recall_error`: (optional) error message if `retrieval_context_recall` evaluation fails
+- `retrieval_context_precision`: (optional) precision of the retrieved context with respect to the reference answer, if evaluation succeeds
+- `retrieval_context_precision_error`: (optional) error message if `retrieval_context_precision` evaluation fails
+- `retrieval_context_f1`: (optional) F1 score of the retrieved context with respect to the reference answer, if `retrieval_context_recall` and `retrieval_context_precision` succeed
+
 
 #### Aggregates Keys
 
@@ -550,6 +587,9 @@ Aggregates are:
     - `once_per_sample`: how many times each step was executed, counted only once per question
     - `empty_results`: how many times the step was executed and returned empty results
     - `errors`: how many times the step was executed and resulted in error
+  - `retrieval_context_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_recall` for all successful questions in this template
+  - `retrieval_context_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_precision` for all successful questions in this template
+  - `retrieval_context_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_f1` for all successful questions in this template
 - `micro`: statistics across questions, regardless of template. It includes:
   - `number_of_error_samples`: total number of questions, which resulted in error response
   - `number_of_success_samples`: total number of questions, which resulted in successful response
@@ -562,6 +602,9 @@ Aggregates are:
   - `answer_f1`: `sum`, `mean`, `median`, `min` and `max` for `answer_f1` of all successful questions
   - `answer_relevance`: `sum`, `mean`, `median`, `min` and `max` statistics for `answer_relevance` of all successful questions
   - `answer_relevance_cost`: `sum`, `mean`, `median`, `min` and `max` statistics for `answer_relevance_cost` of all successful questions
+  - `retrieval_context_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_recall` of all successful questions
+  - `retrieval_context_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_precision` of all successful questions
+  - `retrieval_context_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_f1` of all successful questions
   - `steps_score`: `sum`, `mean`, `median`, `min` and `max` for `steps_score` of all successful questions
 - `macro`: averages across templates, i.e., the mean of each metric per template, averaged. It includes:
   - `input_tokens`: `mean` for `input_tokens`
@@ -573,6 +616,9 @@ Aggregates are:
   - `answer_f1`: `mean` for `answer_f1`
   - `answer_relevance`: `mean` for `answer_relevance`
   - `answer_relevance_cost`: `mean` for `answer_relevance_cost`
+  - `retrieval_context_recall`: `mean` for `retrieval_context_recall`
+  - `retrieval_context_precision`: `mean` for `retrieval_context_precision`
+  - `retrieval_context_f1`: `mean` for `retrieval_context_f1`
   - `steps_score`: `mean` for `steps_score`
 
 #### Example Aggregates

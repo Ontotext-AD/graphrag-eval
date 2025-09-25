@@ -23,7 +23,13 @@ STEPS_METRICS = {
         "retrieval_answer_recall",
         "retrieval_answer_recall_cost",
         "retrieval_answer_f1",
-        "retrieval_answer_f1_cost"
+        "retrieval_answer_f1_cost",
+        "retrieval_context_precision",
+        "retrieval_context_precision_cost",
+        "retrieval_context_recall",
+        "retrieval_context_recall_cost",
+        "retrieval_context_f1",
+        "retrieval_context_f1_cost",
     ]
 }
 PROTECTED_METRICS = [

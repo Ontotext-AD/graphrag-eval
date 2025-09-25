@@ -98,9 +98,11 @@ def get_steps_matches(
 
 def evaluate_steps(
     reference_steps_groups: list[list[dict]],
-    actual_steps: list[dict]
+    actual_steps: list[dict],
+    matches: list[tuple[int, int, int, float]] | None = None
 ) -> float:
-    matches = get_steps_matches(reference_steps_groups, actual_steps)
+    if matches is None:
+        matches = get_steps_matches(reference_steps_groups, actual_steps)
     matches_by_group = defaultdict(list)
     scores_by_group = defaultdict(float)
     for ref_group_idx, ref_match_idx, actual_idx, score in matches:
@@ -128,6 +130,18 @@ def get_steps_evaluation_result_dict(reference: dict, target: dict) -> dict:
             act_step.update(result)
     if "reference_steps" in reference:
         ref_steps = reference["reference_steps"]
-        steps_score = evaluate_steps(ref_steps, act_steps)
+        matches = get_steps_matches(ref_steps, act_steps)
+        steps_score = evaluate_steps(ref_steps, act_steps, matches)
         eval_result["steps_score"] = steps_score
+        for ref_group_idx, ref_match_idx, act_idx, _ in matches:
+            ref_step = ref_steps[ref_group_idx][ref_match_idx]
+            act_step = act_steps[act_idx]
+            if ref_step["name"] == "retrieval":
+                from .retrieval_context_texts import \
+                    get_retrieval_evaluation_dict
+                res = get_retrieval_evaluation_dict(
+                    reference_contexts=json.loads(ref_step["output"]),
+                    actual_contexts=json.loads(act_step["output"])
+                )
+                act_step.update(res)
     return eval_result

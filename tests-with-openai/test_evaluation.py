@@ -14,7 +14,10 @@ from graphrag_eval.steps.retrieval_answer import (
     RagasResponseContextRecallEvaluator,
     RagasResponseContextPrecisionEvaluator,
 )
-
+from graphrag_eval.steps.retrieval_context_texts import (
+    RagasContextPrecisionEvaluator,
+    RagasContextRecallEvaluator,
+)
 
 def test_run_evaluation_and_compute_aggregates(monkeypatch):
     def get_chat_responses(path: Path) -> dict:
@@ -34,7 +37,7 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
         lambda *_: RagasResult(
             status="processed",
             score=0.9,
-            details="relevance reason",
+            details="answer relevance reason",
             cost=Money(currency="USD", amount=0.0007)
         )
     )
@@ -44,7 +47,7 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
         lambda *_: RagasResult(
             status="processed",
             score=0.9,
-            details="recall reason",
+            details="retrieval answer recall reason",
             cost=Money(currency="USD", amount=0.0007)
         )
     )
@@ -54,7 +57,27 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
         lambda *_: RagasResult(
             status="processed",
             score=0.9,
-            details="precision reason",
+            details="retrieval answer precision reason",
+            cost=Money(currency="USD", amount=0.0007)
+        )
+    )
+    monkeypatch.setattr(
+        RagasContextRecallEvaluator,
+        "evaluate",
+        lambda *_: RagasResult(
+            status="processed",
+            score=0.9,
+            details="retrieval context recall reason",
+            cost=Money(currency="USD", amount=0.0007)
+        )
+    )
+    monkeypatch.setattr(
+        RagasContextPrecisionEvaluator,
+        "evaluate",
+        lambda *_: RagasResult(
+            status="processed",
+            score=0.9,
+            details="retrieval context precision reason",
             cost=Money(currency="USD", amount=0.0007)
         )
     )
@@ -66,7 +89,7 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
     monkeypatch.setattr(
         answer_correctness.AnswerCorrectnessEvaluator,
         "call_llm",
-        lambda *_: "2\t2\t2\treason"
+        lambda *_: "2\t2\t2\tanswer correctness reason"
     )
 
     # Run
@@ -101,7 +124,7 @@ def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch):
         lambda *_: RagasResult(
             status="processed",
             score=0.9,
-            details="reason",
+            details="answer relevance reason",
             cost=Money(currency="USD", amount=0.0007)
         )
     )
@@ -113,7 +136,7 @@ def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch):
     monkeypatch.setattr(
         answer_correctness.AnswerCorrectnessEvaluator,
         "call_llm",
-        lambda *_: "2\t2\t2\treason"
+        lambda *_: "2\t2\t2\tanswer correctness reason"
     )
 
     # Run
