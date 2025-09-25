@@ -48,7 +48,7 @@ def run_evaluation(
                         actual_result,
                     )
                 )
-            if "steps" in actual_result:
+            if "actual_steps" in actual_result:
                 eval_result.update(
                     get_steps_evaluation_result_dict(question, actual_result)
                 )
