@@ -137,12 +137,11 @@ def get_steps_evaluation_result_dict(reference: dict, target: dict) -> dict:
             ref_step = ref_steps[ref_group_idx][ref_match_idx]
             act_step = act_steps[act_idx]
             if ref_step["name"] == "retrieval":
-                if "output" in ref_step:
-                    from .retrieval_context_texts import \
-                        get_retrieval_evaluation_dict
-                    res = get_retrieval_evaluation_dict(
-                        reference_contexts=json.loads(ref_step["output"]),
-                        actual_contexts=json.loads(act_step["output"])
-                    )
-                    act_step.update(res)
+                from .retrieval_context_texts import \
+                    get_retrieval_evaluation_dict
+                res = get_retrieval_evaluation_dict(
+                    reference_contexts=json.loads(ref_step["output"]),
+                    actual_contexts=json.loads(act_step["output"])
+                )
+                act_step.update(res)
     return eval_result
