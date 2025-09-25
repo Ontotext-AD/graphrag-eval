@@ -39,4 +39,8 @@ poetry install
 conda activate graphrag-eval
 poetry install --with test
 poetry run pytest --cov=graphrag_eval --cov-report=term-missing tests/
+poetry install --no-interaction --with=openai
+poetry run pytest --cov=graphrag_eval --cov-report=term-missing tests-with-openai/
+export OPENAI_API_KEY=***
+poetry run python system-tests/*.py
 ```

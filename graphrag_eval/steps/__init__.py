@@ -116,7 +116,7 @@ def evaluate_steps(
 
 def get_steps_evaluation_result_dict(reference: dict, target: dict) -> dict:
     eval_result = {}
-    act_steps = target.get("steps", [])
+    act_steps = target.get("actual_steps", [])
     eval_result["actual_steps"] = act_steps
     for act_step in act_steps:
         if act_step["name"] == "retrieval":
