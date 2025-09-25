@@ -104,6 +104,17 @@ The example corpus below illustrates a minimal but realistic Q&A dataset, showin
         args:
           query: transformers Substation OSLO
           k: 2
+        output: |-
+          [
+            {
+              "id": "http://example.com/resource/doc/1",
+              "text": "Transformer OSLO T1 is in Substation Oslo."
+            },
+            {
+              "id": "http://example.com/resource/doc/2",
+              "text": "Transformer OSLO T2 is in Substation Oslo."
+            }
+          ]
       - name: sparql_query
         args:
           query: |2
@@ -342,7 +353,19 @@ The output is a list of statistics for each question from the reference Q&A data
       args:
         query: transformers Substation OSLO
         k: 2
-    - name: sparql_query
+      matches: call_3
+      output: |-
+        [
+          {
+            "id": "http://example.com/resource/doc/1",
+            "text": "Transformer OSLO T1 is in Substation Oslo."
+          },
+          {
+            "id": "http://example.com/resource/doc/2",
+            "text": "Transformer OSLO T2 is in Substation Oslo."
+          }
+        ]
+  - name: sparql_query
       args:
         query: |2
 
@@ -407,7 +430,7 @@ The output is a list of statistics for each question from the reference Q&A data
     retrieval_answer_precision_reason: The context contains only transformers listed in the reference answer
     retrieval_answer_precision_cost: 0.0003
     retrieval_answer_f1: 1.0
-    retrieval_answer_f1_cost: 0.001    
+    retrieval_answer_f1_cost: 0.001
   - name: autocomplete_search
     args:
       query: OSLO
