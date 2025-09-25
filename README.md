@@ -605,7 +605,6 @@ Aggregates are:
   - `retrieval_context_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_recall` of all successful questions
   - `retrieval_context_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_precision` of all successful questions
   - `retrieval_context_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_f1` of all successful questions
-  - `retrieval_context_f1_cost`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_f1_cost` of all successful questions
   - `steps_score`: `sum`, `mean`, `median`, `min` and `max` for `steps_score` of all successful questions
 - `macro`: averages across templates, i.e., the mean of each metric per template, averaged. It includes:
   - `input_tokens`: `mean` for `input_tokens`
