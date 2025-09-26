@@ -16,18 +16,19 @@ def _evaluate(
     metric: str
 ) -> dict[str, float | str]:
     try:
-        result = evaluator.evaluate(entry)
-        if result.status == "processed":
+        le_result = evaluator.evaluate(entry)
+        if le_result.status == "processed":
             result = {
-                f"retrieval_answer_{metric}": result.score,
-                f"retrieval_answer_{metric}_cost": result.cost.amount,
+                f"retrieval_answer_{metric}": le_result.score,
             }
-            if result.details:
-                result[f"retrieval_answer_{metric}_reason"] = result.details
+            if le_result.cost:
+                result[f"retrieval_answer_{metric}_cost"] = le_result.cost.amount
+            if le_result.details:
+                result[f"retrieval_answer_{metric}_reason"] = le_result.details
             return result
         else:
             return {
-                f"retrieval_answer_{metric}_error": result.details
+                f"retrieval_answer_{metric}_error": le_result.details
             }
     except Exception as e:
         return {
