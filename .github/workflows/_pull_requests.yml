@@ -37,7 +37,7 @@ jobs:
         shell: bash -l {0}
         run: |
           conda activate graphrag-eval
-          poetry install --no-interaction --with=openai
+          poetry install --no-interaction --with openai
 
       - name: Run tests that depend on OpenAI
         shell: bash -l {0}
