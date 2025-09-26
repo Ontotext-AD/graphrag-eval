@@ -427,7 +427,6 @@ The output is a list of statistics for each question from the reference Q&A data
     retrieval_answer_recall_reason: The context contains all the transformers listed in the reference answer
     retrieval_answer_recall_cost: 0.0007
     retrieval_answer_precision: 1.0
-    retrieval_answer_precision_reason: The context contains only transformers listed in the reference answer
     retrieval_answer_precision_cost: 0.0003
     retrieval_answer_f1: 1.0
     retrieval_answer_f1_cost: 0.001
@@ -552,7 +551,6 @@ All `actual_steps` with `name` "retrieval" contain:
 - `retrieval_answer_recall_error`: (optional) error message if `retrieval_answer_recall` evaluation fails
 - `retrieval_answer_recall_cost`: cost of evaluating `retrieval_answer_recall`, in US dollars
 - `retrieval_answer_precision`: (optional) precision of the retrieved context with respect to the reference answer, if evaluation succeeds
-- `retrieval_answer_precision_reason`: (optional) LLM reasoning in evaluating `retrieval_answer_precision`
 - `retrieval_answer_precision_error`: (optional) error message if `retrieval_answer_precision` evaluation fails
 - `retrieval_answer_precision_cost`: cost of evaluating `retrieval_answer_precision`, in US dollars
 - `retrieval_answer_f1`: (optional) F1 score of the retrieved context with respect to the reference answer, if `retrieval_answer_recall` and `retrieval_answer_precision` succeed
@@ -587,6 +585,9 @@ Aggregates are:
     - `once_per_sample`: how many times each step was executed, counted only once per question
     - `empty_results`: how many times the step was executed and returned empty results
     - `errors`: how many times the step was executed and resulted in error
+  - `retrieval_answer_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_answer_recall` for all successful questions in this template
+  - `retrieval_answer_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_answer_precision` for all successful questions in this template
+  - `retrieval_answer_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_answer_f1` for all successful questions in this template
   - `retrieval_context_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_recall` for all successful questions in this template
   - `retrieval_context_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_precision` for all successful questions in this template
   - `retrieval_context_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_f1` for all successful questions in this template
@@ -602,6 +603,9 @@ Aggregates are:
   - `answer_f1`: `sum`, `mean`, `median`, `min` and `max` for `answer_f1` of all successful questions
   - `answer_relevance`: `sum`, `mean`, `median`, `min` and `max` statistics for `answer_relevance` of all successful questions
   - `answer_relevance_cost`: `sum`, `mean`, `median`, `min` and `max` statistics for `answer_relevance_cost` of all successful questions
+  - `retrieval_answer_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_answer_recall` of all successful questions
+  - `retrieval_answer_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_answer_precision` of all successful questions
+  - `retrieval_answer_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_answer_f1` of all successful questions
   - `retrieval_context_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_recall` of all successful questions
   - `retrieval_context_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_precision` of all successful questions
   - `retrieval_context_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_f1` of all successful questions
@@ -616,6 +620,9 @@ Aggregates are:
   - `answer_f1`: `mean` for `answer_f1`
   - `answer_relevance`: `mean` for `answer_relevance`
   - `answer_relevance_cost`: `mean` for `answer_relevance_cost`
+  - `retrieval_answer_recall`: `mean` for `retrieval_answer_recall`
+  - `retrieval_answer_precision`: `mean` for `retrieval_answer_precision`
+  - `retrieval_answer_f1`: `mean` for `retrieval_answer_f1`
   - `retrieval_context_recall`: `mean` for `retrieval_context_recall`
   - `retrieval_context_precision`: `mean` for `retrieval_context_precision`
   - `retrieval_context_f1`: `mean` for `retrieval_context_f1`
