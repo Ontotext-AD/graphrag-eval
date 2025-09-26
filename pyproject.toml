@@ -1,10 +1,11 @@
 [project]
 name = "graphrag-eval"
-version = "5.0.1"
+version = "5.0.2"
 description = "For assessing question answering systems' final answers and intermediate steps, against a given set of questions, reference answers and steps."
 authors = [
-    {name = "Neli Hateva", email = "neli.hateva@graphwise.ai"},
-    {name = "Philip Ganchev", email = "philip.ganchev@graphwise.ai"}
+  { name = "Philip Ganchev", email = "philip.ganchev@graphwise.ai" },
+  { name = "Aleksis Datseris", email = "aleksis.datseris@graphwise.ai" },
+  { name = "Neli Hateva", email = "neli.hateva@graphwise.ai" },
 ]
 readme = "README.md"
 license = "Apache-2.0"
