@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 
 IN_FILE_PATH = "../data/data-1.tsv"
-PROMPT_FILE_PATH = "prompts/template.md"
+PROMPT_FILE_PATH = Path(__file__).parent / "prompts" / "template.md"
 OUT_FILE_PATH = "results/data-1.tsv"
 OUT_FIELDS = ["#Reference", "#PTarget", "#Matching", "Reasoning", "Error"]
 LLM_MODEL = "gpt-4o-mini"

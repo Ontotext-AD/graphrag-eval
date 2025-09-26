@@ -56,7 +56,7 @@ To evaluate answers and/or steps:
 1. Format the answers and/or steps you want to evaluate: section [Evaluation Target Corpus](#Evaluation-Target-Corpus)
 1. To evaluate answer relevance:
     1. Include `actual_answer` in the target data to evaluate
-    1. Set environment vairabe `OPENAI_API_KEY` appropriately
+    1. Set environment variable `OPENAI_API_KEY` appropriately
 1. To evaluate answer correctness:
     1. Include `reference_answer` in the reference corpus and `actual_answer` in the target data to evaluate
     1. Set environment variable `OPENAI_API_KEY` appropriately
