@@ -73,7 +73,6 @@
     retrieval_answer_recall_reason: retrieval answer recall reason
     retrieval_answer_recall_cost: 0.0007
     retrieval_answer_precision: 0.9
-    retrieval_answer_precision_reason: retrieval answer precision reason
     retrieval_answer_precision_cost: 0.0007
     retrieval_answer_f1: 0.9
     retrieval_answer_f1_cost: 0.0014

@@ -18,11 +18,13 @@ def _evaluate(
     try:
         result = evaluator.evaluate(entry)
         if result.status == "processed":
-            return {
+            result = {
                 f"retrieval_answer_{metric}": result.score,
                 f"retrieval_answer_{metric}_cost": result.cost.amount,
-                f"retrieval_answer_{metric}_reason": result.details
             }
+            if result.details:
+                result[f"retrieval_answer_{metric}_reason"] = result.details
+            return result
         else:
             return {
                 f"retrieval_answer_{metric}_error": result.details
