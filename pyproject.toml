@@ -13,9 +13,21 @@ requires-python = ">=3.12,<3.13"
 [project.urls]
 repository = "https://github.com/Ontotext-AD/graphrag-eval"
 
-[build-system]
-requires = ["poetry-core>=2.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.poetry.dependencies]
+openai = { version = "^1.97.0", optional = true }
+langevals = { version = "0.1.*", optional = true }
+langevals-ragas = { version = "^0.1.12", optional = true }
+
+[tool.poetry.extras]
+openai = ["openai", "langevals", "langevals-ragas"]
+
+[tool.poetry.group.openai.dependencies]
+openai = "^1.97.0"
+langevals = "0.1.*"
+langevals-ragas = "^0.1.12"
+
+[tool.poetry.group.openai]
+optional = true
 
 [tool.poetry.group.test.dependencies]
 pytest = "<9,>=8"
@@ -26,13 +38,9 @@ pyyaml = "^6.0.2"
 [tool.poetry.group.test]
 optional = true
 
-[tool.poetry.group.openai.dependencies]
-openai = "^1.97.0"
-langevals = "0.1.*"
-langevals-ragas = "^0.1.12"
-
-[tool.poetry.group.openai]
-optional = true
-
 [project.scripts]
 answer-correctness = "graphrag_eval.answer_correctness:main"
+
+[build-system]
+requires = ["poetry-core>=2.0.0"]
+build-backend = "poetry.core.masonry.api"
