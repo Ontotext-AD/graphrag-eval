@@ -1,21 +1,15 @@
-# This is a system test intended to be skipped by pytest because it calls an
-# external LLM. Run it by executing the command:
-#   poetry run python system_tests/answer_relevance.py
-from langevals_ragas.response_relevancy import (
-    RagasResponseRelevancyEvaluator,
-    RagasResponseRelevancyEntry
+from pprint import pprint
+
+from graphrag_eval.answer_relevance import (
+    get_relevance_dict
 )
-settings_dict = {
-    "model": 'gpt-4o-mini',
-    "max_tokens": 65_536,
-}
-entry = RagasResponseRelevancyEntry(
-    input="Why is the sky blue?",
-    output="Oxygen makes it blue",
+
+
+result = get_relevance_dict(
+    question_text="Why is the sky blue?",
+    actual_answer="Oxygen makes it blue"
 )
-evaluator = RagasResponseRelevancyEvaluator(settings=settings_dict)
-result = evaluator.evaluate(entry)
-print(f"status: {result.status}")
-print(f"score: {result.score}")
-print(f"details: {result.details}")
-print(f"cost: {result.cost.amount}")
+pprint(result)
+assert 0 <= result["answer_relevance"] <= 1
+assert 0 <= result["answer_relevance_cost"]
+assert isinstance(result["answer_relevance_reason"], str)
