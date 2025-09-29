@@ -6,7 +6,6 @@ from langevals_ragas.lib.common import RagasResult, Money
 
 from graphrag_eval import (
     answer_correctness,
-    answer_relevance,
     compute_aggregates,
     run_evaluation,
 )
@@ -18,6 +17,9 @@ from graphrag_eval.steps.retrieval_context_texts import (
     RagasContextPrecisionEvaluator,
     RagasContextRecallEvaluator,
 )
+from graphrag_eval.answer_relevance import RagasResponseRelevancyEvaluator
+from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+
 
 DATA_DIR = Path(__file__).parent / "test_data"
 
@@ -32,7 +34,7 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     monkeypatch.setattr(
-        answer_relevance.RagasResponseRelevancyEvaluator,
+        RagasResponseRelevancyEvaluator,
         'evaluate',
         lambda *_: RagasResult(
             status="processed",
@@ -87,7 +89,7 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
         lambda: None
     )
     monkeypatch.setattr(
-        answer_correctness.AnswerCorrectnessEvaluator,
+        AnswerCorrectnessEvaluator,
         "call_llm",
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
@@ -112,7 +114,7 @@ def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch):
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     monkeypatch.setattr(
-        answer_relevance.RagasResponseRelevancyEvaluator,
+        RagasResponseRelevancyEvaluator,
         'evaluate',
         lambda *_: RagasResult(
             status="processed",
@@ -127,7 +129,7 @@ def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch):
         lambda: None
     )
     monkeypatch.setattr(
-        answer_correctness.AnswerCorrectnessEvaluator,
+        AnswerCorrectnessEvaluator,
         "call_llm",
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
