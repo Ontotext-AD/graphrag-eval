@@ -12,14 +12,14 @@ from graphrag_eval.util import get_f1_dict
 
 def _evaluate(
     entry: RagasContextRecallEntry | RagasContextPrecisionEntry,
-    evauator: RagasContextRecallEvaluator | RagasContextPrecisionEvaluator,
+    evaluator: RagasContextRecallEvaluator | RagasContextPrecisionEvaluator,
     metric: str
 ) -> dict:
     try:
-        result = evauator.evaluate(entry)
+        result = evaluator.evaluate(entry)
         if result.status == "processed":
             result_dict = {
-                f"retrieval_context_{metric}": result.score,                
+                f"retrieval_context_{metric}": result.score,
             }
             if result.details:
                 result_dict[f"retrieval_context_{metric}_reason"] = result.details
