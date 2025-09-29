@@ -40,20 +40,20 @@ def extract_response_values(
         return None, None, None, "", msg
     vals = vals[:4]
     try:
-        n_ref, n_target, n_matching = map(int, vals[:3])
+        n_ref, n_actual, n_matching = map(int, vals[:3])
     except ValueError:
         msg = f"Non-int value: {response}"
         return None, None, None, vals[3], msg
     if any([
         n_ref < 1,
-        n_target < 1,
+        n_actual < 1,
         n_matching < 0,
         n_matching > n_ref,
-        n_matching > n_target
+        n_matching > n_actual
     ]):
-        msg = f"Invalid int values: {n_ref}\t{n_target}\t{n_matching}"
+        msg = f"Invalid int values: {n_ref}\t{n_actual}\t{n_matching}"
         return None, None, None, vals[3], msg
-    return n_ref, n_target, n_matching, vals[3], ""
+    return n_ref, n_actual, n_matching, vals[3], ""
 
 
 class AnswerCorrectnessEvaluator:
@@ -95,7 +95,7 @@ class AnswerCorrectnessEvaluator:
     def get_correctness_dict(
         self,
         reference: dict,
-        target: dict,
+        actual: dict,
     ):
         result = {}
         result["reference_answer"] = reference["reference_answer"]
@@ -103,7 +103,7 @@ class AnswerCorrectnessEvaluator:
         self.evaluate_answer(
             reference["question_text"],
             reference["reference_answer"],
-            target["actual_answer"],
+            actual["actual_answer"],
         )
         if error:
             result["answer_eval_error"] = error

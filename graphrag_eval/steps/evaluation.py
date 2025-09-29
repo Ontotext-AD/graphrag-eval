@@ -126,9 +126,9 @@ def evaluate_steps(
     return scores_by_group[group_ix] / len(reference_steps_groups[group_ix])
 
 
-def get_steps_evaluation_result_dict(reference: dict, target: dict) -> dict:
+def get_steps_evaluation_result_dict(reference: dict, actual: dict) -> dict:
     eval_result = {}
-    act_steps = target.get("actual_steps", [])
+    act_steps = actual.get("actual_steps", [])
     eval_result["actual_steps"] = act_steps
     for act_step in act_steps:
         if act_step["name"] == "retrieval":
@@ -136,7 +136,7 @@ def get_steps_evaluation_result_dict(reference: dict, target: dict) -> dict:
             result = get_retrieval_evaluation_dict(
                 question_text=reference["question_text"],
                 reference_answer=reference.get("reference_answer"),
-                actual_answer=target.get("actual_answer"),
+                actual_answer=actual.get("actual_answer"),
                 actual_contexts=json.loads(act_step["output"])
             )
             act_step.update(result)
