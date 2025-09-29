@@ -28,6 +28,9 @@ result_dict = get_retrieval_evaluation_dict(
     ]
 )
 pprint(result_dict)
+assert isinstance(result_dict["retrieval_context_recall"], float)
+assert isinstance(result_dict["retrieval_context_precision"], float)
+assert isinstance(result_dict["retrieval_context_f1"], float)
 assert 0 <= result_dict["retrieval_context_recall"] <= 1
 assert 0 <= result_dict["retrieval_context_precision"] <= 1
 assert 0 <= result_dict["retrieval_context_f1"] <= 1

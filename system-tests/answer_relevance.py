@@ -11,6 +11,7 @@ result = get_relevance_dict(
 )
 
 pprint(result)
+assert isinstance(result["answer_relevance"], float)
 assert 0 <= result["answer_relevance"] <= 1
 assert 0 <= result["answer_relevance_cost"]
 assert isinstance(result["answer_relevance_reason"], str)
