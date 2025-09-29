@@ -5,10 +5,11 @@ import yaml
 
 from graphrag_eval import (
     compute_aggregates,
-    evaluate_steps,
     run_evaluation,
     stats_for_series,
 )
+from graphrag_eval.steps.evaluation import evaluate_steps
+
 
 
 def test_stats_for_series():
