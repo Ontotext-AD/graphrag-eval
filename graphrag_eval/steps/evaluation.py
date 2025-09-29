@@ -1,41 +1,49 @@
 import json
 from collections import defaultdict
+from typing import Any
+from collections.abc import Sequence
 
 from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
 
 
-def compare_steps_outputs(reference: dict, actual: dict) -> float:
-    ref_output = reference.get("output")
-    act_output = actual["output"]
+Match = tuple[int, int, int, float]
+Step = dict[str, Any]
+ReferenceGroup = Sequence[Step]
+
+
+def compare_steps_outputs(reference_step: Step, actual_step: Step) -> float:
+    ref_output = reference_step.get("output")
+    act_output = actual_step["output"]
     assert ref_output, "Reference step output is mandatory"
-    if reference.get("output_media_type") == "application/sparql-results+json":
+    reference_output_media_type = reference_step.get("output_media_type")
+    if reference_output_media_type == "application/sparql-results+json":
         return compare_sparql_results(
             json.loads(ref_output),
             json.loads(act_output),
-            reference["required_columns"],
-            reference.get("ordered", False),
+            reference_step["required_columns"],
+            reference_step.get("ordered", False),
         )
-    if reference.get("output_media_type") == "application/json":
+    if reference_step.get("output_media_type") == "application/json":
         return float(json.loads(ref_output) == json.loads(act_output))
-    if reference["name"] == actual["name"] == "retrieval":
+    if reference_step["name"] == actual_step["name"] == "retrieval":
         ref_contexts_ids = [c["id"] for c in json.loads(ref_output)]
         act_contexts_ids = [c["id"] for c in json.loads(act_output)]
-        k = actual["args"]["k"]
+        k = actual_step["args"]["k"]
         return recall_at_k(ref_contexts_ids, act_contexts_ids, k)
     return float(ref_output == act_output)
 
 
 def match_group_by_output(
-        reference_steps: list[list[dict]],
+        reference_groups: Sequence[ReferenceGroup],
         group_idx: int,
-        actual_steps: list[dict],
+        actual_steps: Sequence[Step],
         candidates_by_name: dict[str, list[int]],
-) -> list[tuple[int, int, int, float]]:
+) -> list[Match]:
     used_actual_indices = set()
     matches = []
 
-    reference_group = reference_steps[group_idx]
+    reference_group = reference_groups[group_idx]
     for reference_idx, reference_step in enumerate(reference_group):
         name = reference_step["name"]
         candidates = reversed(candidates_by_name.get(name, []))
@@ -52,8 +60,8 @@ def match_group_by_output(
 
 
 def collect_possible_matches_by_name_and_status(
-        group: list[dict],
-        actual_steps: list[dict],
+        group: ReferenceGroup,
+        actual_steps: Sequence[Step],
         search_upto: int,
 ) -> dict[str, list[int]]:
     group_by_name = defaultdict(list)
@@ -63,14 +71,14 @@ def collect_possible_matches_by_name_and_status(
         if actual_steps[j]["status"] == "success":
             group_by_name[name].append(j)
 
-    reference_names = {item["name"] for item in group}
+    reference_names = {step["name"] for step in group}
     return {name: group_by_name[name] for name in reference_names if name in group_by_name}
 
 
 def get_steps_matches(
-        reference_steps: list[list[dict]],
-        actual_steps: list[dict],
-) -> list[tuple[int, int, int, float]]:
+        reference_groups: Sequence[ReferenceGroup],
+        actual_steps: Sequence[Step],
+) -> list[Match]:
     # when we have autocomplete
     # matches = []
     # search_upto = len(actual_steps)
@@ -91,15 +99,19 @@ def get_steps_matches(
     # return matches
 
     # for now, we have only the last step(s)
-    last_group = reference_steps[-1]
-    candidates = collect_possible_matches_by_name_and_status(last_group, actual_steps, len(actual_steps))
-    return match_group_by_output(reference_steps, -1, actual_steps, candidates)
+    last_group = reference_groups[-1]
+    candidates = collect_possible_matches_by_name_and_status(
+        last_group,
+        actual_steps,
+        len(actual_steps)
+    )
+    return match_group_by_output(reference_groups, -1, actual_steps, candidates)
 
 
 def evaluate_steps(
-    reference_steps_groups: list[list[dict]],
-    actual_steps: list[dict],
-    matches: list[tuple[int, int, int, float]] | None = None
+    reference_steps_groups: Sequence[ReferenceGroup],
+    actual_steps: Sequence[Step],
+    matches: Sequence[Match] | None = None
 ) -> float:
     if matches is None:
         matches = get_steps_matches(reference_steps_groups, actual_steps)
