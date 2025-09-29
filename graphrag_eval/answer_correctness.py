@@ -4,6 +4,8 @@ from pathlib import Path
 from openai import OpenAI
 from tqdm import tqdm
 
+from graphrag_eval.util import compute_f1
+
 
 IN_FILE_PATH = "../data/data-1.tsv"
 PROMPT_FILE_PATH = Path(__file__).parent / "prompts" / "template.md"
@@ -21,14 +23,11 @@ def compute_recall_precision_f1(
 ) -> tuple[float | None, float | None, float | None]:
     recall = None
     precision = None
-    f1 = None
     if n_true_pos is not None and n_pos:
         recall = n_true_pos / n_pos
     if n_true_pos is not None and n_pred_pos:
         precision = n_true_pos / n_pred_pos
-    if precision is not None and recall is not None and precision + recall > 0:
-        f1 = 2 * (precision * recall) / (precision + recall)
-    return recall, precision, f1
+    return recall, precision, compute_f1(recall, precision)
 
 
 def extract_response_values(
