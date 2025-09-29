@@ -4,8 +4,7 @@
 
 # QA Evaluation
 
-This is a Python module for assessing the quality of question-answering systems such as ones based on LLM agents, based on a set of questions and reference answers for them. This includes evaluating the final answer and the steps used
-to reach the answer (such as orchestrated and executed steps), compared to the given reference steps.
+This is a Python module for assessing the quality of question-answering systems such as ones based on LLM agents, based on a set of questions and reference answers for them. This includes evaluating the final answer and the steps used to reach the answer (such as orchestrated and executed steps), compared to the given reference steps.
 
 ## License
 
@@ -53,7 +52,7 @@ We plan to improve CLI support in future releases.
 To evaluate answers and/or steps:
 1. Install this package: section [Install](#Installation)
 1. Format the corpus of questions and reference answers and/or steps: section [Reference Q&A Corpus](#reference-qa-corpus)
-1. Format the answers and/or steps you want to evaluate: section [Evaluation Target Corpus](#Evaluation-Target-Corpus)
+1. Format the answers and/or steps you want to evaluate: section [Responses to evaluate](#Responses-to-evaluate)
 1. To evaluate answer relevance:
     1. Include `actual_answer` in the target data to evaluate
     1. Set environment variable `OPENAI_API_KEY` appropriately
@@ -89,7 +88,7 @@ Each step includes:
 - `ordered`: (optional, defaults to `false`) For SPARQL query results, whether results order matters. `true` means that the actual result rows must be ordered as the reference result; `false` means that result rows are matched as a set.
 - `required_columns`: (optional) - required only for SPARQL query results; list of binding names, which are required for SPARQL query results to match
 
-#### Example Reference Corpus
+#### Reference Corpus
 
 The example corpus below illustrates a minimal but realistic Q&A dataset, showing two templates with associated questions and steps.
 
@@ -257,9 +256,9 @@ The example corpus below illustrates a minimal but realistic Q&A dataset, showin
 
 The module is agnostic to the specific LLM agent implementation and model; it depends solely on the format of the response.
 
-### Evaluation Target Corpus
+### Responses to evaluate
 
-Below is an example response from the question-answering system for a single question (unless there is an error in answering: see [Example Target Input on Error](#example-target-input-on-error) below):
+Given a question, if the a question-answering system successfully responds, this response is an input to this library. The input to the library should be formatted as in the example below. (On the other hand, if the system encounters an error in answering the question, the input to the evaluation should be formatted as in [Target Input on Error](#target-input-on-error).)
 
 ```json
 {
@@ -312,9 +311,9 @@ Below is an example response from the question-answering system for a single que
 }
 ```
 
-#### Example Target Input on Error
+#### Target Input on Error
 
-If an error occurs during generating a response to a question, the expected target input for evaluation is:
+If an error occurs while the question answering system generating a response to a question, the input for evaluation should be:
 
 ```json
 {
@@ -324,7 +323,7 @@ If an error occurs during generating a response to a question, the expected targ
 }
 ```
 
-### Example Usage Code
+### Usage Code
 
 ```python
 from graphrag_eval import run_evaluation, compute_aggregates
@@ -335,11 +334,11 @@ evaluation_results = run_evaluation(reference_qas, chat_responses)
 aggregates = compute_aggregates(evaluation_results)
 ```
 
-`evaluation_results` is a list of statistics for each question, as in section [Example Evaluation Results](#example-evaluation-results). The format is explained in section [Output Keys](#output-keys)
+`evaluation_results` is a list of statistics for each question, as in section [Evaluation Results](#Evaluation-results). The format is explained in section [Output Keys](#output-keys)
 
 If your chat responses contain actual answers, set your environment variable `OPENAI_API_KEY` before running the code above.
 
-### Example Evaluation Results
+### Evaluation Results
 
 The output is a list of statistics for each question from the reference Q&A dataset. Here is an example of statistics for one question:
 
