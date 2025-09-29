@@ -13,25 +13,25 @@ ReferenceGroup = Sequence[Step]
 
 
 def compare_steps_outputs(reference_step: Step, actual_step: Step) -> float:
-    ref_output = reference_step.get("output")
-    act_output = actual_step["output"]
-    assert ref_output, "Reference step output is mandatory"
+    reference_output = reference_step.get("output")
+    actual_output = actual_step["output"]
+    assert reference_output, "Reference step output is mandatory"
     reference_output_media_type = reference_step.get("output_media_type")
     if reference_output_media_type == "application/sparql-results+json":
         return compare_sparql_results(
-            json.loads(ref_output),
-            json.loads(act_output),
+            json.loads(reference_output),
+            json.loads(actual_output),
             reference_step["required_columns"],
             reference_step.get("ordered", False),
         )
     if reference_step.get("output_media_type") == "application/json":
-        return float(json.loads(ref_output) == json.loads(act_output))
+        return float(json.loads(reference_output) == json.loads(actual_output))
     if reference_step["name"] == actual_step["name"] == "retrieval":
-        ref_contexts_ids = [c["id"] for c in json.loads(ref_output)]
-        act_contexts_ids = [c["id"] for c in json.loads(act_output)]
+        ref_contexts_ids = [c["id"] for c in json.loads(reference_output)]
+        act_contexts_ids = [c["id"] for c in json.loads(actual_output)]
         k = actual_step["args"]["k"]
         return recall_at_k(ref_contexts_ids, act_contexts_ids, k)
-    return float(ref_output == act_output)
+    return float(reference_output == actual_output)
 
 
 def match_group_by_output(
@@ -128,32 +128,32 @@ def evaluate_steps(
 
 def get_steps_evaluation_result_dict(reference: dict, actual: dict) -> dict:
     eval_result = {}
-    act_steps = actual.get("actual_steps", [])
-    eval_result["actual_steps"] = act_steps
-    for act_step in act_steps:
-        if act_step["name"] == "retrieval":
+    actual_steps = actual.get("actual_steps", [])
+    eval_result["actual_steps"] = actual_steps
+    for actual_step in actual_steps:
+        if actual_step["name"] == "retrieval":
             from .retrieval_answer import get_retrieval_evaluation_dict
             result = get_retrieval_evaluation_dict(
                 question_text=reference["question_text"],
                 reference_answer=reference.get("reference_answer"),
                 actual_answer=actual.get("actual_answer"),
-                actual_contexts=json.loads(act_step["output"])
+                actual_contexts=json.loads(actual_step["output"])
             )
-            act_step.update(result)
+            actual_step.update(result)
     if "reference_steps" in reference:
-        ref_steps = reference["reference_steps"]
-        matches = get_steps_matches(ref_steps, act_steps)
-        steps_score = evaluate_steps(ref_steps, act_steps, matches)
-        eval_result["steps_score"] = steps_score
+        reference_steps = reference["reference_steps"]
+        matches = get_steps_matches(reference_steps, actual_steps)
+        eval_result["steps_score"] \
+            = evaluate_steps(reference_steps, actual_steps, matches)
         for ref_group_idx, ref_match_idx, act_idx, _ in matches:
-            ref_step = ref_steps[ref_group_idx][ref_match_idx]
-            act_step = act_steps[act_idx]
-            if ref_step["name"] == "retrieval":
+            reference_step = reference_steps[ref_group_idx][ref_match_idx]
+            actual_step = actual_steps[act_idx]
+            if reference_step["name"] == "retrieval":
                 from .retrieval_context_texts import \
                     get_retrieval_evaluation_dict
                 res = get_retrieval_evaluation_dict(
-                    reference_contexts=json.loads(ref_step["output"]),
-                    actual_contexts=json.loads(act_step["output"])
+                    reference_contexts=json.loads(reference_step["output"]),
+                    actual_contexts=json.loads(actual_step["output"])
                 )
-                act_step.update(res)
+                actual_step.update(res)
     return eval_result
