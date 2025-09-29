@@ -656,11 +656,11 @@ per_template:
       min: 1.0
       max: 1.0
     answer_relevance:
-        min: 0.9
-        max: 0.9
-        mean: 0.9
-        median: 0.9
-        sum: 0.9
+      min: 0.9
+      max: 0.9
+      mean: 0.9
+      median: 0.9
+      sum: 0.9
     answer_relevance_cost:
       min: 0.0007
       max: 0.0007
