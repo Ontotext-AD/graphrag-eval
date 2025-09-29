@@ -122,8 +122,8 @@ def evaluate_steps(
         scores_by_group[ref_group_idx] += score
         reference_steps_groups[ref_group_idx][ref_match_idx]["matches"] \
             = actual_steps[actual_idx]["id"]
-    group_ix = -1  # For now, consider only the last reference group of steps
-    return scores_by_group[group_ix] / len(reference_steps_groups[group_ix])
+    group_idx = -1  # For now, consider only the last reference group of steps
+    return scores_by_group[group_idx] / len(reference_steps_groups[group_idx])
 
 
 def get_steps_evaluation_result_dict(reference: dict, actual: dict) -> dict:
