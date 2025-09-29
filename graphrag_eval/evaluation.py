@@ -1,4 +1,4 @@
-from .steps import get_steps_evaluation_result_dict
+from .steps.evaluation import get_steps_evaluation_result_dict
 
 
 def run_evaluation(
