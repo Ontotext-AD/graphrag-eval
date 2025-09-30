@@ -9,6 +9,7 @@ result = get_relevance_dict(
     question_text="Why is the sky blue?",
     actual_answer="Oxygen makes it blue"
 )
+
 pprint(result)
 assert 0 <= result["answer_relevance"] <= 1
 assert 0 <= result["answer_relevance_cost"]

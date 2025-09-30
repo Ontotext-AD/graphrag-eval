@@ -167,7 +167,7 @@ def test_compare_steps_outputs_retrieval_step_missing_output_raises_error():
             "k": 5
         },
     }
-    with pytest.raises(AssertionError) as e:
+    with pytest.raises(AssertionError):
         compare_steps_outputs(
             retrieval_expected_step_no_output,
             retrieval_actual_step
@@ -181,7 +181,7 @@ def test_compare_steps_outputs_calculation_step_missing_output_raises_error():
             "x": 5, "y": 10
         },
     }
-    with pytest.raises(AssertionError) as e:
+    with pytest.raises(AssertionError):
         compare_steps_outputs(
             calculation_expected_step_no_output,
             calculation_actual_step

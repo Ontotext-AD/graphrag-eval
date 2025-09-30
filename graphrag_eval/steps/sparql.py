@@ -1,5 +1,4 @@
 from collections import Counter
-import re
 from typing import Union
 import itertools
 import math

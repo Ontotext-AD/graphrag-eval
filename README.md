@@ -25,12 +25,12 @@ graphrag-eval = "*"
 To evaluate answer relevance and answer correctness:
 
 ```bash
-pip install 'graphrag-eval[openai]'
+pip install 'graphrag-eval[ragas]'
 ```
 
 or add the following dependency in your `pyproject.toml` file:
 ```toml
-graphrag-eval = {version = "*", extras = ["openai"]}
+graphrag-eval = {version = "*", extras = ["ragas"]}
 ```
 
 ## Maintainers
@@ -43,7 +43,7 @@ For issues or feature requests, please open [a GitHub issue](https://github.com/
 To evaluate only correctness of final answers (system responses), you can clone this repository and run the code on the command line:
 
 1. Prepare an input TSV file with columns `Question`, `Reference answer` and `Actual answer`
-1. Execute `poetry install --with openai`
+1. Execute `poetry install --with ragas`
 1. Execute `OPENAI_API_KEY=<your_api_key> poetry run answer-correctness -i <input_file.tsv> -o <output_file.tsv>`
 
 We plan to improve CLI support in future releases.
@@ -1020,7 +1020,7 @@ The following metrics are based on the content of retrieved documents.
 
 #### Context Recall@k
 
-The fraction of relevant items among the top *k* recommendations. It answers the question: "Of all items the user cares about, how many did we inclide in the first k spots?"
+The fraction of relevant items among the top *k* recommendations. It answers the question: "Of all items the user cares about, how many did we include in the first k spots?"
 * **Formula**:
     $`
     \frac{\text{Number of relevant items in top k}}{\text{Number of relevant items}}

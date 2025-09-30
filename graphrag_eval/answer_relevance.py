@@ -7,7 +7,7 @@ from langevals_ragas.response_relevancy import (
 def get_relevance_dict(
     question_text: str,
     actual_answer: str,
-    model_name : str = 'openai/gpt-4o-mini',
+    model_name: str = 'openai/gpt-4o-mini',
     max_tokens: int = 65_536
 ) -> dict:
     settings_dict = {
