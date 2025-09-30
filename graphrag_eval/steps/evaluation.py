@@ -115,10 +115,8 @@ def evaluate_steps(
 ) -> float:
     if matches is None:
         matches = get_steps_matches(reference_steps_groups, actual_steps)
-    #matches_by_group = defaultdict(list)
     scores_by_group = defaultdict(float)
     for ref_group_idx, ref_match_idx, actual_idx, score in matches:
-        #matches_by_group[ref_group_idx].append(ref_match_idx)
         scores_by_group[ref_group_idx] += score
         reference_steps_groups[ref_group_idx][ref_match_idx]["matches"] \
             = actual_steps[actual_idx]["id"]
