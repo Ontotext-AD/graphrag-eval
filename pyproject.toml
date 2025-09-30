@@ -18,7 +18,7 @@ repository = "https://github.com/Ontotext-AD/graphrag-eval"
 langevals = { version = "0.1.8", optional = true, extras = ["ragas"] }
 ragas = { version = "0.2.9", optional = true }
 langchain-openai = { version = "0.3.7", optional = true }
-langchain_community = { version = "0.3.18", optional = true }
+langchain_community = { version = "0.3.27", optional = true }
 litellm = { version = "1.61.20", optional = true }
 
 [tool.poetry.extras]
@@ -28,7 +28,7 @@ ragas = ["langevals", "ragas", "langchain-openai", "langchain_community", "litel
 langevals = { version = "0.1.8", extras = ["ragas"] }
 ragas = "0.2.9"
 langchain-openai = "0.3.7"
-langchain_community = "0.3.18"
+langchain_community = "0.3.27"
 litellm = "1.61.20"
 
 [tool.poetry.group.ragas]
