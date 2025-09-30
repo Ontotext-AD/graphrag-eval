@@ -1,15 +1,14 @@
 from pathlib import Path
 
-import jsonlines
 import yaml
 
 from graphrag_eval import (
     compute_aggregates,
     run_evaluation,
-    stats_for_series,
 )
+from graphrag_eval.aggregation import stats_for_series
 from graphrag_eval.steps.evaluation import evaluate_steps
-
+from .util import read_responses
 
 
 DATA_DIR = Path(__file__).parent / "test_data"
@@ -51,11 +50,6 @@ def test_stats_for_series():
         "min": 0,
         "max": 9,
     }
-
-
-def read_responses(path: Path) -> dict:
-    with jsonlines.open(path) as reader:
-        return {obj["question_id"]: obj for obj in reader}
 
 
 def test_run_evaluation_and_compute_aggregates():

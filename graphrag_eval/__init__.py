@@ -1,4 +1,2 @@
-from .aggregation import *
-from .evaluation import *
-from .steps import *
-from .steps.sparql import *
+from .aggregation import compute_aggregates
+from .evaluation import run_evaluation
