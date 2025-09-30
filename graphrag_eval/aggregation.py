@@ -33,7 +33,7 @@ STEPS_METRICS = {
         "retrieval_context_f1_cost",
     ]
 }
-PROTECTED_METRICS = [
+RETAINED_METRICS = [
     "input_tokens",
     "output_tokens",
     "total_tokens",
@@ -113,7 +113,7 @@ def compute_per_template_stats(
         }
         for metric in METRICS:
             series = stats_per_template[template_id].get(metric, [])
-            if series or metric in PROTECTED_METRICS:
+            if series or metric in RETAINED_METRICS:
                 summary[template_id][metric] = stats_for_series(series)
         steps_summary = {
             k1: {k2: v2 for k2, v2 in v1.items()}
@@ -148,7 +148,7 @@ def compute_micro_stats(
             for i in values[metric]
             if values.get(metric) is not None
         ]
-        if series or metric in PROTECTED_METRICS:
+        if series or metric in RETAINED_METRICS:
             micro_summary[metric] = stats_for_series(series)
 
     # Add micro step metrics
@@ -171,7 +171,7 @@ def compute_macro_stats(
             for values in summary_per_template.values()
             if values.get(metric) is not None
         ]
-        if means or metric in PROTECTED_METRICS:
+        if means or metric in RETAINED_METRICS:
             macro_summary[metric]["mean"] = mean(means or [0])
 
     # Add macro step metrics
