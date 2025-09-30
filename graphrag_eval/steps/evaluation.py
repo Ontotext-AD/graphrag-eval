@@ -1,7 +1,7 @@
 import json
 from collections import defaultdict
 from typing import Any
-from collections.abc import Sequence, Collection
+from collections.abc import Sequence
 
 from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
@@ -9,7 +9,7 @@ from .sparql import compare_sparql_results
 
 Match = tuple[int, int, int, float]
 Step = dict[str, Any]
-StepsGroup = Collection[Step]
+StepsGroup = Sequence[Step]  # We will index into a group
 
 
 def compare_steps_outputs(reference_step: Step, actual_step: Step) -> float:
