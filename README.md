@@ -51,24 +51,24 @@ We plan to improve CLI support in future releases.
 
 To evaluate answers and/or steps:
 1. Install this package: section [Install](#Installation)
-1. Format the corpus of questions and reference answers and/or steps: section [Reference Q&A Corpus](#reference-qa-corpus)
+1. Format the dataset of questions and reference answers and/or steps: section [Reference Q&A Data](#Reference-qa-Data)
 1. Format the answers and/or steps you want to evaluate: section [Responses to evaluate](#Responses-to-evaluate)
 1. To evaluate answer relevance:
     1. Include `actual_answer` in the target data to evaluate
     1. Set environment variable `OPENAI_API_KEY` appropriately
 1. To evaluate answer correctness:
-    1. Include `reference_answer` in the reference corpus and `actual_answer` in the target data to evaluate
+    1. Include `reference_answer` in the reference dataset and `actual_answer` in the target data to evaluate
     1. Set environment variable `OPENAI_API_KEY` appropriately
 1. To evaluate steps:
-    1. Include `reference_steps` in the reference corpus and `actual_steps` in target data to evaluate
-1. Call the evaluation function with the reference corpus and target corpus: section [Usage Code](#Usage-Code)
+    1. Include `reference_steps` in the reference data and `actual_steps` in target data to evaluate
+1. Call the evaluation function with the reference data and target data: section [Usage Code](#Usage-Code)
 1. Call the aggregation function with the evaluation results
 
 Answer evaluation (correctness and relevance) uses the LLM `openai/gpt-4o-mini`.
 
-### Reference Q&A Corpus
+### Reference Q&A Data
 
-A reference corpus is a list of templates, each of which contains:
+A reference dataset is a list of templates, each of which contains:
 
 - `template_id`: Unique template identifier
 - `questions`: A list of questions derived from this template, where each includes:
@@ -88,9 +88,9 @@ Each step includes:
 - `ordered`: (optional, defaults to `false`) For SPARQL query results, whether results order matters. `true` means that the actual result rows must be ordered as the reference result; `false` means that result rows are matched as a set.
 - `required_columns`: (optional) - required only for SPARQL query results; list of binding names, which are required for SPARQL query results to match
 
-#### Reference Corpus
+#### Reference Data
 
-The example corpus below illustrates a minimal but realistic Q&A dataset, showing two templates with associated questions and steps.
+The example data below illustrates a minimal but realistic Q&A dataset, showing two templates with associated questions and steps.
 
 ```yaml
 - template_id: list_all_transformers_within_Substation_SUBSTATION
@@ -328,7 +328,7 @@ If an error occurs while the question-answering system is generating a response,
 ```python
 from graphrag_eval import run_evaluation, compute_aggregates
 
-reference_qas: list[dict] = [] # read your corpus
+reference_qas: list[dict] = [] # read your reference data
 chat_responses: dict = {} # call your implementation to get the response
 evaluation_results = run_evaluation(reference_qas, chat_responses)
 aggregates = compute_aggregates(evaluation_results)

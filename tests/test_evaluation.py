@@ -59,12 +59,12 @@ def read_responses(path: Path) -> dict:
 
 
 def test_run_evaluation_and_compute_aggregates():
-    reference_corpus = yaml.safe_load(
+    reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     responses_path = DATA_DIR / "actual_responses_1.jsonl"
     actual_responses = read_responses(responses_path)
-    evaluation_results = run_evaluation(reference_corpus, actual_responses)
+    evaluation_results = run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_1.yaml").read_text(
             encoding="utf-8"
@@ -81,12 +81,12 @@ def test_run_evaluation_and_compute_aggregates():
 
 
 def test_run_evaluation_and_compute_aggregates_all_errors():
-    reference_corpus = yaml.safe_load(
+    reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     responses_path = DATA_DIR / "actual_responses_2.jsonl"
     actual_responses = read_responses(responses_path)
-    evaluation_results = run_evaluation(reference_corpus, actual_responses)
+    evaluation_results = run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_2.yaml").read_text(
             encoding="utf-8"
