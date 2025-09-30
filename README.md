@@ -258,7 +258,7 @@ The module is agnostic to the specific LLM agent implementation and model; it de
 
 ### Responses to evaluate
 
-Given a question, if the a question-answering system successfully responds, this response is an input to this library. The input to the library should be formatted as in the example below. (On the other hand, if the system encounters an error in answering the question, the input to the evaluation should be formatted as in [Target Input on Error](#target-input-on-error).)
+Given a question, if the question-answering system successfully responds, to evaluate the response, call `run_evaluation()` with the response formatted as in the example below. (On the other hand, if an error occurs while generating a response, format it as in [Target Input on Error](#target-input-on-error).)
 
 ```json
 {
@@ -313,7 +313,7 @@ Given a question, if the a question-answering system successfully responds, this
 
 #### Target Input on Error
 
-If an error occurs while the question answering system generating a response to a question, the input for evaluation should be:
+If an error occurs while the question-answering system is generating a response, and you want to tally this error, the input to `run_evaluate()` should be like:
 
 ```json
 {
