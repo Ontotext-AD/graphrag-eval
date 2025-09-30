@@ -42,7 +42,7 @@ def extract_response_values(
     try:
         n_ref, n_actual, n_matching = map(int, vals[:3])
     except ValueError:
-        msg = f"Non-int value: {response}"
+        msg = f"Claims counts should be ints: {vals}"
         return None, None, None, vals[3], msg
     if any([
         n_ref < 1,
@@ -51,7 +51,7 @@ def extract_response_values(
         n_matching > n_ref,
         n_matching > n_actual
     ]):
-        msg = f"Invalid int values: {n_ref}\t{n_actual}\t{n_matching}"
+        msg = f"Invalid claims counts combination: {n_ref}\t{n_actual}\t{n_matching}"
         return None, None, None, vals[3], msg
     return n_ref, n_actual, n_matching, vals[3], ""
 
