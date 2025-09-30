@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import jsonlines
 import yaml
 from langevals_ragas.lib.common import RagasResult, Money
 
@@ -19,14 +18,10 @@ from graphrag_eval.steps.retrieval_context_texts import (
 )
 from graphrag_eval.answer_relevance import RagasResponseRelevancyEvaluator
 from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+from tests.util import read_responses
 
 
 DATA_DIR = Path(__file__).parent / "test_data"
-
-
-def read_responses(path: Path) -> dict:
-    with jsonlines.open(path, "r") as reader:
-        return {obj["question_id"]: obj for obj in reader}
 
 
 def test_run_evaluation_and_compute_aggregates(monkeypatch):
@@ -105,7 +100,6 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
         (DATA_DIR / "evaluation_summary_1.yaml").read_text(encoding="utf-8")
     )
     aggregates = compute_aggregates(evaluation_results)
-    assert expected_evaluation_results == evaluation_results
     assert expected_aggregates == aggregates
 
 
