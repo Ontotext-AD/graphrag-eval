@@ -1,7 +1,7 @@
 import json
 from collections import defaultdict
 from typing import Any
-from collections.abc import Sequence
+from collections.abc import Sequence, Collection
 
 from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
@@ -9,7 +9,7 @@ from .sparql import compare_sparql_results
 
 Match = tuple[int, int, int, float]
 Step = dict[str, Any]
-ReferenceGroup = Sequence[Step]
+StepsGroup = Collection[Step]
 
 
 def compare_steps_outputs(reference_step: Step, actual_step: Step) -> float:
@@ -35,7 +35,7 @@ def compare_steps_outputs(reference_step: Step, actual_step: Step) -> float:
 
 
 def match_group_by_output(
-        reference_groups: Sequence[ReferenceGroup],
+        reference_groups: Sequence[StepsGroup],
         group_idx: int,
         actual_steps: Sequence[Step],
         candidates_by_name: dict[str, list[int]],
@@ -60,7 +60,7 @@ def match_group_by_output(
 
 
 def collect_possible_matches_by_name_and_status(
-        group: ReferenceGroup,
+        group: StepsGroup,
         actual_steps: Sequence[Step],
         search_upto: int,
 ) -> dict[str, list[int]]:
@@ -76,7 +76,7 @@ def collect_possible_matches_by_name_and_status(
 
 
 def get_steps_matches(
-        reference_groups: Sequence[ReferenceGroup],
+        reference_groups: Sequence[StepsGroup],
         actual_steps: Sequence[Step],
 ) -> list[Match]:
     # when we have autocomplete
@@ -109,7 +109,7 @@ def get_steps_matches(
 
 
 def evaluate_steps(
-    reference_steps_groups: Sequence[ReferenceGroup],
+    reference_steps_groups: Sequence[StepsGroup],
     actual_steps: Sequence[Step],
     matches: Sequence[Match] | None = None
 ) -> float:
