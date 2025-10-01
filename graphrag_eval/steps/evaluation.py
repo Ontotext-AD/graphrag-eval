@@ -79,26 +79,7 @@ def get_steps_matches(
         reference_groups: Sequence[StepsGroup],
         actual_steps: Sequence[Step],
 ) -> list[Match]:
-    # when we have autocomplete
-    # matches = []
-    # search_upto = len(actual_steps)
-    # for group_idx in reversed(range(len(reference_steps))):
-    #     group = reference_steps[group_idx]
-    #     candidates = collect_possible_matches_by_name(group, actual_steps, search_upto)
-    #
-    #     matched = match_group_by_output(reference_steps, group_idx, actual_steps, candidates)
-    #     if len(matched) == len(group):
-    #         # update search_upto to just before the highest matched actual index
-    #         matches.extend(matched)
-    #         search_upto = min(j for (_, j) in matched)
-    #     elif len(matched) < len(group):
-    #         matches.extend(matched)
-    #         break # a step is not matched and missing, abort
-    #     else:
-    #         break  # a step is not matched and missing, abort
-    # return matches
-
-    # for now, we have only the last step(s)
+    # For now, evaluate only the last group of steps
     last_group = reference_groups[-1]
     candidates = collect_possible_matches_by_name_and_status(
         last_group,
