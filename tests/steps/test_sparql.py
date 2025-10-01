@@ -1,6 +1,6 @@
 import copy
 
-from graphrag_eval import (
+from graphrag_eval.steps.sparql import (
     get_var_to_values,
     compare_sparql_results,
 )

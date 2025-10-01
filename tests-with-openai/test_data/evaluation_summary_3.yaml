@@ -3,23 +3,23 @@ per_template:
     number_of_error_samples: 0
     number_of_success_samples: 1
     answer_f1:
-        min: 1.0
-        max: 1.0
-        mean: 1.0
-        median: 1.0
-        sum: 1.0
-    answer_precision: 
-        min: 1.0
-        max: 1.0
-        mean: 1.0
-        median: 1.0
-        sum: 1.0    
-    answer_recall: 
-        min: 1.0
-        max: 1.0
-        mean: 1.0
-        median: 1.0
-        sum: 1.0
+      min: 1.0
+      max: 1.0
+      mean: 1.0
+      median: 1.0
+      sum: 1.0
+    answer_precision:
+      min: 1.0
+      max: 1.0
+      mean: 1.0
+      median: 1.0
+      sum: 1.0
+    answer_recall:
+      min: 1.0
+      max: 1.0
+      mean: 1.0
+      median: 1.0
+      sum: 1.0
     answer_relevance:
       min: 0.9
       max: 0.9
@@ -59,24 +59,24 @@ per_template:
 micro:
   number_of_error_samples: 0
   number_of_success_samples: 1
-  answer_f1: 
-      max: 1.0
-      mean: 1.0
-      median: 1.0
-      min: 1.0
-      sum: 1.0
-  answer_precision: 
-      max: 1.0
-      mean: 1.0
-      median: 1.0
-      min: 1.0
-      sum: 1.0
-  answer_recall: 
-      max: 1.0
-      mean: 1.0
-      median: 1.0
-      min: 1.0
-      sum: 1.0
+  answer_f1:
+    max: 1.0
+    mean: 1.0
+    median: 1.0
+    min: 1.0
+    sum: 1.0
+  answer_precision:
+    max: 1.0
+    mean: 1.0
+    median: 1.0
+    min: 1.0
+    sum: 1.0
+  answer_recall:
+    max: 1.0
+    mean: 1.0
+    median: 1.0
+    min: 1.0
+    sum: 1.0
   answer_relevance:
     min: 0.9
     max: 0.9
@@ -114,16 +114,16 @@ micro:
     min: 6.601679801940918
     sum: 6.601679801940918
 macro:
-  answer_f1: 
-      mean: 1.0
-  answer_precision: 
-      mean: 1.0
-  answer_recall: 
-      mean: 1.0           
+  answer_f1:
+    mean: 1.0
+  answer_precision:
+    mean: 1.0
+  answer_recall:
+    mean: 1.0
   answer_relevance:
-      mean: 0.9
+    mean: 0.9
   answer_relevance_cost:
-      mean: 0.0007
+    mean: 0.0007
   input_tokens:
     mean: 221339
   output_tokens:

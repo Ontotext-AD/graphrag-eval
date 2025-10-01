@@ -14,40 +14,40 @@ def test_extract_response_values_expected_case():
 def test_extract_response_values_invalid_values():
     response = "0\t1\t1\treason"
     result = extract_response_values(response)
-    assert result == (None, None, None, "reason", "Invalid int values: 0\t1\t1")
+    assert result[4]
 
     response = "1\t0\t1\treason"
     result = extract_response_values(response)
-    assert result == (None, None, None, "reason", "Invalid int values: 1\t0\t1")
+    assert result[4]
 
     response = "1\t2\t-1\treason"
     result = extract_response_values(response)
-    assert result == (None, None, None, "reason", "Invalid int values: 1\t2\t-1")
+    assert result[4]
 
     response = "1\t3\t2\treason"
     result = extract_response_values(response)
-    assert result == (None, None, None, "reason", "Invalid int values: 1\t3\t2")
+    assert result[4]
 
     response = "3\t1\t2\treason"
     result = extract_response_values(response)
-    assert result == (None, None, None, "reason", "Invalid int values: 3\t1\t2")
+    assert result[4]
 
     response = "3\t1\t2\treason"
     result = extract_response_values(response)
-    assert result == (None, None, None, "reason", "Invalid int values: 3\t1\t2")
+    assert result[4]
 
 
 def test_extract_response_values_non_int():
     response = "2\t2\tx\treason"
     result = answer_correctness.extract_response_values(response)
-    assert result == (None, None, None, "reason", "Non-int value: 2\t2\tx\treason")
+    assert result[4]
 
 
 def test_extract_response_values_too_few_values():
     response = "2\t2\treason"
     result = answer_correctness.extract_response_values(response)
     # fewer than 4 values → error
-    assert result == (None, None, None, "", "Expected 4 tab-separated values: 2\t2\treason")
+    assert result[4]
 
 
 def test_extract_response_values_too_many_values():

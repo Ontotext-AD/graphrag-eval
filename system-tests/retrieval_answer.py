@@ -20,10 +20,17 @@ result_dict = get_retrieval_evaluation_dict(
     ]
 )
 pprint(result_dict)
-assert 0 <= result_dict["retrieval_answer_recall"] <= 1
+assert isinstance(result_dict["retrieval_answer_recall"], float)
+assert isinstance(result_dict["retrieval_answer_precision"], float)
+assert isinstance(result_dict["retrieval_answer_f1"], float)
 assert isinstance(result_dict["retrieval_answer_recall_reason"], str)
+assert isinstance(result_dict["retrieval_answer_recall_cost"], float)
+assert isinstance(result_dict["retrieval_answer_precision_cost"], float)
+assert 0 <= result_dict["retrieval_answer_recall"] <= 1
 assert 0 <= result_dict["retrieval_answer_recall_cost"]
 assert 0 <= result_dict["retrieval_answer_precision"] <= 1
 assert 0 <= result_dict["retrieval_answer_precision_cost"]
 assert 0 <= result_dict["retrieval_answer_f1"] <= 1
-assert 0 <= result_dict["retrieval_answer_f1_cost"] == result_dict["retrieval_answer_recall_cost"] + result_dict["retrieval_answer_precision_cost"]
+assert 0 <= result_dict["retrieval_answer_f1_cost"] == \
+    result_dict["retrieval_answer_recall_cost"] \
+    + result_dict["retrieval_answer_precision_cost"]

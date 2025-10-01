@@ -1,12 +1,12 @@
 import pytest
 
-from graphrag_eval import (
+from graphrag_eval.steps.evaluation import (
     compare_steps_outputs,
+    evaluate_steps,
     match_group_by_output,
     collect_possible_matches_by_name_and_status,
     get_steps_matches
 )
-from graphrag_eval.steps import evaluate_steps
 
 
 sparkle_expected_step = {

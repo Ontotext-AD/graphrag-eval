@@ -1,12 +1,10 @@
 from pathlib import Path
 
-import jsonlines
 import yaml
 from langevals_ragas.lib.common import RagasResult, Money
 
 from graphrag_eval import (
     answer_correctness,
-    answer_relevance,
     compute_aggregates,
     run_evaluation,
 )
@@ -18,21 +16,20 @@ from graphrag_eval.steps.retrieval_context_texts import (
     RagasContextPrecisionEvaluator,
     RagasContextRecallEvaluator,
 )
+from graphrag_eval.answer_relevance import RagasResponseRelevancyEvaluator
+from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+from tests.util import read_responses
+
+
+DATA_DIR = Path(__file__).parent / "test_data"
+
 
 def test_run_evaluation_and_compute_aggregates(monkeypatch):
-    def get_chat_responses(path: Path) -> dict:
-        responses = dict()
-        with jsonlines.open(path, "r") as reader:
-            for obj in reader:
-                responses[obj["question_id"]] = obj
-        return responses
-
-    sample_reference_standard = yaml.safe_load(
-        (Path(__file__).parent / "test_data" / "reference_standard_corpus_1.yaml").read_text(encoding="utf-8")
+    reference_data = yaml.safe_load(
+        (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
-    sample_chat_responses_path = Path(__file__).parent / "test_data" / "chat_responses_1.jsonl"
     monkeypatch.setattr(
-        answer_relevance.RagasResponseRelevancyEvaluator,
+        RagasResponseRelevancyEvaluator,
         'evaluate',
         lambda *_: RagasResult(
             status="processed",
@@ -87,39 +84,31 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
         lambda: None
     )
     monkeypatch.setattr(
-        answer_correctness.AnswerCorrectnessEvaluator,
+        AnswerCorrectnessEvaluator,
         "call_llm",
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
 
-    # Run
-    evaluation_results = run_evaluation(sample_reference_standard, get_chat_responses(sample_chat_responses_path))
-    aggregates = compute_aggregates(evaluation_results)
+    actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
+    evaluation_results = run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
-        (Path(__file__).parent / "test_data" / "evaluation_1.yaml").read_text(encoding="utf-8")
+        (DATA_DIR / "evaluation_1.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
+
     expected_aggregates = yaml.safe_load(
-        (Path(__file__).parent / "test_data" / "evaluation_summary_1.yaml").read_text(encoding="utf-8")
+        (DATA_DIR / "evaluation_summary_1.yaml").read_text(encoding="utf-8")
     )
+    aggregates = compute_aggregates(evaluation_results)
     assert expected_aggregates == aggregates
 
 
 def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch):
-    def get_chat_responses(path: Path) -> dict:
-        responses = dict()
-        with jsonlines.open(path, "r") as reader:
-            for obj in reader:
-                responses[obj["question_id"]] = obj
-        return responses
-
-    sample_reference_standard = yaml.safe_load(
-        (Path(__file__).parent / "test_data" / "reference_standard_corpus_1.yaml").read_text(encoding="utf-8")
+    reference_data = yaml.safe_load(
+        (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
-    sample_chat_responses_path = Path(__file__).parent / "test_data" / "chat_responses_3.jsonl"
-
     monkeypatch.setattr(
-        answer_relevance.RagasResponseRelevancyEvaluator,
+        RagasResponseRelevancyEvaluator,
         'evaluate',
         lambda *_: RagasResult(
             status="processed",
@@ -134,44 +123,36 @@ def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch):
         lambda: None
     )
     monkeypatch.setattr(
-        answer_correctness.AnswerCorrectnessEvaluator,
+        AnswerCorrectnessEvaluator,
         "call_llm",
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
 
-    # Run
-    evaluation_results = run_evaluation(sample_reference_standard, get_chat_responses(sample_chat_responses_path))
-    aggregates = compute_aggregates(evaluation_results)
+    actual_responses = read_responses(DATA_DIR / "actual_responses_3.jsonl")
+    evaluation_results = run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
-        (Path(__file__).parent / "test_data" / "evaluation_3.yaml").read_text(encoding="utf-8")
+        (DATA_DIR / "evaluation_3.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
     expected_aggregates = yaml.safe_load(
-        (Path(__file__).parent / "test_data" / "evaluation_summary_3.yaml").read_text(encoding="utf-8")
+        (DATA_DIR / "evaluation_summary_3.yaml").read_text(encoding="utf-8")
     )
+    aggregates = compute_aggregates(evaluation_results)
     assert expected_aggregates == aggregates
 
 
 def test_run_evaluation_and_compute_aggregates_all_errors():
-    def get_chat_responses(path: Path) -> dict:
-        responses = dict()
-        with jsonlines.open(path, "r") as reader:
-            for obj in reader:
-                responses[obj["question_id"]] = obj
-        return responses
-
-    sample_reference_standard = yaml.safe_load(
-        (Path(__file__).parent / "test_data" / "reference_standard_corpus_1.yaml").read_text(encoding="utf-8")
+    reference_data = yaml.safe_load(
+        (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
-    sample_chat_responses_path = Path(__file__).parent / "test_data" / "chat_responses_2.jsonl"
-
-    evaluation_results = run_evaluation(sample_reference_standard, get_chat_responses(sample_chat_responses_path))
-    aggregates = compute_aggregates(evaluation_results)
+    actual_responses = read_responses(DATA_DIR / "actual_responses_2.jsonl")
+    evaluation_results = run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
-        (Path(__file__).parent / "test_data" / "evaluation_2.yaml").read_text(encoding="utf-8")
+        (DATA_DIR / "evaluation_2.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
     expected_aggregates = yaml.safe_load(
-        (Path(__file__).parent / "test_data" / "evaluation_summary_2.yaml").read_text(encoding="utf-8")
+        (DATA_DIR / "evaluation_summary_2.yaml").read_text(encoding="utf-8")
     )
+    aggregates = compute_aggregates(evaluation_results)
     assert expected_aggregates == aggregates

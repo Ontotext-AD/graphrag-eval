@@ -4,8 +4,7 @@
 
 # QA Evaluation
 
-This is a Python module for assessing the quality of question-answering systems such as ones based on LLM agents, based on a set of questions and reference answers for them. This includes evaluating the final answer and the steps used
-to reach the answer (such as orchestrated and executed steps), compared to the given reference steps.
+This is a Python module for assessing the quality of question-answering systems such as ones based on LLM agents, based on a set of questions and reference answers for them. This includes evaluating the final answer and the steps used to reach the answer (such as orchestrated and executed steps), compared to the given reference steps.
 
 ## License
 
@@ -52,24 +51,24 @@ We plan to improve CLI support in future releases.
 
 To evaluate answers and/or steps:
 1. Install this package: section [Install](#Installation)
-1. Format the corpus of questions and reference answers and/or steps: section [Reference Q&A Corpus](#reference-qa-corpus)
-1. Format the answers and/or steps you want to evaluate: section [Evaluation Target Corpus](#Evaluation-Target-Corpus)
+1. Format the dataset of questions and reference answers and/or steps: section [Reference Q&A Data](#Reference-qa-Data)
+1. Format the answers and/or steps you want to evaluate: section [Responses to evaluate](#Responses-to-evaluate)
 1. To evaluate answer relevance:
     1. Include `actual_answer` in the target data to evaluate
     1. Set environment variable `OPENAI_API_KEY` appropriately
 1. To evaluate answer correctness:
-    1. Include `reference_answer` in the reference corpus and `actual_answer` in the target data to evaluate
+    1. Include `reference_answer` in the reference dataset and `actual_answer` in the target data to evaluate
     1. Set environment variable `OPENAI_API_KEY` appropriately
 1. To evaluate steps:
-    1. Include `reference_steps` in the reference corpus and `actual_steps` in target data to evaluate
-1. Call the evaluation function with the reference corpus and target corpus: section [Example Usage Code](#Example-Usage-Code)
+    1. Include `reference_steps` in the reference data and `actual_steps` in target data to evaluate
+1. Call the evaluation function with the reference data and target data: section [Usage Code](#Usage-Code)
 1. Call the aggregation function with the evaluation results
 
 Answer evaluation (correctness and relevance) uses the LLM `openai/gpt-4o-mini`.
 
-### Reference Q&A Corpus
+### Reference Q&A Data
 
-A reference corpus is a list of templates, each of which contains:
+A reference dataset is a list of templates, each of which contains:
 
 - `template_id`: Unique template identifier
 - `questions`: A list of questions derived from this template, where each includes:
@@ -89,9 +88,9 @@ Each step includes:
 - `ordered`: (optional, defaults to `false`) For SPARQL query results, whether results order matters. `true` means that the actual result rows must be ordered as the reference result; `false` means that result rows are matched as a set.
 - `required_columns`: (optional) - required only for SPARQL query results; list of binding names, which are required for SPARQL query results to match
 
-#### Example Reference Corpus
+#### Reference Data
 
-The example corpus below illustrates a minimal but realistic Q&A dataset, showing two templates with associated questions and steps.
+The example data below illustrates a minimal but realistic Q&A dataset, showing two templates with associated questions and steps.
 
 ```yaml
 - template_id: list_all_transformers_within_Substation_SUBSTATION
@@ -257,9 +256,9 @@ The example corpus below illustrates a minimal but realistic Q&A dataset, showin
 
 The module is agnostic to the specific LLM agent implementation and model; it depends solely on the format of the response.
 
-### Evaluation Target Corpus
+### Responses to evaluate
 
-Below is an example response from the question-answering system for a single question (unless there is an error in answering: see [Example Target Input on Error](#example-target-input-on-error) below):
+Given a question, if the question-answering system successfully responds, to evaluate the response, call `run_evaluation()` with the response formatted as in the example below. (On the other hand, if an error occurs while generating a response, format it as in [Target Input on Error](#target-input-on-error).)
 
 ```json
 {
@@ -312,9 +311,9 @@ Below is an example response from the question-answering system for a single que
 }
 ```
 
-#### Example Target Input on Error
+#### Target Input on Error
 
-If an error occurs during generating a response to a question, the expected target input for evaluation is:
+If an error occurs while the question-answering system is generating a response, and you want to tally this error, the input to `run_evaluate()` should be like:
 
 ```json
 {
@@ -324,22 +323,22 @@ If an error occurs during generating a response to a question, the expected targ
 }
 ```
 
-### Example Usage Code
+### Usage Code
 
 ```python
 from graphrag_eval import run_evaluation, compute_aggregates
 
-reference_qas: list[dict] = [] # read your corpus
+reference_qas: list[dict] = [] # read your reference data
 chat_responses: dict = {} # call your implementation to get the response
 evaluation_results = run_evaluation(reference_qas, chat_responses)
 aggregates = compute_aggregates(evaluation_results)
 ```
 
-`evaluation_results` is a list of statistics for each question, as in section [Example Evaluation Results](#example-evaluation-results). The format is explained in section [Output Keys](#output-keys)
+`evaluation_results` is a list of statistics for each question, as in section [Evaluation Results](#Evaluation-results). The format is explained in section [Output Keys](#output-keys)
 
 If your chat responses contain actual answers, set your environment variable `OPENAI_API_KEY` before running the code above.
 
-### Example Evaluation Results
+### Evaluation Results
 
 The output is a list of statistics for each question from the reference Q&A dataset. Here is an example of statistics for one question:
 
@@ -564,69 +563,72 @@ All `actual_steps` with `name` "retrieval" contain:
 
 #### Aggregates Keys
 
-The `aggregates` object provides aggregated evaluation metrics.
-Aggregates are computed both per-template and overall, using micro and macro averaging strategies.
-These aggregates support analysis of agent quality, token efficiency, and execution performance.
+The `aggregates` object provides aggregated evaluation metrics. These aggregates support analysis of agent quality, token efficiency, and execution performance. Aggregates are computed:
+1. per question template, and
+1. over all questions in the dataset, using micro and macro averaging
+
 Aggregates are:
 - `per_template`: a dictionary mapping a template identifier to the following statistics:
   - `number_of_error_samples`: number of questions for this template, which resulted in error response
   - `number_of_success_samples`: number of questions for this template, which resulted in successful response
-  - `input_tokens`: `sum`, `mean`, `median`, `min` and `max` statistics for `input_tokens` of all successful questions for this template
-  - `output_tokens`: `sum`, `mean`, `median`, `min` and `max` statistics for `output_tokens` of all successful questions for this template
-  - `total_tokens`: `sum`, `mean`, `median`, `min` and `max` statistics for `total_tokens` of all successful questions for this template
-  - `elapsed_sec`: `sum`, `mean`, `median`, `min` and `max` statistics for `elapsed_sec` of all successful questions for this template
-  - `answer_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `answer_recall` of all successful questions for this template
-  - `answer_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `answer_precision` of all successful questions for this template
-  - `answer_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `answer_f1` of all successful questions for this template
-  - `answer_relevance`: `sum`, `mean`, `median`, `min` and `max` statistics for `answer_relevance` of all successful questions for this template
-  - `steps_score`: `sum`, `mean`, `median`, `min` and `max` statistics for `steps_score` of all successful questions for this template
-  - `steps`: `sum`, `mean`, `median`, `min` and `max` statistics for `steps` of all successful questions for this template. Includes:
-    - `steps`: for each step type how many times it was executed
-    - `once_per_sample`: how many times each step was executed, counted only once per question
-    - `empty_results`: how many times the step was executed and returned empty results
-    - `errors`: how many times the step was executed and resulted in error
-  - `retrieval_answer_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_answer_recall` for all successful questions in this template
-  - `retrieval_answer_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_answer_precision` for all successful questions in this template
-  - `retrieval_answer_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_answer_f1` for all successful questions in this template
-  - `retrieval_context_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_recall` for all successful questions in this template
-  - `retrieval_context_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_precision` for all successful questions in this template
-  - `retrieval_context_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_f1` for all successful questions in this template
+  - `sum`, `mean`, `median`, `min` and `max` statistics over all non-error responses for this template for the following metrics:
+    - `input_tokens`
+    - `output_tokens`
+    - `total_tokens`
+    - `elapsed_sec`
+    - `answer_recall`
+    - `answer_precision`
+    - `answer_f1`
+    - `answer_relevance`
+    - `steps_score`
+    - `retrieval_answer_recall`
+    - `retrieval_answer_precision`
+    - `retrieval_answer_f1`
+    - `retrieval_context_recall`
+    - `retrieval_context_precision`
+    - `retrieval_context_f1`
+    - `steps`: includes:
+      - `steps`: for each step type how many times it was executed
+      - `once_per_sample`: how many times each step was executed, counted only once per question
+      - `empty_results`: how many times the step was executed and returned empty results
+      - `errors`: how many times the step was executed and resulted in error
 - `micro`: statistics across questions, regardless of template. It includes:
   - `number_of_error_samples`: total number of questions, which resulted in error response
   - `number_of_success_samples`: total number of questions, which resulted in successful response
-  - `input_tokens`: `sum`, `mean`, `median`, `min` and `max` for `input_tokens` of all successful questions
-  - `output_tokens`: `sum`, `mean`, `median`, `min` and `max` for `output_tokens` of all successful questions
-  - `total_tokens`: `sum`, `mean`, `median`, `min` and `max` for `total_tokens` of all successful questions
-  - `elapsed_sec`: `sum`, `mean`, `median`, `min` and `max` for `elapsed_sec` of all successful questions
-  - `answer_recall`: `sum`, `mean`, `median`, `min` and `max` for `answer_recall` of all successful questions
-  - `answer_precision`: `sum`, `mean`, `median`, `min` and `max` for `answer_precision` of all successful questions
-  - `answer_f1`: `sum`, `mean`, `median`, `min` and `max` for `answer_f1` of all successful questions
-  - `answer_relevance`: `sum`, `mean`, `median`, `min` and `max` statistics for `answer_relevance` of all successful questions
-  - `answer_relevance_cost`: `sum`, `mean`, `median`, `min` and `max` statistics for `answer_relevance_cost` of all successful questions
-  - `retrieval_answer_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_answer_recall` of all successful questions
-  - `retrieval_answer_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_answer_precision` of all successful questions
-  - `retrieval_answer_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_answer_f1` of all successful questions
-  - `retrieval_context_recall`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_recall` of all successful questions
-  - `retrieval_context_precision`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_precision` of all successful questions
-  - `retrieval_context_f1`: `sum`, `mean`, `median`, `min` and `max` statistics for `retrieval_context_f1` of all successful questions
-  - `steps_score`: `sum`, `mean`, `median`, `min` and `max` for `steps_score` of all successful questions
-- `macro`: averages across templates, i.e., the mean of each metric per template, averaged. It includes:
-  - `input_tokens`: `mean` for `input_tokens`
-  - `output_tokens`: `mean` for `output_tokens`
-  - `total_tokens`: `mean` for `total_tokens`
-  - `elapsed_sec`: `mean` for `elapsed_sec`
-  - `answer_recall`: `mean` for `answer_recall`
-  - `answer_precision`: `mean` for `answer_precision`
-  - `answer_f1`: `mean` for `answer_f1`
-  - `answer_relevance`: `mean` for `answer_relevance`
-  - `answer_relevance_cost`: `mean` for `answer_relevance_cost`
-  - `retrieval_answer_recall`: `mean` for `retrieval_answer_recall`
-  - `retrieval_answer_precision`: `mean` for `retrieval_answer_precision`
-  - `retrieval_answer_f1`: `mean` for `retrieval_answer_f1`
-  - `retrieval_context_recall`: `mean` for `retrieval_context_recall`
-  - `retrieval_context_precision`: `mean` for `retrieval_context_precision`
-  - `retrieval_context_f1`: `mean` for `retrieval_context_f1`
-  - `steps_score`: `mean` for `steps_score`
+  - `sum`, `mean`, `median`, `min` and `max` statistics over all non-error responses for the following metrics:
+    - `input_tokens`
+    - `output_tokens`
+    - `total_tokens`
+    - `elapsed_sec`
+    - `answer_recall`
+    - `answer_precision`
+    - `answer_f1`
+    - `answer_relevance`
+    - `answer_relevance_cost`
+    - `retrieval_answer_recall`
+    - `retrieval_answer_precision`
+    - `retrieval_answer_f1`
+    - `retrieval_context_recall`
+    - `retrieval_context_precision`
+    - `retrieval_context_f1`
+    - `steps_score`
+- `macro`: averages across templates, i.e., the mean of each metric per template, averaged. It includes the following means:
+  - `input_tokens`
+  - `output_tokens`
+  - `total_tokens`
+  - `elapsed_sec`
+  - `answer_recall`
+  - `answer_precision`
+  - `answer_f1`
+  - `answer_relevance`
+  - `answer_relevance_cost`
+  - `retrieval_answer_recall`
+  - `retrieval_answer_precision`
+  - `retrieval_answer_f1`
+  - `retrieval_context_recall`
+  - `retrieval_context_precision`
+  - `retrieval_context_f1`
+  - `steps_score`
 
 #### Example Aggregates
 
@@ -654,11 +656,11 @@ per_template:
       min: 1.0
       max: 1.0
     answer_relevance:
-        min: 0.9
-        max: 0.9
-        mean: 0.9
-        median: 0.9
-        sum: 0.9
+      min: 0.9
+      max: 0.9
+      mean: 0.9
+      median: 0.9
+      sum: 0.9
     answer_relevance_cost:
       min: 0.0007
       max: 0.0007
