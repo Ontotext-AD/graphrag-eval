@@ -4,7 +4,6 @@ from collections.abc import Sequence
 from statistics import mean, median
 from typing import Any, Collection, Iterable
 
-
 METRICS = [
     "answer_recall",
     "answer_precision",
@@ -135,7 +134,7 @@ def compute_micro_stats(
     number_of_samples_per_template_by_status,
     stats_per_template,
     step_metrics_per_template
-):
+) -> dict:
     values = number_of_samples_per_template_by_status.values()
     micro_summary = defaultdict(dict, {
         "number_of_error_samples": sum(v["error"] for v in values),
@@ -158,7 +157,7 @@ def compute_micro_stats(
             micro_step_metrics[metric].extend(values)
     for metric, values in micro_step_metrics.items():
         micro_summary[metric] = stats_for_series(values)
-    return micro_summary
+    return dict(micro_summary)
 
 
 def compute_macro_stats(
@@ -182,7 +181,7 @@ def compute_macro_stats(
                 macro_step_metrics[metric].append(stats["mean"])
     for metric, values in macro_step_metrics.items():
         macro_summary[metric]["mean"] = mean(values or [0])
-    return macro_summary
+    return dict(macro_summary)
 
 
 def compute_aggregates(samples: list[dict]) -> dict:
@@ -205,18 +204,19 @@ def compute_aggregates(samples: list[dict]) -> dict:
         update_steps_summary(sample, steps_summary_per_template[template_id])
         update_step_metrics(sample, step_metrics_per_template[template_id])
 
-    summary = {}
-    summary["per_template"] = compute_per_template_stats(
-        templates_ids,
-        number_of_samples_per_template_by_status,
-        stats_per_template,
-        steps_summary_per_template,
-        step_metrics_per_template,
-    )
-    summary["micro"] = compute_micro_stats(
-        number_of_samples_per_template_by_status,
-        stats_per_template,
-        step_metrics_per_template
-    )
+    summary = {
+        "per_template": compute_per_template_stats(
+            templates_ids,
+            number_of_samples_per_template_by_status,
+            stats_per_template,
+            steps_summary_per_template,
+            step_metrics_per_template,
+        ),
+        "micro": compute_micro_stats(
+            number_of_samples_per_template_by_status,
+            stats_per_template,
+            step_metrics_per_template
+        )
+    }
     summary["macro"] = compute_macro_stats(summary["per_template"])
     return summary
