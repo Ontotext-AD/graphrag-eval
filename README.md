@@ -87,6 +87,7 @@ Each step includes:
 - `output_media_type`: (optional, missing or one of `application/sparql-results+json`, `application/json`) Indicates how the output of a step must be processed
 - `ordered`: (optional, defaults to `false`) For SPARQL query results, whether results order matters. `true` means that the actual result rows must be ordered as the reference result; `false` means that result rows are matched as a set.
 - `required_columns`: (optional) - required only for SPARQL query results; list of binding names, which are required for SPARQL query results to match
+- `ignore_duplicates`: (optional, defaults to `true`) For SPARQL query results, whether duplicate binding values in the expected or in the actual results should be ignored for the comparison.
 
 #### Reference Data
 

@@ -1,7 +1,7 @@
-from collections import Counter
-from typing import Union
 import itertools
 import math
+from collections import Counter
+from typing import Union
 
 XSD_NUMERIC_TYPES = {
     "http://www.w3.org/2001/XMLSchema#integer",
@@ -35,7 +35,7 @@ def truncate(number: float, decimals: int = 0) -> float:
     elif decimals == 0:
         return math.trunc(number)
 
-    factor = 10.0**decimals
+    factor = 10.0 ** decimals
     return math.trunc(number * factor) / factor
 
 
@@ -137,8 +137,8 @@ def compare_values(
     actual_vars: Union[list[str], tuple[str, ...]],
     actual_var_to_values: dict[str, list],
     results_are_ordered: bool,
+    ignore_duplicates: bool,
 ) -> bool:
-
     if len(reference_vars) < len(actual_vars):
         for combination in itertools.combinations(actual_vars, len(reference_vars)):
             if compare_values(
@@ -147,6 +147,7 @@ def compare_values(
                 combination,
                 actual_var_to_values,
                 results_are_ordered,
+                ignore_duplicates,
             ):
                 return True
         return False
@@ -154,9 +155,9 @@ def compare_values(
     table = convert_table_dict2lines(reference_vars, reference_var_to_values)
     for permutation in itertools.permutations(actual_vars):
         actual_table = convert_table_dict2lines(permutation, actual_var_to_values)
-        if (results_are_ordered and table == actual_table) or (
-            not results_are_ordered and Counter(table) == Counter(actual_table)
-        ):
+        if (results_are_ordered and table == actual_table) or \
+            ((not results_are_ordered) and ignore_duplicates and set(table) == set(actual_table)) or \
+            ((not results_are_ordered) and (not ignore_duplicates) and Counter(table) == Counter(actual_table)):
             return True
 
     return False
@@ -167,6 +168,7 @@ def compare_sparql_results(
     actual_sparql_result: dict,
     required_vars: list[str],
     results_are_ordered: bool = False,
+    ignore_duplicates: bool = True,
 ) -> float:
     # DESCRIBE results
     if isinstance(actual_sparql_result, str):
@@ -208,5 +210,6 @@ def compare_sparql_results(
             actual_vars,
             actual_var_to_values,
             results_are_ordered,
+            ignore_duplicates,
         )
     )
