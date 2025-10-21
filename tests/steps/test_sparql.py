@@ -165,7 +165,7 @@ def test_compare_empty_sparql_results() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["personName", "person"]
         )
-        == False
+        == 0.0
     )
 
     expected_sparql_results = {
@@ -177,7 +177,7 @@ def test_compare_empty_sparql_results() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["personName", "person"]
         )
-        == True
+        == 1.0
     )
 
     expected_sparql_results = {
@@ -192,7 +192,7 @@ def test_compare_empty_sparql_results() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["personName", "person"]
         )
-        == True
+        == 1.0
     )
 
     expected_sparql_results = {
@@ -204,7 +204,7 @@ def test_compare_empty_sparql_results() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["personName", "person"]
         )
-        == False
+        == 0.0
     )
 
     expected_sparql_results = {
@@ -216,7 +216,7 @@ def test_compare_empty_sparql_results() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["person"]
         )
-        == True
+        == 1.0
     )
 
 
@@ -225,28 +225,28 @@ def test_compare_sparql_results_ask() -> None:
     actual_sparql_results = {"head": {}, "boolean": True}
     assert (
         compare_sparql_results(expected_sparql_results, actual_sparql_results, [])
-        == True
+        == 1.0
     )
 
     expected_sparql_results = {"head": {}, "boolean": False}
     actual_sparql_results = {"head": {}, "boolean": True}
     assert (
         compare_sparql_results(expected_sparql_results, actual_sparql_results, [])
-        == False
+        == 0.0
     )
 
     expected_sparql_results = {"head": {}, "boolean": True}
     actual_sparql_results = {"head": {}, "boolean": False}
     assert (
         compare_sparql_results(expected_sparql_results, actual_sparql_results, [])
-        == False
+        == 0.0
     )
 
     expected_sparql_results = {"head": {}, "boolean": False}
     actual_sparql_results = {"head": {}, "boolean": False}
     assert (
         compare_sparql_results(expected_sparql_results, actual_sparql_results, [])
-        == True
+        == 1.0
     )
 
 
@@ -272,7 +272,7 @@ def test_compare_sparql_results_exactly_the_same_results_as_expected() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["person", "personName"]
         )
-        == True
+        == 1.0
     )
     assert (
         compare_sparql_results(
@@ -281,7 +281,7 @@ def test_compare_sparql_results_exactly_the_same_results_as_expected() -> None:
             ["person", "personName"],
             results_are_ordered=True,
         )
-        == True
+        == 1.0
     )
 
     required_columns = ["personName"]
@@ -289,7 +289,7 @@ def test_compare_sparql_results_exactly_the_same_results_as_expected() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, required_columns
         )
-        == True
+        == 1.0
     )
     assert (
         compare_sparql_results(
@@ -298,7 +298,7 @@ def test_compare_sparql_results_exactly_the_same_results_as_expected() -> None:
             required_columns,
             results_are_ordered=True,
         )
-        == True
+        == 1.0
     )
 
     required_columns = []
@@ -306,7 +306,7 @@ def test_compare_sparql_results_exactly_the_same_results_as_expected() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, required_columns
         )
-        == True
+        == 1.0
     )
     assert (
         compare_sparql_results(
@@ -315,7 +315,7 @@ def test_compare_sparql_results_exactly_the_same_results_as_expected() -> None:
             required_columns,
             results_are_ordered=True,
         )
-        == True
+        == 1.0
     )
 
 
@@ -355,7 +355,7 @@ def test_compare_sparql_results_same_results_as_expected_but_variables_are_renam
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["person", "personName"]
         )
-        == True
+        == 1.0
     )
     assert (
         compare_sparql_results(
@@ -364,7 +364,7 @@ def test_compare_sparql_results_same_results_as_expected_but_variables_are_renam
             ["person", "personName"],
             results_are_ordered=True,
         )
-        == True
+        == 1.0
     )
 
     required_columns = ["personName"]
@@ -372,7 +372,7 @@ def test_compare_sparql_results_same_results_as_expected_but_variables_are_renam
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, required_columns
         )
-        == True
+        == 1.0
     )
     assert (
         compare_sparql_results(
@@ -381,7 +381,7 @@ def test_compare_sparql_results_same_results_as_expected_but_variables_are_renam
             required_columns,
             results_are_ordered=True,
         )
-        == True
+        == 1.0
     )
 
     required_columns = []
@@ -389,7 +389,7 @@ def test_compare_sparql_results_same_results_as_expected_but_variables_are_renam
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, required_columns
         )
-        == True
+        == 1.0
     )
     assert (
         compare_sparql_results(
@@ -398,7 +398,7 @@ def test_compare_sparql_results_same_results_as_expected_but_variables_are_renam
             required_columns,
             results_are_ordered=True,
         )
-        == True
+        == 1.0
     )
 
 
@@ -435,7 +435,7 @@ def test_compare_sparql_results_equals_one_binding() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["average_person_age"]
         )
-        == True
+        == 1.0
     )
 
 
@@ -474,7 +474,7 @@ def test_compare_sparql_results_not_equals() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["person", "personName"]
         )
-        == False
+        == 0.0
     )
     assert (
         compare_sparql_results(
@@ -483,7 +483,7 @@ def test_compare_sparql_results_not_equals() -> None:
             ["person", "personName"],
             results_are_ordered=True,
         )
-        == False
+        == 0.0
     )
 
 
@@ -522,7 +522,7 @@ def test_compare_sparql_results_different_order() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["person", "personName"]
         )
-        == True
+        == 1.0
     )
     assert (
         compare_sparql_results(
@@ -531,7 +531,7 @@ def test_compare_sparql_results_different_order() -> None:
             ["person", "personName"],
             results_are_ordered=True,
         )
-        == False
+        == 0.0
     )
 
 
@@ -591,7 +591,7 @@ def test_compare_sparql_results_different_order_optional_columns() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, required_columns
         )
-        == True
+        == 1.0
     )
     assert (
         compare_sparql_results(
@@ -600,7 +600,7 @@ def test_compare_sparql_results_different_order_optional_columns() -> None:
             required_columns,
             results_are_ordered=True,
         )
-        == False
+        == 0.0
     )
 
 
@@ -651,7 +651,7 @@ def test_compare_sparql_results_empty_binding_values() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["x", "y"]
         )
-        == False
+        == 0.0
     )
 
     expected_sparql_results = {
@@ -700,7 +700,7 @@ def test_compare_sparql_results_empty_binding_values() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["x", "y"]
         )
-        == True
+        == 1.0
     )
 
 
@@ -733,24 +733,34 @@ def test_compare_sparql_results_additional_column() -> None:
         compare_sparql_results(
             expected_sparql_results, actual_sparql_results, ["person"]
         )
-        == True
+        == 1.0
     )
 
 
 def test_compare_sparql_results_equal_binding_values() -> None:
     expected_sparql_results = {
-        "head": {"vars": ["person", "personName", "Age"]},
+        "head": {"vars": ["character", "characterName", "age"]},
         "results": {
             "bindings": [
                 {
-                    "person": {"type": "uri", "value": "http://example.com/Person/1"},
-                    "personName": {"type": "literal", "value": "Neli"},
-                    "Age": {"type": "literal", "value": "100"},
+                    "character": {"type": "uri", "value": "http://example.com/Person/1"},
+                    "characterName": {"type": "literal", "value": "Aragorn"},
+                    "age": {"type": "literal", "value": "87"},
                 },
                 {
-                    "person": {"type": "uri", "value": "http://example.com/Person/1"},
-                    "personName": {"type": "literal", "value": "Reni"},
-                    "Age": {"type": "literal", "value": "101"},
+                    "character": {"type": "uri", "value": "http://example.com/Person/2"},
+                    "characterName": {"type": "literal", "value": "Arwen"},
+                    "age": {"type": "literal", "value": "2778"},
+                },
+                {
+                    "character": {"type": "uri", "value": "http://example.com/Person/1"},
+                    "characterName": {"type": "literal", "value": "Elessar"},
+                    "age": {"type": "literal", "value": "87"},
+                },
+                {
+                    "character": {"type": "uri", "value": "http://example.com/Person/2"},
+                    "characterName": {"type": "literal", "value": "Undómiel"},
+                    "age": {"type": "literal", "value": "2778"},
                 },
             ]
         },
@@ -761,13 +771,23 @@ def test_compare_sparql_results_equal_binding_values() -> None:
             "bindings": [
                 {
                     "x": {"type": "uri", "value": "http://example.com/Person/1"},
-                    "y": {"type": "literal", "value": "Reni"},
-                    "z": {"type": "literal", "value": "101"},
+                    "y": {"type": "literal", "value": "Elessar"},
+                    "z": {"type": "literal", "value": "87"},
                 },
                 {
                     "x": {"type": "uri", "value": "http://example.com/Person/1"},
-                    "y": {"type": "literal", "value": "Neli"},
-                    "z": {"type": "literal", "value": "100"},
+                    "y": {"type": "literal", "value": "Aragorn"},
+                    "z": {"type": "literal", "value": "87"},
+                },
+                {
+                    "x": {"type": "uri", "value": "http://example.com/Person/2"},
+                    "y": {"type": "literal", "value": "Undómiel"},
+                    "z": {"type": "literal", "value": "2778"},
+                },
+                {
+                    "x": {"type": "uri", "value": "http://example.com/Person/2"},
+                    "y": {"type": "literal", "value": "Arwen"},
+                    "z": {"type": "literal", "value": "2778"},
                 },
             ]
         },
@@ -777,9 +797,87 @@ def test_compare_sparql_results_equal_binding_values() -> None:
         compare_sparql_results(
             expected_sparql_results,
             actual_sparql_results,
-            ["person", "personName", "Age"],
+            ["character", "characterName", "age"],
         )
-        == True
+        == 1.0
+    )
+    assert (
+        compare_sparql_results(
+            actual_sparql_results,
+            expected_sparql_results,
+            ["x", "y", "z"],
+        )
+        == 1.0
+    )
+
+    expected_sparql_results = {
+        "head": {"vars": ["character"]},
+        "results": {
+            "bindings": [
+                {
+                    "character": {"type": "uri", "value": "http://example.com/Person/2"},
+                },
+                {
+                    "character": {"type": "uri", "value": "http://example.com/Person/1"},
+                },
+            ]
+        },
+    }
+
+    assert (
+        compare_sparql_results(
+            expected_sparql_results,
+            actual_sparql_results,
+            ["character"],
+        )
+        == 1.0
+    )
+    assert (
+        compare_sparql_results(
+            actual_sparql_results,
+            expected_sparql_results,
+            ["x"],
+        )
+        == 1.0
+    )
+
+    assert (
+        compare_sparql_results(
+            expected_sparql_results,
+            actual_sparql_results,
+            ["character"],
+            results_are_ordered=True,
+        )
+        == 0.0
+    )
+    assert (
+        compare_sparql_results(
+            actual_sparql_results,
+            expected_sparql_results,
+            ["x"],
+            results_are_ordered=True,
+        )
+        == 0.0
+    )
+
+    assert (
+        compare_sparql_results(
+            expected_sparql_results,
+            actual_sparql_results,
+            ["character"],
+            ignore_duplicates=False,
+        )
+        == 0.0
+    )
+
+    assert (
+        compare_sparql_results(
+            actual_sparql_results,
+            expected_sparql_results,
+            ["x"],
+            ignore_duplicates=False,
+        )
+        == 0.0
     )
 
 
@@ -791,26 +889,26 @@ def test_compare_sparql_results_equal_binding_values_numerical_values() -> None:
                 {
                     "weight": {
                         "type": "literal",
-                        "value": "40.123456789",
+                        "value": "72.5",
                         "datatype": "http://www.w3.org/2001/XMLSchema#float",
                     },
-                    "personName": {"type": "literal", "value": "Neli"},
+                    "personName": {"type": "literal", "value": "Doctor Who"},
                     "Age": {
                         "type": "literal",
-                        "value": "100",
+                        "value": "903",
                         "datatype": "http://www.w3.org/2001/XMLSchema#integer",
                     },
                 },
                 {
                     "weight": {
                         "type": "literal",
-                        "value": "41.123456789",
+                        "value": "80.123456789",
                         "datatype": "http://www.w3.org/2001/XMLSchema#float",
                     },
-                    "personName": {"type": "literal", "value": "Reni"},
+                    "personName": {"type": "literal", "value": "The Master"},
                     "Age": {
                         "type": "literal",
-                        "value": "101",
+                        "value": "1024",
                         "datatype": "http://www.w3.org/2001/XMLSchema#integer",
                     },
                 },
@@ -824,26 +922,26 @@ def test_compare_sparql_results_equal_binding_values_numerical_values() -> None:
                 {
                     "x": {
                         "type": "literal",
-                        "value": "41.12345678",
+                        "value": "80.12345678",
                         "datatype": "http://www.w3.org/2001/XMLSchema#float",
                     },
-                    "y": {"type": "literal", "value": "Reni"},
+                    "y": {"type": "literal", "value": "The Master"},
                     "z": {
                         "type": "literal",
-                        "value": "101",
+                        "value": "1024",
                         "datatype": "http://www.w3.org/2001/XMLSchema#integer",
                     },
                 },
                 {
                     "x": {
                         "type": "literal",
-                        "value": "40.12345678",
+                        "value": "72.50000000001",
                         "datatype": "http://www.w3.org/2001/XMLSchema#float",
                     },
-                    "y": {"type": "literal", "value": "Neli"},
+                    "y": {"type": "literal", "value": "Doctor Who"},
                     "z": {
                         "type": "literal",
-                        "value": "100",
+                        "value": "903",
                         "datatype": "http://www.w3.org/2001/XMLSchema#integer",
                     },
                 },
@@ -857,5 +955,5 @@ def test_compare_sparql_results_equal_binding_values_numerical_values() -> None:
             actual_sparql_results,
             ["weight", "personName", "Age"],
         )
-        == True
+        == 1.0
     )

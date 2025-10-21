@@ -1,11 +1,10 @@
 import json
 from collections import defaultdict
-from typing import Any
 from collections.abc import Sequence
+from typing import Any
 
 from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
-
 
 Match = tuple[int, int, int, float]
 Step = dict[str, Any]
@@ -23,6 +22,7 @@ def compare_steps_outputs(reference_step: Step, actual_step: Step) -> float:
             json.loads(actual_output),
             reference_step["required_columns"],
             reference_step.get("ordered", False),
+            reference_step.get("ignore_duplicates", True),
         )
     if reference_step.get("output_media_type") == "application/json":
         return float(json.loads(reference_output) == json.loads(actual_output))

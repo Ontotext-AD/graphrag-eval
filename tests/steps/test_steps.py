@@ -9,7 +9,7 @@ from graphrag_eval.steps.evaluation import (
 )
 
 
-sparkle_expected_step = {
+sparql_expected_step = {
     "name": "sparql_query",
     "args": {
         "query": "\nPREFIX cimex: <https://rawgit2.com/statnett/Talk2PowerSystem/main/demo1/cimex/>\nPREFIX cim: <https://cim.ucaiug.io/ns#>\nPREFIX rank: <http://www.ontotext.com/owlim/RDFRank#>\nPREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nselect distinct ?transformer ?transformerName\nwhere {\n    bind(<urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f> as ?substation)\n\n    ?transformer a cim:PowerTransformer ;\n      cim:Equipment.EquipmentContainer ?substation ;\n      cim:IdentifiedObject.name ?transformerName .\n}\n"
@@ -19,7 +19,7 @@ sparkle_expected_step = {
     "required_columns": ["transformer", "transformerName"],
     "ordered": False,
 }
-sparkle_actual_step = {
+sparql_actual_step = {
     "name": "sparql_query",
     "args": {
         "query": "SELECT ?transformer ?transformerName WHERE {\n  ?transformer a cim:PowerTransformer ;\n               cim:Equipment.EquipmentContainer <urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f> ;\n               cim:IdentifiedObject.name ?transformerName .\n}"
@@ -137,7 +137,7 @@ retrieval_error_step = {
 
 
 def test_compare_outputs_sparql_results():
-    assert compare_steps_outputs(sparkle_expected_step, sparkle_actual_step) == 1.0
+    assert compare_steps_outputs(sparql_expected_step, sparql_actual_step) == 1.0
 
 
 def test_compare_outputs_json():
@@ -295,13 +295,13 @@ def test_get_steps_matches():
 
 def test_evaluate_steps_groups():
     expected_groups = [
-        [sparkle_expected_step],
+        [sparql_expected_step],
         [retrieval_expected_step],
     ]
-    actual_steps = [retrieval_actual_step, sparkle_actual_step]
+    actual_steps = [retrieval_actual_step, sparql_actual_step]
     assert evaluate_steps(expected_groups, actual_steps) == 0.6
     assert evaluate_steps(expected_groups, [retrieval_actual_step]) == 0.6
-    assert evaluate_steps(expected_groups, [sparkle_actual_step]) == 0.0
+    assert evaluate_steps(expected_groups, [sparql_actual_step]) == 0.0
     assert evaluate_steps(expected_groups, list(reversed(actual_steps))) == 0.6
     assert evaluate_steps(expected_groups, [calculation_actual_step]) == 0.0
     assert evaluate_steps(expected_groups, [retrieval_error_step]) == 0.0
@@ -310,12 +310,12 @@ def test_evaluate_steps_groups():
 
 def test_evaluate_steps_last_group():
     expected_groups = [
-        [sparkle_expected_step, retrieval_expected_step]
+        [sparql_expected_step, retrieval_expected_step]
     ]
-    actual_steps = [retrieval_actual_step, sparkle_actual_step]
+    actual_steps = [retrieval_actual_step, sparql_actual_step]
     assert evaluate_steps(expected_groups, actual_steps) == 0.8
     assert evaluate_steps(expected_groups, [retrieval_actual_step]) == 0.3
-    assert evaluate_steps(expected_groups, [sparkle_actual_step]) == 0.5
+    assert evaluate_steps(expected_groups, [sparql_actual_step]) == 0.5
     assert evaluate_steps(expected_groups, list(reversed(actual_steps))) == 0.8
     assert evaluate_steps(expected_groups, [calculation_actual_step]) == 0.0
     assert evaluate_steps(expected_groups, [retrieval_error_step]) == 0.0
