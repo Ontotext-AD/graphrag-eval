@@ -146,6 +146,15 @@ per_template:
 micro:
   number_of_error_samples: 0
   number_of_success_samples: 1
+  steps:
+    total:
+      autocomplete_search: 1
+      retrieval: 1
+      sparql_query: 1
+    once_per_sample:
+      autocomplete_search: 1
+      retrieval: 1
+      sparql_query: 1
   answer_recall:
     max: 1.0
     mean: 1.0

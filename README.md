@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Graphwise Logo" src=".github/Graphwise_Logo.jpg">
+  <img alt="Graphwise Logo" src="https://github.com/Ontotext-AD/graphrag-eval/blob/main/.github/Graphwise_Logo.jpg">
 </p>
 
 # QA Evaluation
@@ -8,7 +8,7 @@ This is a Python module for assessing the quality of question-answering systems 
 
 ## License
 
-Apache-2.0 License. See [LICENSE](LICENSE) file for details.
+Apache-2.0 License. See [LICENSE](https://github.com/Ontotext-AD/graphrag-eval/blob/main/LICENSE) file for details.
 
 ## Installation
 
@@ -572,7 +572,7 @@ Aggregates are:
 - `per_template`: a dictionary mapping a template identifier to the following statistics:
   - `number_of_error_samples`: number of questions for this template, which resulted in error response
   - `number_of_success_samples`: number of questions for this template, which resulted in successful response
-  - `sum`, `mean`, `median`, `min` and `max` statistics over all non-error responses for this template for the following metrics:
+  - `sum`, `mean`, `median`, `min` and `max` statistics over all questions for this template for the following metrics, where they are present:
     - `input_tokens`
     - `output_tokens`
     - `total_tokens`
@@ -589,14 +589,19 @@ Aggregates are:
     - `retrieval_context_precision`
     - `retrieval_context_f1`
     - `steps`: includes:
-      - `steps`: for each step type how many times it was executed
+      - `total`: for each step type how many times it was executed
       - `once_per_sample`: how many times each step was executed, counted only once per question
       - `empty_results`: how many times the step was executed and returned empty results
       - `errors`: how many times the step was executed and resulted in error
 - `micro`: statistics across questions, regardless of template. It includes:
   - `number_of_error_samples`: total number of questions, which resulted in error response
   - `number_of_success_samples`: total number of questions, which resulted in successful response
-  - `sum`, `mean`, `median`, `min` and `max` statistics over all non-error responses for the following metrics:
+  - `steps`: includes:
+    - `total`: for each step type how many times it was executed
+    - `once_per_sample`: how many times each step was executed, counted only once per question
+    - `empty_results`: how many times the step was executed and returned empty results
+    - `errors`: how many times the step was executed and resulted in error
+  - `sum`, `mean`, `median`, `min` and `max` statistics for the following metrics, where they are present:
     - `input_tokens`
     - `output_tokens`
     - `total_tokens`

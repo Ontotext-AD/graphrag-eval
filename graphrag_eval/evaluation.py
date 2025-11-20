@@ -6,7 +6,7 @@ def run_evaluation(
         responses_dict: dict,
 ) -> list[dict]:
     # Output metrics are not nested, for simpler aggregation
-    answer_correctess_evaluator = None
+    answer_correctness_evaluator = None
     evaluation_results = []
     for template in qa_dataset:
         template_id = template["template_id"]
@@ -26,9 +26,9 @@ def run_evaluation(
                     "status": "error",
                     "error": actual_result["error"],
                 })
-                evaluation_results.append(eval_result)
-                continue
-            eval_result["status"] = "success"
+            else:
+                eval_result["status"] = "success"
+
             if "actual_answer" in actual_result:
                 eval_result["actual_answer"] = actual_result["actual_answer"]
                 from graphrag_eval import answer_relevance
@@ -38,25 +38,24 @@ def run_evaluation(
                         actual_result["actual_answer"],
                     )
                 )
-            if "reference_answer" in question and "actual_answer" in actual_result:
-                from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
-                if not answer_correctess_evaluator:
-                    answer_correctess_evaluator = AnswerCorrectnessEvaluator()
-                eval_result.update(
-                    answer_correctess_evaluator.get_correctness_dict(
-                        question,
-                        actual_result,
+
+                if "reference_answer" in question:
+                    from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+                    if not answer_correctness_evaluator:
+                        answer_correctness_evaluator = AnswerCorrectnessEvaluator()
+                    eval_result.update(
+                        answer_correctness_evaluator.get_correctness_dict(
+                            question,
+                            actual_result,
+                        )
                     )
-                )
-            if "actual_steps" in actual_result:
-                eval_result.update(
-                    get_steps_evaluation_result_dict(question, actual_result)
-                )
-            eval_result.update({
-                "input_tokens": actual_result["input_tokens"],
-                "output_tokens": actual_result["output_tokens"],
-                "total_tokens": actual_result["total_tokens"],
-                "elapsed_sec": actual_result["elapsed_sec"],
-            })
+
+            eval_result.update(
+                get_steps_evaluation_result_dict(question, actual_result)
+            )
+            for key in "input_tokens", "output_tokens", "total_tokens", "elapsed_sec":
+                if key in actual_result:
+                    eval_result[key] = actual_result[key]
+
             evaluation_results.append(eval_result)
     return evaluation_results
