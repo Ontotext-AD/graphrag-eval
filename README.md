@@ -601,7 +601,7 @@ Aggregates are:
     - `once_per_sample`: how many times each step was executed, counted only once per question
     - `empty_results`: how many times the step was executed and returned empty results
     - `errors`: how many times the step was executed and resulted in error
-  - `sum`, `mean`, `median`, `min` and `max` statistics for the following metrics, where they are present:
+  - `sum`, `mean`, `median`, `min` and `max` statistics for the following metrics, over all questions where the metrics exist:
     - `input_tokens`
     - `output_tokens`
     - `total_tokens`
