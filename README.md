@@ -572,7 +572,7 @@ Aggregates are:
 - `per_template`: a dictionary mapping a template identifier to the following statistics:
   - `number_of_error_samples`: number of questions for this template, which resulted in error response
   - `number_of_success_samples`: number of questions for this template, which resulted in successful response
-  - `sum`, `mean`, `median`, `min` and `max` statistics over all questions for this template for the following metrics, where they are present:
+  - `sum`, `mean`, `median`, `min` and `max` statistics for the following metrics over all questions of this template for which the metrics exist:
     - `input_tokens`
     - `output_tokens`
     - `total_tokens`

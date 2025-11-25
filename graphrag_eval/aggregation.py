@@ -161,9 +161,9 @@ def compute_micro_stats(
 
     steps_summary = defaultdict(lambda: defaultdict(int))
     for template_steps_summary in steps_summary_per_template.values():
-        for k, steps_stats in template_steps_summary.items():
+        for summary_name, steps_stats in template_steps_summary.items():
             for step_id, count in steps_stats.items():
-                steps_summary[k][step_id] += count
+                steps_summary[summary_name][step_id] += count
     steps_summary = {k: dict(v) for k, v in steps_summary.items()}
     if len(steps_summary) > 0:
         micro_summary["steps"] = steps_summary
