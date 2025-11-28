@@ -1651,6 +1651,8 @@
       ordered: false
   status: error
   error: Some error
+  actual_steps: [ ]
+  steps_score: 0.0
 - template_id: list_all_substations_that_are_connected_via_an_ac_line_or_a_dc_line_to_substation_named_SUBSTATION
   question_id: f91fc938d606e5f6089912bebfaf114b
   question_text: List all substations that are connected via an AC-line or a DC line to

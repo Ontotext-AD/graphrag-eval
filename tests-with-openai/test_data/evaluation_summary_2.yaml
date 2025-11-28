@@ -2,6 +2,12 @@ per_template:
   list_all_transformers_within_Substation_SUBSTATION:
     number_of_error_samples: 1
     number_of_success_samples: 0
+    steps_score:
+      sum: 0
+      mean: 0
+      median: 0
+      min: 0
+      max: 0
     input_tokens:
       sum: 0
       mean: 0
@@ -29,6 +35,12 @@ per_template:
 micro:
   number_of_error_samples: 1
   number_of_success_samples: 0
+  steps_score:
+    sum: 0
+    mean: 0
+    median: 0
+    min: 0
+    max: 0
   input_tokens:
     sum: 0
     mean: 0
@@ -54,6 +66,8 @@ micro:
     min: 0
     max: 0
 macro:
+  steps_score:
+    mean: 0
   input_tokens:
     mean: 0
   output_tokens:

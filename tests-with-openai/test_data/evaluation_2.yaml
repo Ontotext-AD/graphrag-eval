@@ -45,3 +45,5 @@
         - transformerName
   status: error
   error: Some error
+  actual_steps: []
+  steps_score: 0.0

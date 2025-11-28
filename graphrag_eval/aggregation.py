@@ -131,9 +131,10 @@ def compute_per_template_stats(
 
 
 def compute_micro_stats(
-    number_of_samples_per_template_by_status,
-    stats_per_template,
-    step_metrics_per_template
+    number_of_samples_per_template_by_status: dict[str, dict[str, int]],
+    stats_per_template: dict[str, dict[str, Sequence[int]]],
+    steps_summary_per_template: dict[str, dict[str, dict[str, int]]],
+    step_metrics_per_template: dict[str, dict[str, Sequence[int]]],
 ) -> dict:
     values = number_of_samples_per_template_by_status.values()
     micro_summary = defaultdict(dict, {
@@ -157,6 +158,16 @@ def compute_micro_stats(
             micro_step_metrics[metric].extend(values)
     for metric, values in micro_step_metrics.items():
         micro_summary[metric] = stats_for_series(values)
+
+    steps_summary = defaultdict(lambda: defaultdict(int))
+    for template_steps_summary in steps_summary_per_template.values():
+        for summary_name, steps_stats in template_steps_summary.items():
+            for step_id, count in steps_stats.items():
+                steps_summary[summary_name][step_id] += count
+    steps_summary = {k: dict(v) for k, v in steps_summary.items()}
+    if len(steps_summary) > 0:
+        micro_summary["steps"] = steps_summary
+
     return dict(micro_summary)
 
 
@@ -198,8 +209,8 @@ def compute_aggregates(samples: list[dict]) -> dict:
 
         if "error" in sample:
             number_of_samples_per_template_by_status[template_id]["error"] += 1
-            continue
-        number_of_samples_per_template_by_status[template_id]["success"] += 1
+        else:
+            number_of_samples_per_template_by_status[template_id]["success"] += 1
         update_stats(sample, stats_per_template[template_id])
         update_steps_summary(sample, steps_summary_per_template[template_id])
         update_step_metrics(sample, step_metrics_per_template[template_id])
@@ -215,6 +226,7 @@ def compute_aggregates(samples: list[dict]) -> dict:
         "micro": compute_micro_stats(
             number_of_samples_per_template_by_status,
             stats_per_template,
+            steps_summary_per_template,
             step_metrics_per_template
         )
     }
