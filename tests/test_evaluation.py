@@ -7,9 +7,8 @@ from graphrag_eval import (
     run_evaluation,
 )
 from graphrag_eval.aggregation import stats_for_series
-from graphrag_eval.steps.evaluation import evaluate_steps
+from graphrag_eval.steps.evaluation import evaluate_steps, get_steps_matches
 from .util import read_responses
-
 
 DATA_DIR = Path(__file__).parent / "test_data"
 
@@ -113,7 +112,7 @@ def test_get_steps_matches():
         {"name": "step_a", "output": "result_a", "status": "success", "id": "4"},
         {"name": "step_b", "error": "error", "status": "error", "id": "5"},
     ]
-    assert evaluate_steps(expected_steps, actual_steps) == 0
+    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 0
     assert "matches" not in expected_steps[-1][0]
 
     expected_steps = [
@@ -133,7 +132,7 @@ def test_get_steps_matches():
         {"name": "step_a", "output": "result_a", "status": "success", "id": "5"},
         {"name": "step_b", "output": "result_b_1", "status": "success", "id": "6"},
     ]
-    assert evaluate_steps(expected_steps, actual_steps) == 1
+    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 1
     assert expected_steps[-1][0]["matches"] == "3"
 
     expected_steps = [
@@ -152,7 +151,7 @@ def test_get_steps_matches():
         {"name": "step_a", "output": "result_a", "status": "success", "id": "3"},
         {"name": "step_b", "output": "result_b_1", "status": "success", "id": "4"},
     ]
-    assert evaluate_steps(expected_steps, actual_steps) == 1
+    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 1
     assert expected_steps[-1][0]["matches"] == "4"
     assert expected_steps[-1][1]["matches"] == "1"
 
@@ -172,7 +171,7 @@ def test_get_steps_matches():
         {"name": "step_a", "output": "result_a", "status": "success", "id": "3"},
         {"name": "step_b", "output": "result_b_1", "status": "success", "id": "4"},
     ]
-    assert evaluate_steps(expected_steps, actual_steps) == 0.5
+    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 0.5
     assert expected_steps[-1][0]["matches"] == "4"
     assert "matches" not in expected_steps[-1][1]
 
@@ -188,7 +187,7 @@ def test_evaluate_steps_expected_select_actual_ask():
             encoding="utf-8"
         )
     )
-    assert evaluate_steps(expected_steps, actual_steps) == 0
+    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 0
     assert "matches" not in expected_steps[-1][0]
 
     expected_steps = yaml.safe_load(
@@ -201,7 +200,7 @@ def test_evaluate_steps_expected_select_actual_ask():
             encoding="utf-8"
         )
     )
-    assert evaluate_steps(expected_steps, actual_steps) == 0
+    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 0
     assert "matches" not in expected_steps[-1][0]
 
 
@@ -216,7 +215,7 @@ def test_evaluate_steps_expected_select_actual_describe():
             encoding="utf-8"
         )
     )
-    assert evaluate_steps(expected_steps, actual_steps) == 0
+    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 0
     assert "matches" not in expected_steps[-1][0]
 
 
@@ -231,6 +230,16 @@ def test_evaluate_steps_expected_select_actual_ask_and_then_select():
             encoding="utf-8"
         )
     )
-    assert evaluate_steps(expected_steps, actual_steps) == 1
+    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 1
     assert "matches" in expected_steps[-1][0]
     assert expected_steps[-1][0]["matches"] == "call_3qJK186HZj1twnr6x976slHN"
+
+
+def test_evaluate_timeseries_steps():
+    reference_data = yaml.safe_load(
+        (DATA_DIR / "reference_2.yaml").read_text(encoding="utf-8")
+    )
+    responses_path = DATA_DIR / "actual_responses_3.jsonl"
+    actual_responses = read_responses(responses_path)
+    evaluation_results = run_evaluation(reference_data, actual_responses)
+    assert evaluation_results[0]["steps_score"] == 1
