@@ -151,7 +151,7 @@ def test_get_steps_matches():
         {"name": "step_a", "output": "result_a", "status": "success", "id": "3"},
         {"name": "step_b", "output": "result_b_1", "status": "success", "id": "4"},
     ]
-    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 1
+    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 0.5
     assert expected_steps[-1][0]["matches"] == "4"
     assert expected_steps[-1][1]["matches"] == "1"
 
@@ -171,7 +171,7 @@ def test_get_steps_matches():
         {"name": "step_a", "output": "result_a", "status": "success", "id": "3"},
         {"name": "step_b", "output": "result_b_1", "status": "success", "id": "4"},
     ]
-    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 0.5
+    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 0.25
     assert expected_steps[-1][0]["matches"] == "4"
     assert "matches" not in expected_steps[-1][1]
 
@@ -230,16 +230,51 @@ def test_evaluate_steps_expected_select_actual_ask_and_then_select():
             encoding="utf-8"
         )
     )
-    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 1
+    assert evaluate_steps(expected_steps, actual_steps, get_steps_matches(expected_steps, actual_steps)) == 0.5
     assert "matches" in expected_steps[-1][0]
     assert expected_steps[-1][0]["matches"] == "call_3qJK186HZj1twnr6x976slHN"
 
 
-def test_evaluate_timeseries_steps():
+def test_evaluate_timeseries_steps_with_2_reference_sparql_queries():
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_2.yaml").read_text(encoding="utf-8")
     )
     responses_path = DATA_DIR / "actual_responses_3.jsonl"
     actual_responses = read_responses(responses_path)
     evaluation_results = run_evaluation(reference_data, actual_responses)
-    assert evaluation_results[0]["steps_score"] == 1
+    expected_evaluation_results = yaml.safe_load(
+        (DATA_DIR / "evaluation_4.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert expected_evaluation_results == evaluation_results
+
+
+def test_evaluate_timeseries_steps_with_1_reference_sparql_query():
+    reference_data = yaml.safe_load(
+        (DATA_DIR / "reference_3.yaml").read_text(encoding="utf-8")
+    )
+    responses_path = DATA_DIR / "actual_responses_3.jsonl"
+    actual_responses = read_responses(responses_path)
+    evaluation_results = run_evaluation(reference_data, actual_responses)
+    expected_evaluation_results = yaml.safe_load(
+        (DATA_DIR / "evaluation_5.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert expected_evaluation_results == evaluation_results
+
+
+def test_evaluate_timeseries_steps_with_1_iri_discovery():
+    reference_data = yaml.safe_load(
+        (DATA_DIR / "reference_4.yaml").read_text(encoding="utf-8")
+    )
+    responses_path = DATA_DIR / "actual_responses_3.jsonl"
+    actual_responses = read_responses(responses_path)
+    evaluation_results = run_evaluation(reference_data, actual_responses)
+    expected_evaluation_results = yaml.safe_load(
+        (DATA_DIR / "evaluation_6.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert expected_evaluation_results == evaluation_results

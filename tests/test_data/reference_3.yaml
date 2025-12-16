@@ -18,59 +18,29 @@
         required_columns:
         - uri
     - - args:
-          query: 'PREFIX nc: <https://cim4.eu/ns/nc#>
-SELECT ?border WHERE {
-  ?border a nc:BiddingZoneBorder ;
-    nc:BiddingZoneBorder.BiddingZoneOne <urn:uuid:83aa03e5-5fd0-431c-b8dd-acc08c21ed6a> ;
-    nc:BiddingZoneBorder.BiddingZoneTwo <urn:uuid:0f094148-164b-427a-a8e8-0c5f334688ae> .
-}'
-        name: sparql_query
-        output: '{
-  "head": {
-    "vars": [
-      "border"
-    ]
-  },
-  "results": {
-    "bindings": [
-      {
-        "border": {
-          "type": "uri",
-          "value": "urn:uuid:852b95c0-4c49-4ded-85b2-a8f2b610db30"
-        }
-      }
-    ]
-  }
-}'
-        output_media_type: application/sparql-results+json
-        required_columns:
-        - border
-      - args:
           query: 'PREFIX cimr: <https://cim.ucaiug.io/rules#>
 PREFIX cim: <https://cim.ucaiug.io/ns#>
-SELECT ?measurement ?mrid WHERE {
-  ?measurement a cim:Analog ;
-    cim:Measurement.PowerSystemResource <urn:uuid:852b95c0-4c49-4ded-85b2-a8f2b610db30> ;
-    cim:Measurement.measurementType "ThreePhaseActivePower-Flow-Estimated" ;
+PREFIX nc: <https://cim4.eu/ns/nc#>
+SELECT ?mrid WHERE {
+    ?border a nc:BiddingZoneBorder;
+    nc:BiddingZoneBorder.BiddingZoneOne <urn:uuid:83aa03e5-5fd0-431c-b8dd-acc08c21ed6a>;
+    nc:BiddingZoneBorder.BiddingZoneTwo <urn:uuid:0f094148-164b-427a-a8e8-0c5f334688ae>.
+    ?analog cim:Measurement.PowerSystemResource ?border;
+    cim:Measurement.measurementType "ThreePhaseActivePower-Flow-Estimated";
     cim:Analog.positiveFlowIn true ;
     cimr:Measurement.isInCognite true;
-    cim:IdentifiedObject.mRID ?mrid .
-} LIMIT 1'
+    cim:IdentifiedObject.mRID ?mrid.
+}'
         name: sparql_query
         output: '{
   "head": {
     "vars": [
-      "measurement",
       "mrid"
     ]
   },
   "results": {
     "bindings": [
       {
-        "measurement": {
-          "type": "uri",
-          "value": "urn:uuid:9bb00fb1-4e7f-831a-e040-1e828c94e833"
-        },
         "mrid": {
           "type": "literal",
           "value": "9bb00fb1-4e7f-831a-e040-1e828c94e833"

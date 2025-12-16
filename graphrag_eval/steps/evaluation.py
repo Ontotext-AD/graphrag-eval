@@ -49,7 +49,7 @@ def match_group(
     matches = []
 
     reference_group = reference_groups[group_idx]
-    for reference_idx, reference_step in enumerate(reference_group):
+    for reference_idx, reference_step in reversed(list(enumerate(reference_group))):
         name = reference_step["name"]
         candidates = reversed(candidates_by_name.get(name, []))
         for actual_idx in candidates:
@@ -84,33 +84,21 @@ def get_steps_matches(
     reference_groups: Sequence[StepsGroup],
     actual_steps: Sequence[Step],
 ) -> list[Match]:
-    # when we have autocomplete
-    # matches = []
-    # search_upto = len(actual_steps)
-    # for group_idx in reversed(range(len(reference_steps))):
-    #     group = reference_steps[group_idx]
-    #     candidates = collect_possible_matches_by_name(group, actual_steps, search_upto)
-    #
-    #     matched = match_group_by_output(reference_steps, group_idx, actual_steps, candidates)
-    #     if len(matched) == len(group):
-    #         # update search_upto to just before the highest matched actual index
-    #         matches.extend(matched)
-    #         search_upto = min(j for (_, j) in matched)
-    #     elif len(matched) < len(group):
-    #         matches.extend(matched)
-    #         break # a step is not matched and missing, abort
-    #     else:
-    #         break  # a step is not matched and missing, abort
-    # return matches
-
-    # for now, we have only the last step(s)
-    last_group = reference_groups[-1]
-    candidates = collect_possible_matches_by_name_and_status(
-        last_group,
-        actual_steps,
-        len(actual_steps)
-    )
-    return match_group(reference_groups, -1, actual_steps, candidates)
+    matches = []
+    search_upto = len(actual_steps)
+    for group_idx in reversed(range(len(reference_groups))):
+        group = reference_groups[group_idx]
+        candidates = collect_possible_matches_by_name_and_status(group, actual_steps, search_upto)
+        matched = match_group(reference_groups, group_idx, actual_steps, candidates)
+        if len(matched) == len(group):
+            matches.extend(matched)
+            search_upto = min(actual_idx for (_, _, actual_idx, _) in matched)
+        elif len(matched) < len(group):
+            matches.extend(matched)
+            break  # a step is not matched and missing, abort
+        else:
+            break  # a step is not matched and missing, abort
+    return matches
 
 
 def evaluate_steps(
@@ -123,8 +111,11 @@ def evaluate_steps(
         scores_by_group[ref_group_idx] += score
         reference_steps_groups[ref_group_idx][ref_match_idx]["matches"] \
             = actual_steps[actual_idx]["id"]
-    group_idx = -1  # For now, consider only the last reference group of steps
-    return scores_by_group[group_idx] / len(reference_steps_groups[group_idx])
+
+    steps_score = 0
+    for group_idx in range(len(reference_steps_groups)):
+        steps_score += scores_by_group[group_idx] / len(reference_steps_groups[group_idx])
+    return steps_score / len(reference_steps_groups)
 
 
 def get_steps_evaluation(reference: dict, actual: dict) -> dict:
