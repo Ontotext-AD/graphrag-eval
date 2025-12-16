@@ -9,6 +9,7 @@
       output_media_type: text/uri
       required_columns:
       - uri
+      matches: call_McU1eeVy7OpLxuD6J07bvqBi
     - args:
         query: NO3
       name: iri_discovery
@@ -16,6 +17,7 @@
       output_media_type: text/uri
       required_columns:
       - uri
+      matches: call_vMtXHDegeihqw1PjViNdh3M3
   - - args:
         query: 'PREFIX cimr: <https://cim.ucaiug.io/rules#>
 PREFIX cim: <https://cim.ucaiug.io/ns#>
@@ -250,7 +252,7 @@ SELECT ?mrid WHERE {
       \ \"sum\": -3881328.2995967865\n },\n {\n \"timestamp\": \"2025-12-10 00:00:00\"\
       ,\n \"max\": -106.10661315918,\n \"min\": -416.067596435547,\n \"sum\": -1366852.111000061\n\
       \ }\n ]\n}"
-  steps_score: 0.75
+  steps_score: 1
   input_tokens: 791569
   output_tokens: 15522
   total_tokens: 807091

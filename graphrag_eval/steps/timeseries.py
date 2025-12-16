@@ -127,34 +127,30 @@ def compare_points_in_time(
     return v_ref == v_act
 
 
-def compare_retrieve_time_series(reference_step: dict[str, Any], actual_step: dict[str, Any]) -> float:
+def compare_retrieve_time_series(
+    reference_step: dict[str, Any],
+    actual_step: dict[str, Any]
+) -> bool:
     reference_args = reference_step["args"]
     actual_args = actual_step["args"]
     if "mrid" in reference_args:
         if "limit" in reference_args:
-            return float(
-                normalize_str_value(reference_args["mrid"]) == normalize_str_value(actual_args.get("mrid")) \
+            return normalize_str_value(reference_args["mrid"]) == normalize_str_value(actual_args.get("mrid")) \
                 and reference_args["limit"] == actual_args.get("limit")
-            )
         else:
-            return float(
-                normalize_str_value(reference_args["mrid"]) == normalize_str_value(actual_args.get("mrid"))
-            )
+            return normalize_str_value(reference_args["mrid"]) == normalize_str_value(actual_args.get("mrid"))
     else:
-        return float(
-            "mrid" not in actual_args and reference_args.get("limit") == actual_args.get("limit")
-        )
+        return "mrid" not in actual_args and reference_args.get("limit") == actual_args.get("limit")
 
 
 def compare_retrieve_data_points(
     reference_step: dict[str, Any],
     actual_step: dict[str, Any],
     anchor_time: datetime,
-) -> float:
+) -> bool:
     reference_args = reference_step["args"]
     actual_args = actual_step["args"]
-    return float(
-        normalize_str_value(reference_args["external_id"]) == normalize_str_value(actual_args["external_id"]) \
+    return normalize_str_value(reference_args["external_id"]) == normalize_str_value(actual_args["external_id"]) \
         and normalize_granularity(reference_args.get("granularity")) == normalize_granularity(
             actual_args.get("granularity")) \
         and normalize_str_value(reference_args.get("aggregates")) == normalize_str_value(
@@ -162,4 +158,3 @@ def compare_retrieve_data_points(
         and compare_points_in_time(anchor_time, reference_args.get("start"), actual_args.get("start")) \
         and compare_points_in_time(anchor_time, reference_args.get("end"), actual_args.get("end")) \
         and reference_args.get("limit") == actual_args.get("limit")
-    )

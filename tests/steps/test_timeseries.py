@@ -221,7 +221,7 @@ def test_compare_retrieve_time_series():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_time_series(reference_step, actual_step) == 1.0
+    assert compare_retrieve_time_series(reference_step, actual_step) == True
 
     reference_step = {
         "name": "retrieve_time_series",
@@ -236,7 +236,7 @@ def test_compare_retrieve_time_series():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_time_series(reference_step, actual_step) == 0.0
+    assert compare_retrieve_time_series(reference_step, actual_step) == False
 
     reference_step = {
         "name": "retrieve_time_series",
@@ -251,7 +251,7 @@ def test_compare_retrieve_time_series():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_time_series(reference_step, actual_step) == 0.0
+    assert compare_retrieve_time_series(reference_step, actual_step) == False
 
     reference_step = {
         "name": "retrieve_time_series",
@@ -267,7 +267,7 @@ def test_compare_retrieve_time_series():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_time_series(reference_step, actual_step) == 1.0
+    assert compare_retrieve_time_series(reference_step, actual_step) == True
 
     reference_step = {
         "name": "retrieve_time_series",
@@ -284,7 +284,7 @@ def test_compare_retrieve_time_series():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_time_series(reference_step, actual_step) == 1.0
+    assert compare_retrieve_time_series(reference_step, actual_step) == True
 
     reference_step = {
         "name": "retrieve_time_series",
@@ -300,7 +300,7 @@ def test_compare_retrieve_time_series():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_time_series(reference_step, actual_step) == 1.0
+    assert compare_retrieve_time_series(reference_step, actual_step) == True
 
     reference_step = {
         "name": "retrieve_time_series",
@@ -323,7 +323,7 @@ def test_compare_retrieve_time_series():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_time_series(reference_step, actual_step) == 1.0
+    assert compare_retrieve_time_series(reference_step, actual_step) == True
 
     reference_step = {
         "name": "retrieve_time_series",
@@ -342,7 +342,7 @@ def test_compare_retrieve_time_series():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_time_series(reference_step, actual_step) == 0.0
+    assert compare_retrieve_time_series(reference_step, actual_step) == False
 
     reference_step = {
         "name": "retrieve_time_series",
@@ -359,7 +359,7 @@ def test_compare_retrieve_time_series():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_time_series(reference_step, actual_step) == 0.0
+    assert compare_retrieve_time_series(reference_step, actual_step) == False
 
     reference_step = {
         "name": "retrieve_time_series",
@@ -377,7 +377,7 @@ def test_compare_retrieve_time_series():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_time_series(reference_step, actual_step) == 1.0
+    assert compare_retrieve_time_series(reference_step, actual_step) == True
 
 
 def test_compare_retrieve_data_points():
@@ -395,7 +395,7 @@ def test_compare_retrieve_data_points():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == 1.0
+    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == True
 
     reference_step = {
         "name": "retrieve_data_points",
@@ -411,7 +411,7 @@ def test_compare_retrieve_data_points():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == 1.0
+    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == True
 
     reference_step = {
         "name": "retrieve_data_points",
@@ -433,7 +433,7 @@ def test_compare_retrieve_data_points():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == 1.0
+    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == True
 
     reference_step = {
         "name": "retrieve_data_points",
@@ -449,7 +449,7 @@ def test_compare_retrieve_data_points():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == 0.0
+    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == False
 
     reference_step = {
         "name": "retrieve_data_points",
@@ -467,7 +467,7 @@ def test_compare_retrieve_data_points():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == 1.0
+    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == True
 
     reference_step = {
         "name": "retrieve_data_points",
@@ -484,7 +484,7 @@ def test_compare_retrieve_data_points():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == 0.0
+    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == False
 
     reference_step = {
         "name": "retrieve_data_points",
@@ -506,7 +506,7 @@ def test_compare_retrieve_data_points():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == 1.0
+    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == True
 
     reference_step = {
         "name": "retrieve_data_points",
@@ -530,7 +530,7 @@ def test_compare_retrieve_data_points():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == 1.0
+    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == True
 
     reference_step = {
         "name": "retrieve_data_points",
@@ -554,4 +554,4 @@ def test_compare_retrieve_data_points():
         "id": "call_1MA7PL4KAPJ7riH2UrxseyZW",
         "status": "success",
     }
-    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == 0.0
+    assert compare_retrieve_data_points(reference_step, actual_step, datetime.now()) == False

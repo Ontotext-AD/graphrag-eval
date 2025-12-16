@@ -1,4 +1,4 @@
-from .steps.evaluation import get_steps_evaluation
+from .steps.evaluation import evaluate_steps
 
 
 def run_evaluation(
@@ -51,7 +51,7 @@ def run_evaluation(
                     )
 
             eval_result.update(
-                get_steps_evaluation(question, actual_result)
+                evaluate_steps(question, actual_result)
             )
             for key in "input_tokens", "output_tokens", "total_tokens", "elapsed_sec":
                 if key in actual_result:

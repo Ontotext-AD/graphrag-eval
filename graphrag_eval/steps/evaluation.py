@@ -3,6 +3,7 @@ from collections import defaultdict
 from collections.abc import Sequence
 from typing import Any
 
+from .iri_discovery import compare_iri_discovery
 from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
 from .timeseries import compare_retrieve_time_series, compare_retrieve_data_points
@@ -13,11 +14,14 @@ StepsGroup = Sequence[Step]  # We will index into a group
 
 
 def compare_steps(reference_step: Step, actual_step: Step) -> float:
-    actual_output = actual_step["output"]
+    reference_step_name = reference_step["name"]
+    actual_step_name = actual_step["name"]
     reference_output = reference_step.get("output")
+    actual_output = actual_step["output"]
     reference_output_media_type = reference_step.get("output_media_type")
 
-    if reference_output_media_type == "application/sparql-results+json":
+    if reference_step_name == actual_step_name == "sparql_query" \
+        and reference_output_media_type == "application/sparql-results+json":
         return compare_sparql_results(
             json.loads(reference_output),
             json.loads(actual_output),
@@ -25,17 +29,19 @@ def compare_steps(reference_step: Step, actual_step: Step) -> float:
             reference_step.get("ordered", False),
             reference_step.get("ignore_duplicates", True),
         )
-    elif reference_output_media_type == "application/json":
-        return float(json.loads(reference_output) == json.loads(actual_output))
-    elif reference_step["name"] == "retrieval" and reference_output:
+    elif reference_step_name == actual_step_name == "retrieval" and reference_output:
         ref_contexts_ids = [c["id"] for c in json.loads(reference_output)]
         act_contexts_ids = [c["id"] for c in json.loads(actual_output)]
         k = actual_step["args"]["k"]
         return recall_at_k(ref_contexts_ids, act_contexts_ids, k)
-    elif reference_step["name"] == "retrieve_time_series":
-        return compare_retrieve_time_series(reference_step, actual_step)
-    elif reference_step["name"] == "retrieve_data_points":
-        return compare_retrieve_data_points(reference_step, actual_step, actual_step["execution_timestamp"])
+    elif reference_step_name == actual_step_name == "retrieve_time_series":
+        return float(compare_retrieve_time_series(reference_step, actual_step))
+    elif reference_step_name == actual_step_name == "retrieve_data_points":
+        return float(compare_retrieve_data_points(reference_step, actual_step, actual_step["execution_timestamp"]))
+    elif reference_step_name == "iri_discovery":
+        return float(compare_iri_discovery(reference_step, actual_step))
+    elif reference_step_name == actual_step_name and reference_output_media_type == "application/json":
+        return float(json.loads(reference_output) == json.loads(actual_output))
     return float(reference_output == actual_output)
 
 
@@ -43,19 +49,17 @@ def match_group(
     reference_groups: Sequence[StepsGroup],
     group_idx: int,
     actual_steps: Sequence[Step],
-    candidates_by_name: dict[str, list[int]],
+    search_upto: int,
 ) -> list[Match]:
     used_actual_indices = set()
     matches = []
 
     reference_group = reference_groups[group_idx]
     for reference_idx, reference_step in reversed(list(enumerate(reference_group))):
-        name = reference_step["name"]
-        candidates = reversed(candidates_by_name.get(name, []))
-        for actual_idx in candidates:
-            if actual_idx in used_actual_indices:
+        for actual_idx, actual_step in reversed(list(enumerate(actual_steps[:search_upto]))):
+            if actual_idx in used_actual_indices or actual_step["status"] != "success":
                 continue
-            actual_step = actual_steps[actual_idx]
+
             score = compare_steps(reference_step, actual_step)
             if score > 0.0:
                 matches.append((group_idx, reference_idx, actual_idx, score))
@@ -64,23 +68,7 @@ def match_group(
     return matches
 
 
-def collect_possible_matches_by_name_and_status(
-    group: StepsGroup,
-    actual_steps: Sequence[Step],
-    search_upto: int,
-) -> dict[str, list[int]]:
-    group_by_name = defaultdict(list)
-
-    for j in range(search_upto):
-        name = actual_steps[j]["name"]
-        if actual_steps[j]["status"] == "success":
-            group_by_name[name].append(j)
-
-    reference_names = {step["name"] for step in group}
-    return {name: group_by_name[name] for name in reference_names if name in group_by_name}
-
-
-def get_steps_matches(
+def match_groups(
     reference_groups: Sequence[StepsGroup],
     actual_steps: Sequence[Step],
 ) -> list[Match]:
@@ -88,8 +76,7 @@ def get_steps_matches(
     search_upto = len(actual_steps)
     for group_idx in reversed(range(len(reference_groups))):
         group = reference_groups[group_idx]
-        candidates = collect_possible_matches_by_name_and_status(group, actual_steps, search_upto)
-        matched = match_group(reference_groups, group_idx, actual_steps, candidates)
+        matched = match_group(reference_groups, group_idx, actual_steps, search_upto)
         if len(matched) == len(group):
             matches.extend(matched)
             search_upto = min(actual_idx for (_, _, actual_idx, _) in matched)
@@ -101,7 +88,7 @@ def get_steps_matches(
     return matches
 
 
-def evaluate_steps(
+def calculate_steps_score(
     reference_steps_groups: Sequence[StepsGroup],
     actual_steps: Sequence[Step],
     matches: Sequence[Match]
@@ -118,7 +105,7 @@ def evaluate_steps(
     return steps_score / len(reference_steps_groups)
 
 
-def get_steps_evaluation(reference: dict, actual: dict) -> dict:
+def evaluate_steps(reference: dict, actual: dict) -> dict:
     eval_result = {}
     actual_steps = actual.get("actual_steps", [])
     eval_result["actual_steps"] = actual_steps
@@ -134,9 +121,8 @@ def get_steps_evaluation(reference: dict, actual: dict) -> dict:
             actual_step.update(result)
     if "reference_steps" in reference:
         reference_steps = reference["reference_steps"]
-        matches = get_steps_matches(reference_steps, actual_steps)
-        eval_result["steps_score"] \
-            = evaluate_steps(reference_steps, actual_steps, matches)
+        matches = match_groups(reference_steps, actual_steps)
+        eval_result["steps_score"] = calculate_steps_score(reference_steps, actual_steps, matches)
         for ref_group_idx, ref_match_idx, act_idx, _ in matches:
             reference_step = reference_steps[ref_group_idx][ref_match_idx]
             actual_step = actual_steps[act_idx]
