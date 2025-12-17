@@ -5554,4 +5554,4 @@ ragas = ["langchain-openai", "langchain_community", "langevals", "litellm", "rag
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.13"
-content-hash = "bd31de204749523cb47aed18f08845910442ceac0fcdb5266a12a77387b3d46d"
+content-hash = "9acf2e6239187a9088de0dd36dab199ca1a024f926ef5325974f6dd5b729cba9"

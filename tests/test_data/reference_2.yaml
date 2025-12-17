@@ -1,0 +1,94 @@
+- template_id: timeseries_template_1
+  questions:
+  - id: timeseries_template_1_question_1
+    question_text: Power flow from NO1 to NO3; for 2025, weekly average, min, max
+    reference_steps:
+    - - args:
+          query: NO1
+        name: iri_discovery
+        output: urn:uuid:83aa03e5-5fd0-431c-b8dd-acc08c21ed6a
+        output_media_type: text/uri
+        required_columns:
+        - uri
+      - args:
+          query: NO3
+        name: iri_discovery
+        output: urn:uuid:0f094148-164b-427a-a8e8-0c5f334688ae
+        output_media_type: text/uri
+        required_columns:
+        - uri
+    - - args:
+          query: 'PREFIX nc: <https://cim4.eu/ns/nc#>
+SELECT ?border WHERE {
+  ?border a nc:BiddingZoneBorder ;
+    nc:BiddingZoneBorder.BiddingZoneOne <urn:uuid:83aa03e5-5fd0-431c-b8dd-acc08c21ed6a> ;
+    nc:BiddingZoneBorder.BiddingZoneTwo <urn:uuid:0f094148-164b-427a-a8e8-0c5f334688ae> .
+}'
+        name: sparql_query
+        output: '{
+  "head": {
+    "vars": [
+      "border"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "border": {
+          "type": "uri",
+          "value": "urn:uuid:852b95c0-4c49-4ded-85b2-a8f2b610db30"
+        }
+      }
+    ]
+  }
+}'
+        output_media_type: application/sparql-results+json
+        required_columns:
+        - border
+      - args:
+          query: 'PREFIX cimr: <https://cim.ucaiug.io/rules#>
+PREFIX cim: <https://cim.ucaiug.io/ns#>
+SELECT ?measurement ?mrid WHERE {
+  ?measurement a cim:Analog ;
+    cim:Measurement.PowerSystemResource <urn:uuid:852b95c0-4c49-4ded-85b2-a8f2b610db30> ;
+    cim:Measurement.measurementType "ThreePhaseActivePower-Flow-Estimated" ;
+    cim:Analog.positiveFlowIn true ;
+    cimr:Measurement.isInCognite true;
+    cim:IdentifiedObject.mRID ?mrid .
+} LIMIT 1'
+        name: sparql_query
+        output: '{
+  "head": {
+    "vars": [
+      "measurement",
+      "mrid"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "measurement": {
+          "type": "uri",
+          "value": "urn:uuid:9bb00fb1-4e7f-831a-e040-1e828c94e833"
+        },
+        "mrid": {
+          "type": "literal",
+          "value": "9bb00fb1-4e7f-831a-e040-1e828c94e833"
+        }
+      }
+    ]
+  }
+}'
+        output_media_type: application/sparql-results+json
+        required_columns:
+        - mrid
+    - - args:
+          mrid: 9bb00fb1-4e7f-831a-e040-1e828c94e833
+        name: retrieve_time_series
+    - - args:
+          external_id: 9bb00fb1-4e7f-831a-e040-1e828c94e833_estimated_value
+          aggregates: [ 'average', 'min', 'max' ]
+          granularity: 1w
+          start: 2025-01-01T00:00:00Z
+          end: 2026-01-01T00:00:00Z
+        name: retrieve_data_points
