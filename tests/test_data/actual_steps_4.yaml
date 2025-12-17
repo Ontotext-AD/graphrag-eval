@@ -32,6 +32,7 @@
     literal\",\n          \"value\": \"0.00217\"\n        }\n      }\n    ]\n  }\n\
     }"
   status: success
+  execution_timestamp: '2025-12-17T10:48:53Z'
 - args:
     query: ASK { <urn:uuid:f176965a-9aeb-11e5-91da-b8763fd99c5f> a cim:TopologicalNode
       . }
@@ -39,6 +40,7 @@
   name: sparql_query
   output: "{\n  \"head\": {},\n  \"boolean\": false\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:49:18Z'
 - args:
     query: ASK { <urn:uuid:47eb7c2a-d0f6-11e7-9f7b-b46d83638f70> a cim:TopologicalNode
       . }
@@ -46,6 +48,7 @@
   name: sparql_query
   output: "{\n  \"head\": {},\n  \"boolean\": true\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:49:43Z'
 - args:
     query: SELECT ?voltageLevel WHERE { <urn:uuid:47eb7c2a-d0f6-11e7-9f7b-b46d83638f70>
       cim:TopologicalNode.ConnectivityNodeContainer ?voltageLevel . ?voltageLevel
@@ -57,3 +60,4 @@
     \          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769660-9aeb-11e5-91da-b8763fd99c5f\"\
     \n        }\n      }\n    ]\n  }\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:50:08Z'

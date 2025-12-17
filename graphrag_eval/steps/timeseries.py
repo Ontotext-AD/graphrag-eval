@@ -5,12 +5,12 @@ from typing import Any
 from dateutil import parser
 
 
-def normalize_str_value(val: str | list[str] | None) -> list[str] | None:
-    if not val:
-        return val
-    if type(val) == str:
-        return [val]
-    return sorted(val)
+def normalize_str_values(vals: str | list[str] | None) -> list[str] | None:
+    if not vals:
+        return vals
+    if isinstance(vals, str):
+        return [vals]
+    return sorted(vals)
 
 
 def normalize_granularity(granularity: str | None) -> str | None:
@@ -115,16 +115,16 @@ def compare_points_in_time(
 
     anchor_utc = to_utc_timezone(anchor_time)
 
-    v_ref = to_utc_timezone(normalize_point_in_time(reference_time, anchor_utc))
-    v_act = to_utc_timezone(normalize_point_in_time(actual_time, anchor_utc))
+    ref_utc = to_utc_timezone(normalize_point_in_time(reference_time, anchor_utc))
+    act_utc = to_utc_timezone(normalize_point_in_time(actual_time, anchor_utc))
 
-    if isinstance(v_ref, datetime) and isinstance(v_act, datetime):
+    if isinstance(ref_utc, datetime) and isinstance(act_utc, datetime):
         if use_tolerance:
-            diff = abs((v_ref - v_act).total_seconds())
+            diff = abs((ref_utc - act_utc).total_seconds())
             return diff <= tolerance_seconds
-        return v_ref == v_act
+        return ref_utc == act_utc
 
-    return v_ref == v_act
+    return ref_utc == act_utc
 
 
 def compare_retrieve_time_series(
@@ -135,10 +135,10 @@ def compare_retrieve_time_series(
     actual_args = actual_step["args"]
     if "mrid" in reference_args:
         if "limit" in reference_args:
-            return normalize_str_value(reference_args["mrid"]) == normalize_str_value(actual_args.get("mrid")) \
+            return normalize_str_values(reference_args["mrid"]) == normalize_str_values(actual_args.get("mrid")) \
                 and reference_args["limit"] == actual_args.get("limit")
         else:
-            return normalize_str_value(reference_args["mrid"]) == normalize_str_value(actual_args.get("mrid"))
+            return normalize_str_values(reference_args["mrid"]) == normalize_str_values(actual_args.get("mrid"))
     else:
         return "mrid" not in actual_args and reference_args.get("limit") == actual_args.get("limit")
 
@@ -150,10 +150,10 @@ def compare_retrieve_data_points(
 ) -> bool:
     reference_args = reference_step["args"]
     actual_args = actual_step["args"]
-    return normalize_str_value(reference_args["external_id"]) == normalize_str_value(actual_args["external_id"]) \
+    return normalize_str_values(reference_args["external_id"]) == normalize_str_values(actual_args["external_id"]) \
         and normalize_granularity(reference_args.get("granularity")) == normalize_granularity(
             actual_args.get("granularity")) \
-        and normalize_str_value(reference_args.get("aggregates")) == normalize_str_value(
+        and normalize_str_values(reference_args.get("aggregates")) == normalize_str_values(
             actual_args.get("aggregates")) \
         and compare_points_in_time(anchor_time, reference_args.get("start"), actual_args.get("start")) \
         and compare_points_in_time(anchor_time, reference_args.get("end"), actual_args.get("end")) \

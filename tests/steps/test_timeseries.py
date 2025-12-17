@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from graphrag_eval.steps.timeseries import (
-    normalize_str_value,
+    normalize_str_values,
     normalize_granularity,
     normalize_relative_time,
     is_relative_time,
@@ -13,11 +13,11 @@ from graphrag_eval.steps.timeseries import (
 )
 
 
-def test_normalize_str_value():
-    assert normalize_str_value(None) is None
-    assert normalize_str_value("string") == ["string"]
-    assert normalize_str_value(["string"]) == ["string"]
-    assert normalize_str_value(["s2", "s1"]) == ["s1", "s2"]
+def test_normalize_str_values():
+    assert normalize_str_values(None) is None
+    assert normalize_str_values("string") == ["string"]
+    assert normalize_str_values(["string"]) == ["string"]
+    assert normalize_str_values(["s2", "s1"]) == ["s1", "s2"]
 
 
 def test_normalize_granularity():
