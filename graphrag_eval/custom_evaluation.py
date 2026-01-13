@@ -74,6 +74,8 @@ class CustomEvaluator:
             inputs["question_text"] = reference["question_text"]
         if "reference_answer" in self.input_variables:
             inputs["reference_answer"] = reference["reference_answer"]
+        if "reference_context" in self.input_variables:
+            inputs["reference_context"] = reference["reference_steps"][-1]["output"]
         if "reference_steps" in self.input_variables:
             inputs["reference_steps"] = self.format_steps(reference["reference_steps"])
         if "actual_answer" in self.input_variables:
