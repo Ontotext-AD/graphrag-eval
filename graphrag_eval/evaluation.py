@@ -1,5 +1,5 @@
 from .steps.evaluation import evaluate_steps
-from .custom_evaluation import CustomEvaluator
+from .custom_evaluation import parse_config
 
 
 def run_evaluation(
@@ -10,10 +10,7 @@ def run_evaluation(
     # Output metrics are not nested, for simpler aggregation
     answer_correctness_evaluator = None
     evaluation_results = []
-    if custom_eval_config_file_path:
-        custom_evaluator = CustomEvaluator(custom_eval_config_file_path)
-    else:
-        custom_evaluator = None
+    custom_evaluators = parse_config(custom_eval_config_file_path)
     for template in qa_dataset:
         template_id = template["template_id"]
         for question in template["questions"]:
@@ -55,9 +52,9 @@ def run_evaluation(
                             actual_result,
                         )
                     )
-            if custom_evaluator:
-                custom_metric = custom_evaluator.evaluate(question, actual_result)
-                eval_result[custom_evaluator.metric_name] = custom_metric
+            for evaluator in custom_evaluators:
+                custom_metric = evaluator.evaluate(question, actual_result)
+                eval_result[evaluator.metric_name] = custom_metric
             eval_result.update(
                 evaluate_steps(question, actual_result)
             )
