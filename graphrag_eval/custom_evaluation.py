@@ -9,14 +9,17 @@ TEMPERATURE = 0.0
 
 class CustomEvaluator:
     def __init__(
-        self, config_file_path: str,
+        self, 
+        metric_name: str, 
+        input_variables: dict, 
+        n_outputs: int, 
+        prompt_template: str,
         temperature : float = TEMPERATURE
     ):
-        config = yaml.safe_load(open(config_file_path))
-        self.metric_name = config["name"]
-        self.input_variables = config["inputs"]
-        self.n_outputs = config["n_outputs"]
-        self.prompt_template = config["instructions"]
+        self.metric_name = metric_name
+        self.input_variables = input_variables
+        self.n_outputs = n_outputs
+        self.prompt_template = prompt_template
         self.openai_client = OpenAI()
         self.temperature = temperature
 
@@ -64,3 +67,10 @@ class CustomEvaluator:
         prompt = self.prompt_template.format(**inputs)
         response = self.call_llm(prompt)
         return self.parse_values(response)
+
+
+def parse_config(config_file_path: str | None) -> list[CustomEvaluator]:
+        if config_file_path is None:
+            return []
+        config = yaml.safe_load(open(config_file_path))
+        return [CustomEvaluator(**c) for c in config]
