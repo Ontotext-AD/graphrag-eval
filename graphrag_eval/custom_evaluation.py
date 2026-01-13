@@ -6,20 +6,37 @@ from openai import OpenAI
 LLM_MODEL = "gpt-4o-mini"
 TEMPERATURE = 0.0
 
+def format_input_template(input_config: str | dict[str, list[str]]) -> str:
+    if isinstance(input_config, str):
+        k = input_config
+    elif isinstance(input_config, dict):
+        k = list(input_config.keys())[0]
+    else:
+        raise ValueError(f"Invalid input format: {input_config}")
+    header = k.replace("_", " ").capitalize()
+    return f"# {header}\n{{{k}}}"
+
 
 class CustomEvaluator:
     def __init__(
         self, 
-        metric_name: str, 
-        input_variables: dict, 
-        n_outputs: int, 
-        prompt_template: str,
+        name: str,
+        inputs: list[str],
+        outputs: list[str],
+        instructions: str,
         temperature : float = TEMPERATURE
     ):
-        self.metric_name = metric_name
-        self.input_variables = input_variables
-        self.n_outputs = n_outputs
-        self.prompt_template = prompt_template
+        self.metric_name = name
+        self.input_variables = inputs
+        self.output_variables = outputs
+        inputs_template = "\n\n".join(format_input_template(i) for i in inputs)
+        output_instructions = "Output the following values separated by tabs:"\
+            + "".join(f"\n* {o}" for o in outputs)
+        self.prompt_template = "\n\n".join([
+            instructions,
+            output_instructions,
+            inputs_template,
+        ])
         self.openai_client = OpenAI()
         self.temperature = temperature
 
@@ -45,10 +62,11 @@ class CustomEvaluator:
     def parse_values(self, response: str) -> list[str | None]:
         vals = response.split("\t")
         act_n = len(vals)
-        if act_n == self.n_outputs:
+        exp_n = len(self.output_variables)
+        if act_n == exp_n:
             return vals
-        msg = f"Expected {self.n_outputs} tab-separated values: {response}"
-        return [] * self.n_outputs + [msg]
+        msg = f"Expected {exp_n} tab-separated values: {response}"
+        return [] * exp_n + [msg]
     
     def evaluate(self, reference: dict, actual: dict) -> list[str | None]:
         inputs = {}
