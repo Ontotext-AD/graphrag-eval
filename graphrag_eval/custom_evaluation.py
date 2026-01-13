@@ -1,4 +1,4 @@
-from pathlib import Path
+import yaml
 
 from openai import OpenAI
 
@@ -9,11 +9,14 @@ TEMPERATURE = 0.0
 
 class CustomEvaluator:
     def __init__(
-        self, instructions_file_path: str,
+        self, config_file_path: str,
         temperature : float = TEMPERATURE
     ):
-        self.prompt_template = open(instructions_file_path).read()
-        self.metric_name = Path(instructions_file_path).stem
+        config = yaml.safe_load(open(config_file_path))
+        self.metric_name = config["name"]
+        self.input_variables = config["inputs"]
+        self.n_outputs = config["n_outputs"]
+        self.prompt_template = config["instructions"]
         self.openai_client = OpenAI()
         self.temperature = temperature
 
@@ -28,20 +31,36 @@ class CustomEvaluator:
         except Exception as e:
             return str(e).replace("\n", "    ")
 
-    def evaluate(self, reference: dict, actual: dict) -> str:
+    def format_steps(self, steps: list[dict]) -> str:
+        keys = self.input_variables["reference_steps"]
+        step_strs = []
+        for step in steps:
+            step_out = {k: step[k] for k in keys}
+            step_strs.append(str(step_out))
+        return "\n\n".join(step_strs)
+
+    def parse_values(self, response: str) -> list[str | None]:
+        vals = response.split("\t")
+        act_n = len(vals)
+        if act_n == self.n_outputs:
+            return vals
+        msg = f"Expected {self.n_outputs} tab-separated values: {response}"
+        return [] * self.n_outputs + [msg]
+    
+    def evaluate(self, reference: dict, actual: dict) -> list[str | None]:
         inputs = {}
-        if "question_text" in reference:
+        if "question" in self.input_variables:
             inputs["question_text"] = reference["question_text"]
-        if "reference_answer" in reference:
+        if "reference_answer" in self.input_variables:
             inputs["reference_answer"] = reference["reference_answer"]
-        if "reference_steps" in reference:
-            steps = reference["reference_steps"]
-            inputs["reference_steps"] = "\n".join(s["output"] for s in steps)
-        if "actual_answer" in actual:
+        if "reference_steps" in self.input_variables:
+            inputs["reference_steps"] = self.format_steps(reference["reference_steps"])
+        if "actual_answer" in self.input_variables:
             inputs["actual_answer"] = actual["actual_answer"]
-        if "actual_steps" in actual:
+        if "actual_context" in self.input_variables:
             inputs["actual_context"] = actual["actual_steps"][-1]["output"]
-            steps = actual["actual_steps"]
-            inputs["actual_steps"] = "\n".join(s["output"] for s in steps)
+        if "actual_steps" in self.input_variables:
+            inputs["actual_steps"] = self.format_steps(actual["actual_steps"])
         prompt = self.prompt_template.format(**inputs)
-        return self.call_llm(prompt)
+        response = self.call_llm(prompt)
+        return self.parse_values(response)
