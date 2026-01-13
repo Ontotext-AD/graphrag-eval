@@ -5,13 +5,13 @@ from .custom_evaluation import CustomEvaluator
 def run_evaluation(
         qa_dataset: list[dict],
         responses_dict: dict,
-        custom_instructions_file_path: str | None = None,
+        custom_eval_config_file_path: str | None = None,
 ) -> list[dict]:
     # Output metrics are not nested, for simpler aggregation
     answer_correctness_evaluator = None
     evaluation_results = []
-    if custom_instructions_file_path:
-        custom_evaluator = CustomEvaluator(custom_instructions_file_path)
+    if custom_eval_config_file_path:
+        custom_evaluator = CustomEvaluator(custom_eval_config_file_path)
     else:
         custom_evaluator = None
     for template in qa_dataset:
