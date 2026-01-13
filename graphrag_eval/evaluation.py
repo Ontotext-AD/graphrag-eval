@@ -1,13 +1,19 @@
 from .steps.evaluation import evaluate_steps
+from .custom_evaluation import CustomEvaluator
 
 
 def run_evaluation(
         qa_dataset: list[dict],
         responses_dict: dict,
+        custom_instructions_file_path: str | None = None,
 ) -> list[dict]:
     # Output metrics are not nested, for simpler aggregation
     answer_correctness_evaluator = None
     evaluation_results = []
+    if custom_instructions_file_path:
+        custom_evaluator = CustomEvaluator(custom_instructions_file_path)
+    else:
+        custom_evaluator = None
     for template in qa_dataset:
         template_id = template["template_id"]
         for question in template["questions"]:
@@ -49,7 +55,9 @@ def run_evaluation(
                             actual_result,
                         )
                     )
-
+            if custom_evaluator:
+                custom_metric = custom_evaluator.evaluate(question, actual_result)
+                eval_result[custom_evaluator.metric_name] = custom_metric
             eval_result.update(
                 evaluate_steps(question, actual_result)
             )
