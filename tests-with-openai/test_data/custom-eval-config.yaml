@@ -1,0 +1,28 @@
+-
+  name: custom_1
+  inputs:
+    - question
+    - actual_answer
+    - reference_answer
+    - actual_context
+    - reference_context
+    - actual_steps
+    - reference_steps
+  steps_keys:
+    - name
+    - args
+    - output
+  instructions: |
+    Given the question, evaluate the actual answer based on the
+    reference answer.
+    
+    Also evaluate the actual context based on the reference context.
+    
+    Also evaluate the actual steps based on the reference steps.
+  outputs:
+    custom_1_answer_score: fraction between 0 and 1
+    custom_1_answer_reason: reason for your evaluation of the answer
+    custom_1_context_score: fraction between 0 and 1
+    custom_1_context_reason: reason for your evaluation of the context
+    custom_1_steps_score: fraction between 0 and 1
+    custom_1_steps_reason: reason for your evaluation of the steps
