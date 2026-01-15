@@ -1,11 +1,13 @@
-from .steps.evaluation import evaluate_steps
+from pathlib import Path
+
 from .custom_evaluation import parse_config
+from .steps.evaluation import evaluate_steps
 
 
 def run_evaluation(
         qa_dataset: list[dict],
         responses_dict: dict,
-        custom_eval_config_file_path: str | None = None,
+        custom_eval_config_file_path: str | Path | None = None,
 ) -> list[dict]:
     # Output metrics are not nested, for simpler aggregation
     answer_correctness_evaluator = None
@@ -53,8 +55,8 @@ def run_evaluation(
                         )
                     )
             for evaluator in custom_evaluators:
-                custom_metric = evaluator.evaluate(question, actual_result)
-                eval_result[evaluator.metric_name] = custom_metric
+                custom_metrics = evaluator.evaluate(question, actual_result)
+                eval_result.update(**custom_metrics)
             eval_result.update(
                 evaluate_steps(question, actual_result)
             )
