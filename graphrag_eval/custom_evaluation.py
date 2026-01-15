@@ -77,7 +77,7 @@ class CustomEvaluator:
             steps_out.append(step_out)        
         return json.dumps(steps_out, indent=2)
     
-    def parse_values(self, response: str) -> dict[str, str | None]:
+    def parse_outputs(self, response: str) -> dict[str, str | None]:
         vals = response.split("\t")
         n_act = len(vals)
         n_exp = len(self.output_variables)
@@ -120,7 +120,7 @@ class CustomEvaluator:
         with open("tests-with-openai/test_data/prompt.md", "w") as f:
             f.write(prompt)
         response = self.call_llm(prompt)
-        return self.parse_values(response)
+        return self.parse_outputs(response)
 
 
 def parse_config(config_file_path: str | Path | None) -> list[CustomEvaluator]:
