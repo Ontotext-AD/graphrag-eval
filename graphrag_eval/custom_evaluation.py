@@ -1,4 +1,6 @@
+import json
 import yaml
+from pathlib import Path
 
 from openai import OpenAI
 
@@ -22,18 +24,21 @@ class CustomEvaluator:
         self, 
         name: str,
         inputs: list[str],
-        outputs: list[str],
+        steps_keys: list[str],
+        outputs: dict[str, str],
         instructions: str,
         temperature : float = TEMPERATURE
     ):
         self.metric_name = name
         self.input_variables = inputs
-        self.output_variables = outputs
+        self.steps_keys = steps_keys
+        outputs_tuples = list(outputs.items())
+        self.output_variables = list(zip(*outputs_tuples))[0]
         inputs_template = "\n\n".join(format_input_template(i) for i in inputs)
         output_instructions = "Output the following values separated by tabs:"\
-            + "".join(f"\n* {o}" for o in outputs)
+            + "".join(f"\n* {n}: {d}" for n, d in outputs_tuples)
         self.prompt_template = "\n\n".join([
-            instructions,
+            instructions.strip(),
             output_instructions,
             inputs_template,
         ])
@@ -51,45 +56,74 @@ class CustomEvaluator:
         except Exception as e:
             return str(e).replace("\n", "    ")
 
-    def format_steps(self, steps: list[dict]) -> str:
-        keys = self.input_variables["reference_steps"]
-        step_strs = []
+    def format_steps(self, steps: list) -> str:
+        steps_out = []
         for step in steps:
-            step_out = {k: step[k] for k in keys}
-            step_strs.append(str(step_out))
-        return "\n\n".join(step_strs)
-
-    def parse_values(self, response: str) -> list[str | None]:
-        vals = response.split("\t")
-        act_n = len(vals)
-        exp_n = len(self.output_variables)
-        if act_n == exp_n:
-            return vals
-        msg = f"Expected {exp_n} tab-separated values: {response}"
-        return [] * exp_n + [msg]
+            if isinstance(step, str):
+                try:
+                    step = json.loads(step)
+                except json.JSONDecodeError:
+                    pass
+            step_out = {}
+            for k in self.steps_keys:
+                val = step.get(k)
+                if isinstance(val, str):
+                    try:
+                        step_out[k] = json.loads(val)
+                    except (json.JSONDecodeError, TypeError):
+                        step_out[k] = val
+                else:
+                    step_out[k] = val
+            steps_out.append(step_out)        
+        return json.dumps(steps_out, indent=2)
     
-    def evaluate(self, reference: dict, actual: dict) -> list[str | None]:
+    def parse_values(self, response: str) -> dict[str, str | None]:
+        vals = response.split("\t")
+        n_act = len(vals)
+        n_exp = len(self.output_variables)
+        if n_act == n_exp:
+            result = {}
+            for k, v in zip(self.output_variables, vals):
+                try:
+                    v = json.loads(v)
+                except json.decoder.JSONDecodeError:
+                    pass
+                result[k] = v
+            return result
+        msg = f"Expected {n_exp} tab-separated values, got: {response}"
+        result = dict(zip(self.output_variables, [None] * n_exp))
+        result[self.metric_name + '_error'] = msg
+        return result
+
+    def evaluate(self, reference: dict, actual: dict) -> dict[str, str | None]:
         inputs = {}
         if "question" in self.input_variables:
-            inputs["question_text"] = reference["question_text"]
+            inputs["question"] = reference["question_text"]
         if "reference_answer" in self.input_variables:
             inputs["reference_answer"] = reference["reference_answer"]
         if "reference_context" in self.input_variables:
-            inputs["reference_context"] = reference["reference_steps"][-1]["output"]
+            context_str = json.loads(reference["reference_steps"][-1][-1]["output"])
+            inputs["reference_context"] = json.dumps(context_str, indent=2)
         if "reference_steps" in self.input_variables:
-            inputs["reference_steps"] = self.format_steps(reference["reference_steps"])
+            formatted_steps = [self.format_steps(ss) for ss in reference["reference_steps"]]
+            inputs["reference_steps"] = "\n\n".join(formatted_steps)
         if "actual_answer" in self.input_variables:
             inputs["actual_answer"] = actual["actual_answer"]
         if "actual_context" in self.input_variables:
-            inputs["actual_context"] = actual["actual_steps"][-1]["output"]
+            context_str = json.loads(actual["actual_steps"][-1]["output"])
+            inputs["actual_context"] = json.dumps(context_str, indent=2)
+            with open("temp2.txt", "w") as f:
+                f.write(inputs["actual_context"])
         if "actual_steps" in self.input_variables:
             inputs["actual_steps"] = self.format_steps(actual["actual_steps"])
         prompt = self.prompt_template.format(**inputs)
+        with open("tests-with-openai/test_data/prompt.md", "w") as f:
+            f.write(prompt)
         response = self.call_llm(prompt)
         return self.parse_values(response)
 
 
-def parse_config(config_file_path: str | None) -> list[CustomEvaluator]:
+def parse_config(config_file_path: str | Path | None) -> list[CustomEvaluator]:
         if config_file_path is None:
             return []
         config = yaml.safe_load(open(config_file_path))
