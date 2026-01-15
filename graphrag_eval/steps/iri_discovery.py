@@ -2,7 +2,7 @@ import json
 from typing import Any
 
 
-def compare_iri_discovery(
+def do_iri_discovery_steps_equal(
     reference_step: dict[str, Any],
     actual_step: dict[str, Any],
 ) -> bool:

@@ -1,7 +1,7 @@
-from graphrag_eval.steps.iri_discovery import compare_iri_discovery
+from graphrag_eval.steps.iri_discovery import do_iri_discovery_steps_equal
 
 
-def test_compare_iri_discovery():
+def test_do_iri_discovery_steps_equal():
     reference_step = {
         "name": "iri_discovery",
         "output": "urn:uuid:83aa03e5-5fd0-431c-b8dd-acc08c21ed6a",
@@ -9,7 +9,7 @@ def test_compare_iri_discovery():
             "query": "NO1",
         }
     }
-    assert compare_iri_discovery(reference_step, reference_step) == False
+    assert do_iri_discovery_steps_equal(reference_step, reference_step) == False
 
     actual_step = {
         "name": "autocomplete_search",
@@ -20,7 +20,7 @@ def test_compare_iri_discovery():
         "status": "success",
         "output": "{\"head\":{\"vars\":[\"iri\",\"name\",\"class\",\"rank\"]},\"results\":{\"bindings\":[{\"iri\":{\"type\":\"uri\",\"value\":\"urn:uuid:83aa03e5-5fd0-431c-b8dd-acc08c21ed6a\"},\"name\":{\"type\":\"literal\",\"value\":\"NO1\"},\"class\":{\"type\":\"uri\",\"value\":\"https://cim4.eu/ns/nc#BiddingZone\"},\"rank\":{\"datatype\":\"http://www.w3.org/2001/XMLSchema#float\",\"type\":\"literal\",\"value\":\"0.01489\"}}]}}"
     }
-    assert compare_iri_discovery(reference_step, actual_step) == True
+    assert do_iri_discovery_steps_equal(reference_step, actual_step) == True
 
     actual_step = {
         "name": "autocomplete_search",
@@ -33,7 +33,7 @@ def test_compare_iri_discovery():
         "status": "success",
         "output": "{\"head\":{\"vars\":[\"iri\",\"name\",\"class\",\"rank\"]},\"results\":{\"bindings\":[{\"iri\":{\"type\":\"uri\",\"value\":\"urn:uuid:83aa03e5-5fd0-431c-b8dd-acc08c21ed6a\"},\"name\":{\"type\":\"literal\",\"value\":\"NO1\"},\"class\":{\"type\":\"uri\",\"value\":\"https://cim4.eu/ns/nc#BiddingZone\"},\"rank\":{\"datatype\":\"http://www.w3.org/2001/XMLSchema#float\",\"type\":\"literal\",\"value\":\"0.01489\"}}]}}"
     }
-    assert compare_iri_discovery(reference_step, actual_step) == True
+    assert do_iri_discovery_steps_equal(reference_step, actual_step) == True
 
     actual_step = {
         "name": "autocomplete_search",
@@ -44,4 +44,4 @@ def test_compare_iri_discovery():
         "status": "success",
         "output": "{\"head\":{\"vars\":[\"iri\",\"name\",\"class\",\"rank\"]},\"results\":{\"bindings\":[]}}"
     }
-    assert compare_iri_discovery(reference_step, actual_step) == False
+    assert do_iri_discovery_steps_equal(reference_step, actual_step) == False

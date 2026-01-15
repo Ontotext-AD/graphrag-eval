@@ -95,7 +95,7 @@ def test_run_evaluation_and_compute_aggregates_all_errors():
     assert expected_aggregates == aggregates
 
 
-def test_get_steps_matches():
+def test_calculate_steps_score():
     expected_steps = [
         [
             {"name": "step_a", "output": "result_a_1", "status": "success"},
@@ -176,7 +176,7 @@ def test_get_steps_matches():
     assert "matches" not in expected_steps[-1][1]
 
 
-def test_evaluate_steps_expected_select_actual_ask():
+def test_calculate_steps_score_expected_select_actual_ask():
     expected_steps = yaml.safe_load(
         (DATA_DIR / "expected_steps_1.yaml").read_text(
             encoding="utf-8"
@@ -204,7 +204,7 @@ def test_evaluate_steps_expected_select_actual_ask():
     assert "matches" not in expected_steps[-1][0]
 
 
-def test_evaluate_steps_expected_select_actual_describe():
+def test_calculate_steps_score_expected_select_actual_describe():
     expected_steps = yaml.safe_load(
         (DATA_DIR / "expected_steps_3.yaml").read_text(
             encoding="utf-8"
@@ -219,7 +219,7 @@ def test_evaluate_steps_expected_select_actual_describe():
     assert "matches" not in expected_steps[-1][0]
 
 
-def test_evaluate_steps_expected_select_actual_ask_and_then_select():
+def test_calculate_steps_score_expected_select_actual_ask_and_then_select():
     expected_steps = yaml.safe_load(
         (DATA_DIR / "expected_steps_4.yaml").read_text(
             encoding="utf-8"

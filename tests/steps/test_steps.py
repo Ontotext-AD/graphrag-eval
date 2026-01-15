@@ -229,7 +229,7 @@ def test_match_group():
     assert matches == [(-1, 1, 0, 1.0), (-1, 0, 2, 1.0)]
 
 
-def test_get_steps_matches():
+def test_match_groups():
     expected_steps = [
         [
             {"name": "step_a", "output": "result_a_1", "status": "success"},
@@ -250,7 +250,7 @@ def test_get_steps_matches():
     assert matches == [(1, 1, 0, 1.0), (1, 0, 3, 1.0)]
 
 
-def test_evaluate_steps_groups():
+def test_calculate_steps_score_two_reference_groups():
     expected_groups = [
         [sparql_expected_step],
         [retrieval_expected_step],
@@ -270,7 +270,7 @@ def test_evaluate_steps_groups():
     assert calculate_steps_score(expected_groups, [], match_groups(expected_groups, [])) == 0.0
 
 
-def test_evaluate_steps_last_group():
+def test_calculate_steps_score_one_reference_group():
     expected_groups = [
         [sparql_expected_step, retrieval_expected_step]
     ]
