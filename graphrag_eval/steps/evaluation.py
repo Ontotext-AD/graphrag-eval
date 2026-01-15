@@ -3,10 +3,10 @@ from collections import defaultdict
 from collections.abc import Sequence
 from typing import Any
 
-from .iri_discovery import compare_iri_discovery
+from .iri_discovery import do_iri_discovery_steps_equal
 from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
-from .timeseries import compare_retrieve_time_series, compare_retrieve_data_points
+from .timeseries import do_retrieve_time_series_steps_equal, do_retrieve_data_points_steps_equal
 
 Match = tuple[int, int, int, float]
 Step = dict[str, Any]
@@ -35,11 +35,13 @@ def compare_steps(reference_step: Step, actual_step: Step) -> float:
         k = actual_step["args"]["k"]
         return recall_at_k(ref_contexts_ids, act_contexts_ids, k)
     elif reference_step_name == actual_step_name == "retrieve_time_series":
-        return float(compare_retrieve_time_series(reference_step, actual_step))
+        return float(do_retrieve_time_series_steps_equal(reference_step, actual_step))
     elif reference_step_name == actual_step_name == "retrieve_data_points":
-        return float(compare_retrieve_data_points(reference_step, actual_step, actual_step["execution_timestamp"]))
+        return float(
+            do_retrieve_data_points_steps_equal(reference_step, actual_step, actual_step["execution_timestamp"])
+        )
     elif reference_step_name == "iri_discovery":
-        return float(compare_iri_discovery(reference_step, actual_step))
+        return float(do_iri_discovery_steps_equal(reference_step, actual_step))
     elif reference_step_name == actual_step_name and reference_output_media_type == "application/json":
         return float(json.loads(reference_output) == json.loads(actual_output))
     return float(reference_output == actual_output)
@@ -72,10 +74,17 @@ def match_groups(
     reference_groups: Sequence[StepsGroup],
     actual_steps: Sequence[Step],
 ) -> list[Match]:
+    """
+    Match the actual steps to the steps in the reference groups such that:
+    * Order is preserved (later steps match steps in later reference groups)
+    * An actual step can match at most one reference step
+    * Extra actual steps are ignored
+    * Actual steps with status different from "success" are ignored
+    * Matching stops once we find a missing step
+    """
     matches = []
     search_upto = len(actual_steps)
-    for group_idx in reversed(range(len(reference_groups))):
-        group = reference_groups[group_idx]
+    for group_idx, group in reversed(list(enumerate(reference_groups))):
         matched = match_group(reference_groups, group_idx, actual_steps, search_upto)
         if len(matched) == len(group):
             matches.extend(matched)
