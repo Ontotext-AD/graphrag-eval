@@ -4,7 +4,9 @@
 
 # QA Evaluation
 
-This is a Python module for assessing the quality of question-answering systems such as ones based on LLM agents, based on a set of questions and reference answers for them. This includes evaluating the final answer and the steps used to reach the answer (such as orchestrated and executed steps), compared to the given reference steps.
+This is a Python module for assessing the quality of question-answering systems such as ones based on LLM agents, 
+based on a set of questions and reference answers for them. This includes evaluating the final answer and 
+the steps used to reach the answer (such as orchestrated and executed steps), compared to the given reference steps.
 
 ## License
 
@@ -22,11 +24,9 @@ graphrag-eval = "*"
 ```
 
 To evaluate answer relevance and answer correctness:
-
 ```bash
 pip install 'graphrag-eval[ragas]'
 ```
-
 or add the following dependency in your `pyproject.toml` file:
 ```toml
 graphrag-eval = {version = "*", extras = ["ragas"]}
@@ -39,7 +39,8 @@ For issues or feature requests, please open [a GitHub issue](https://github.com/
 
 ## Command Line Use
 
-To evaluate only correctness of final answers (system responses), you can clone this repository and run the code on the command line:
+To evaluate only correctness of final answers (system responses), you can clone this repository and 
+run the code on the command line:
 
 1. Prepare an input TSV file with columns `Question`, `Reference answer` and `Actual answer`
 1. Execute `poetry install --with ragas`
@@ -62,7 +63,7 @@ To evaluate answers and/or steps:
 1. To evaluate steps:
     1. Include `reference_steps` in the reference data and `actual_steps` in target data to evaluate
 1. Call the evaluation function with the reference data and target data: section [Usage Code](#Usage-Code)
-1. Call the aggregation function with the evaluation results
+1. Call the aggregation function with the evaluation results: section [Usage Code](#Usage-Code)
 
 Answer evaluation (correctness and relevance) uses the LLM `openai/gpt-4o-mini`.
 
@@ -74,48 +75,41 @@ A reference dataset is a list of templates, each of which contains:
 - `questions`: A list of questions derived from this template, where each includes:
   - `id`: Unique question identifier
   - `question_text`: The natural language query passed to the LLM
-  - `reference_steps`: (optional) A list of expected steps grouped by expected order of execution, where all steps in a group can be executed in any order relative to each other, but after all steps in the previous group and before all steps in the next group.
+  - `reference_steps`: (optional) A list of expected steps grouped by expected order of execution, 
+  where all steps in a group can be executed in any order relative to each other, 
+  but after all steps in the previous group and before all steps in the next group.
   - `reference_answer`: (optional) The expected answer to the question
 
-The assumption is that the final answer to the question is derived from the outputs of the steps, which are executed last (last level).
+The assumption is that the final answer to the question is derived from the outputs of the steps, 
+which are executed last (last level).
 
 Each step includes:
 
-- `name`: The type of step being performed (e.g., `sparql_query`)
+- `name`: The name of the step (e.g., `sparql_query`)
 - `args`: Arguments of the step (e.g., arguments to a tool used in the step, such as a SPARQL query)
 - `output`: The expected output from the step.
-- `output_media_type`: (optional, missing or one of `application/sparql-results+json`, `application/json`) Indicates how the output of a step must be processed
-- `ordered`: (optional, defaults to `false`) For SPARQL query results, whether results order matters. `true` means that the actual result rows must be ordered as the reference result; `false` means that result rows are matched as a set.
-- `required_columns`: (optional) - required only for SPARQL query results; list of binding names, which are required for SPARQL query results to match
-- `ignore_duplicates`: (optional, defaults to `true`) For SPARQL query results, whether duplicate binding values in the expected or in the actual results should be ignored for the comparison.
+- `output_media_type`: (optional, missing or one of `application/sparql-results+json`, `application/json`) 
+Indicates how the output of a step must be processed
+- `ordered`: (optional, defaults to `false`) For SPARQL query results, whether results order matters.
+`true` means that the actual result rows must be ordered as the reference result; 
+`false` means that result rows are matched as a set.
+- `required_columns`: (optional) - required only for SPARQL query results; list of binding names, 
+which are required for SPARQL query results to match
+- `ignore_duplicates`: (optional, defaults to `true`) For SPARQL query results, 
+whether duplicate binding values in the expected or in the actual results should be ignored for the comparison.
 
 #### Reference Data
 
-The example data below illustrates a minimal but realistic Q&A dataset, showing two templates with associated questions and steps.
+The example data below illustrates a minimal but realistic Q&A dataset, 
+showing two templates with associated questions and steps.
 
 ```yaml
 - template_id: list_all_transformers_within_Substation_SUBSTATION
   questions:
   - id: c10bbc8dce98a4b8832d125134a16153
     question_text: List all transformers within Substation OSLO
-    reference_answer: OSLO T1, OSLO T2
     reference_steps:
-    - - name: retrieval
-        args:
-          query: transformers Substation OSLO
-          k: 2
-        output: |-
-          [
-            {
-              "id": "http://example.com/resource/doc/1",
-              "text": "Transformer OSLO T1 is in Substation Oslo."
-            },
-            {
-              "id": "http://example.com/resource/doc/2",
-              "text": "Transformer OSLO T2 is in Substation Oslo."
-            }
-          ]
-      - name: sparql_query
+    - - name: sparql_query
         args:
           query: |2
 
@@ -142,7 +136,6 @@ The example data below illustrates a minimal but realistic Q&A dataset, showing 
           - transformerName
   - id: 8bbea9a10876a04ad77a82fd2aedee40
     question_text: List all transformers within Substation STAVANGER
-    reference_answer: STAVANGET1
     reference_steps:
     - - name: sparql_query
         args:
@@ -171,7 +164,6 @@ The example data below illustrates a minimal but realistic Q&A dataset, showing 
   questions:
   - id: d566b1e9da418ac83e520a66cc7af4d7
     question_text: List all substations within bidding zone NO2 SGR
-    reference_answer: ARENDAL, BLAFALLI, STAVANGER, KRISTIA_HVDC, KVILLDAL, SANDEFJORD, KRISTIANSAND, FEDA_HVDC
     reference_steps:
     - - name: sparql_query
         args:
@@ -211,116 +203,60 @@ The example data below illustrates a minimal but realistic Q&A dataset, showing 
           - substation
           - substationName
         ordered: false
-  - id: 03d4283773b4387114342518176b128b
-    question_text: List all substations within bidding zone NO1 SGR
-    reference_answer: HALDEN, KONGSBERG, SYLLING, OSLO, ASKER, SYSLE, SKIEN, TRETTEN
-    reference_steps:
-    - - name: sparql_query
-        args:
-          query: |2
-
-            PREFIX cimex: <https://rawgit2.com/statnett/Talk2PowerSystem/main/demo1/cimex/>
-            PREFIX cim: <https://cim.ucaiug.io/ns#>
-            PREFIX rank: <http://www.ontotext.com/owlim/RDFRank#>
-            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-            select distinct ?substation ?substationName
-            where {
-                bind(<urn:uuid:f1769609-9aeb-11e5-91da-b8763fd99c5f> as ?region)
-
-                ?substation a cim:Substation ;
-                  cim:Substation.Region ?region ;
-                  cim:IdentifiedObject.name ?substationName .
-            }
-        output: '{"head": {"vars": ["substation", "substationName"]}, "results": {"bindings":
-          [{"substation": {"type": "uri", "value": "urn:uuid:f176960e-9aeb-11e5-91da-b8763fd99c5f"},
-          "substationName": {"type": "literal", "value": "HALDEN"}}, {"substation":
-          {"type": "uri", "value": "urn:uuid:f176961e-9aeb-11e5-91da-b8763fd99c5f"},
-          "substationName": {"type": "literal", "value": "KONGSBERG"}}, {"substation":
-          {"type": "uri", "value": "urn:uuid:f1769642-9aeb-11e5-91da-b8763fd99c5f"},
-          "substationName": {"type": "literal", "value": "SYLLING"}}, {"substation":
-          {"type": "uri", "value": "urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f"},
-          "substationName": {"type": "literal", "value": "OSLO"}}, {"substation":
-          {"type": "uri", "value": "urn:uuid:f176964e-9aeb-11e5-91da-b8763fd99c5f"},
-          "substationName": {"type": "literal", "value": "ASKER"}}, {"substation":
-          {"type": "uri", "value": "urn:uuid:f1769648-9aeb-11e5-91da-b8763fd99c5f"},
-          "substationName": {"type": "literal", "value": "SYSLE"}}, {"substation":
-          {"type": "uri", "value": "urn:uuid:f1769654-9aeb-11e5-91da-b8763fd99c5f"},
-          "substationName": {"type": "literal", "value": "SKIEN"}}, {"substation":
-          {"type": "uri", "value": "urn:uuid:f1769604-9aeb-11e5-91da-b8763fd99c5f"},
-          "substationName": {"type": "literal", "value": "TRETTEN"}}]}}'
-        output_media_type: application/sparql-results+json
-        required_columns:
-          - substation
-          - substationName
-        ordered: false
 ```
 
-The module is agnostic to the specific LLM agent implementation and model; it depends solely on the format of the response.
+The module is agnostic to the specific LLM agent implementation and model; 
+it depends solely on the format of the response.
 
 ### Responses to evaluate
 
-Given a question, if the question-answering system successfully responds, to evaluate the response, call `run_evaluation()` with the response formatted as in the example below. (On the other hand, if an error occurs while generating a response, format it as in [Target Input on Error](#target-input-on-error).)
+Given a question, if the question-answering system successfully responds, 
+to evaluate the response, call `run_evaluation()` with the response formatted as in the example below. 
+If an error occurs while generating a response, format it as in [Target Input on Error](#target-input-on-error).
 
 ```json
 {
-    "question_id": "f91fc938d606e5f6089912bebfaf114b",
-    "input_tokens": 298028,
-    "output_tokens": 725,
-    "total_tokens": 298753,
-    "elapsed_sec": 46.48961806297302,
-    "actual_steps": [
-        {
-          "name": "retrieval",
-          "args": {
-            "query": "transformers Substation OSLO",
-            "k": 2
-          },
-          "id": "call_3",
-          "status": "success",
-          "output": "[\n  {\n    \"id\": \"http://example.com/resource/doc/1\",\n    \"text\": \"Transformer OSLO T1 is in Substation Oslo.\"\n  },\n  {\n    \"id\": \"http://example.com/resource/doc/2\",\n    \"text\": \"Transformer OSLO T2 is in Substation Oslo.\"\n  }\n]"
-        },
-        {
-            "name": "autocomplete_search",
-            "args": {
-                "query": "STAVANGER",
-                "result_class": "cim:Substation"
-            },
-            "id": "call_7amIsfEGelOnVZ1DWtgtc0hc",
-            "status": "success",
-            "output": "{\n  \"head\": {\n    \"vars\": [\n      \"iri\",\n      \"name\",\n      \"rank\"\n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n        \"iri\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769664-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"name\": {\n          \"type\": \"literal\",\n          \"value\": \"STAVANGER\"\n        },\n        \"rank\": {\n          \"datatype\": \"http://www.w3.org/2001/XMLSchema#float\",\n          \"type\": \"literal\",\n          \"value\": \"0.00976\"\n        }\n      }\n    ]\n  }\n}"
-        },
-        {
-            "name": "sparql_query",
-            "args": {
-                "query": "SELECT DISTINCT ?substation2 ?substation2Name ?line ?lineName WHERE {\n  # Substation STAVANGER\n  BIND(urn:uuid:f1769664-9aeb-11e5-91da-b8763fd99c5f AS ?substation1) .\n\n  # Find lines connected to STAVANGER\n  ?line a cim:Line ;\n        cimex:connectedThroughPart ?substation1, ?substation2 ;\n        cim:IdentifiedObject.name ?lineName .\n\n  # Ensure the connected substation is different from STAVANGER\n  ?substation2 a cim:Substation ;\n               cim:IdentifiedObject.name ?substation2Name .\n  FILTER(?substation1 != ?substation2)\n}"
-            },
-            "id": "call_DbMkZ8kv3qkf49wNNdREkpRN",
-            "status": "error",
-            "error": "Error: ValueError('The following prefixes are undefined: urn')\n Please fix your mistakes."
-        },
-        {
-            "name": "sparql_query",
-            "args": {
-                "query": "SELECT DISTINCT ?substation2 ?substation2Name ?line ?lineName WHERE {\n  # Substation STAVANGER\n  BIND(<urn:uuid:f1769664-9aeb-11e5-91da-b8763fd99c5f> AS ?substation1) .\n\n  # Find lines connected to STAVANGER\n  ?line a cim:Line ;\n        cimex:connectedThroughPart ?substation1, ?substation2 ;\n        cim:IdentifiedObject.name ?lineName .\n\n  # Ensure the connected substation is different from STAVANGER\n  ?substation2 a cim:Substation ;\n               cim:IdentifiedObject.name ?substation2Name .\n  FILTER(?substation1 != ?substation2)\n}"
-            },
-            "id": "call_Qm1mzX7g5q9SVPrR2QzEMTp3",
-            "status": "success",
-            "output": "{\n  \"head\": {\n    \"vars\": [\n      \"substation2\",\n      \"substation2Name\",\n      \"line\",\n      \"lineName\"\n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176965a-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KRISTIANSAND\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:47332c85-17a4-7a41-abd5-2b92e4b800ed\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 300KRISTIAN-STAVANGE\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769614-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"DAGALI\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:c5f535a5-f053-a948-9cee-f6a7b07c7d4f\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420DAGALI-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KVILLDAL\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:c5f535a5-f053-a948-9cee-f6a7b07c7d4f\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420DAGALI-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769688-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"HAGAFOSS\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:c5f535a5-f053-a948-9cee-f6a7b07c7d4f\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420DAGALI-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"OSLO\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:a93b83d7-8a39-ef48-8c29-36de1ac0eaf5\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYSLE-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769648-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"SYSLE\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:a93b83d7-8a39-ef48-8c29-36de1ac0eaf5\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYSLE-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KVILLDAL\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:a93b83d7-8a39-ef48-8c29-36de1ac0eaf5\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYSLE-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769688-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"HAGAFOSS\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:a93b83d7-8a39-ef48-8c29-36de1ac0eaf5\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYSLE-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176962a-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"AURLAND\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:293e49bc-c995-fc46-a69c-380876b317a1\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420AURLAND-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KVILLDAL\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:293e49bc-c995-fc46-a69c-380876b317a1\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420AURLAND-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769688-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"HAGAFOSS\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:293e49bc-c995-fc46-a69c-380876b317a1\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420AURLAND-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769624-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"SIMA\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:293e49bc-c995-fc46-a69c-380876b317a1\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420AURLAND-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769642-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"SYLLING\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:163037f6-cf93-054e-8a6d-3f58de83b6a3\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYLLING-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"OSLO\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:163037f6-cf93-054e-8a6d-3f58de83b6a3\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYLLING-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KVILLDAL\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:163037f6-cf93-054e-8a6d-3f58de83b6a3\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYLLING-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769688-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"HAGAFOSS\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:163037f6-cf93-054e-8a6d-3f58de83b6a3\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYLLING-HAGAFOSS\"\n        }\n      }\n    ]\n  }\n}"
-        }
-    ],
-    "actual_answer": "The substations connected to the substation \"STAVANGER\" via AC or DC lines are:\n\n1. **KRISTIANSAND** via line \"LC 300KRISTIAN-STAVANGE\"\n2. **DAGALI** via line \"LC 420DAGALI-HAGAFOSS\"\n3. **KVILLDAL** via lines:\n   - \"LC 420DAGALI-HAGAFOSS\"\n   - \"LC 420SYSLE-HAGAFOSS\"\n   - \"LC 420AURLAND-HAGAFOSS\"\n   - \"LC 420SYLLING-HAGAFOSS\"\n4. **HAGAFOSS** via lines:\n   - \"LC 420DAGALI-HAGAFOSS\"\n   - \"LC 420SYSLE-HAGAFOSS\"\n   - \"LC 420AURLAND-HAGAFOSS\"\n   - \"LC 420SYLLING-HAGAFOSS\"\n5. **OSLO** via lines:\n   - \"LC 420SYSLE-HAGAFOSS\"\n   - \"LC 420SYLLING-HAGAFOSS\"\n6. **SYSLE** via line \"LC 420SYSLE-HAGAFOSS\"\n7. **AURLAND** via line \"LC 420AURLAND-HAGAFOSS\"\n8. **SIMA** via line \"LC 420AURLAND-HAGAFOSS\"\n9. **SYLLING** via line \"LC 420SYLLING-HAGAFOSS\""
+  "question_id": "c10bbc8dce98a4b8832d125134a16153",
+  "input_tokens": 221339,
+  "output_tokens": 212,
+  "total_tokens": 221551,
+  "elapsed_sec": 6.601679801940918,
+  "actual_steps": [
+    {
+      "name": "autocomplete_search",
+      "args": {
+        "query": "OSLO",
+        "result_class": "cim:Substation"
+      },
+      "id": "call_3wIrBHIsInzAWzo8qwwYAkDD",
+      "status": "success",
+      "output": "{\n  \"head\": {\n    \"vars\": [\n      \"iri\",\n      \"name\",\n      \"rank\"\n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n        \"iri\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"name\": {\n          \"type\": \"literal\",\n          \"value\": \"OSLO\"\n        },\n        \"rank\": {\n          \"datatype\": \"http://www.w3.org/2001/XMLSchema#float\",\n          \"type\": \"literal\",\n          \"value\": \"0.01185\"\n        }\n      }\n    ]\n  }\n}",
+      "execution_timestamp": "2025-12-17T09:15:53Z"
+    },
+    {
+      "name": "sparql_query",
+      "args": {
+        "query": "SELECT ?transformer ?transformerName WHERE {\n  ?transformer a cim:PowerTransformer ;\n               cim:Equipment.EquipmentContainer <urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f> ;\n               cim:IdentifiedObject.name ?transformerName .\n}"
+      },
+      "id": "call_3b3zHJnBXwYYSg04BiFGAAgO",
+      "status": "success",
+      "output": "{\n  \"head\": {\n    \"vars\": [\n      \"transformer\",\n      \"transformerName\"\n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n        \"transformer\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769de8-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"transformerName\": {\n          \"type\": \"literal\",\n          \"value\": \"OSLO    T2\"\n        }\n      },\n      {\n        \"transformer\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769dd6-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"transformerName\": {\n          \"type\": \"literal\",\n          \"value\": \"OSLO    T1\"\n        }\n      }\n    ]\n  }\n}",
+      "execution_timestamp": "2025-12-17T09:15:58Z"
+    }
+  ]
 }
 ```
 
 #### Target Input on Error
 
-If an error occurs while the question-answering system is generating a response, and you want to tally this error, the input to `run_evaluate()` should be like:
+If an error occurs while the question-answering system is generating a response, 
+and you want to tally this error, the input to `run_evaluate()` should be like:
 
 ```json
 {
-    "question_id": "a8daaf98b84b4f6b0e0052fb942bf6b6",
-    "error": "Error message",
-    "status": "error"
+  "question_id": "a8daaf98b84b4f6b0e0052fb942bf6b6",
+  "error": "Error message",
+  "status": "error"
 }
 ```
 
@@ -329,13 +265,14 @@ If an error occurs while the question-answering system is generating a response,
 ```python
 from graphrag_eval import run_evaluation, compute_aggregates
 
-reference_qas: list[dict] = [] # read your reference data
+reference_qa_dataset: list[dict] = [] # read your reference data
 chat_responses: dict = {} # call your implementation to get the response
-evaluation_results = run_evaluation(reference_qas, chat_responses)
+evaluation_results = run_evaluation(reference_qa_dataset, chat_responses)
 aggregates = compute_aggregates(evaluation_results)
 ```
 
-`evaluation_results` is a list of statistics for each question, as in section [Evaluation Results](#Evaluation-results). The format is explained in section [Output Keys](#output-keys)
+`evaluation_results` is a list of statistics for each question, as in section [Evaluation Results](#Evaluation-results). 
+The format is explained in section [Output Keys](#output-keys)
 
 If your chat responses contain actual answers, set your environment variable `OPENAI_API_KEY` before running the code above.
 
@@ -347,40 +284,15 @@ The output is a list of statistics for each question from the reference Q&A data
 - template_id: list_all_transformers_within_Substation_SUBSTATION
   question_id: c10bbc8dce98a4b8832d125134a16153
   question_text: List all transformers within Substation OSLO
-  reference_answer: OSLO T1, OSLO T2
   reference_steps:
-  - - name: retrieval
+  - - name: sparql_query
       args:
-        query: transformers Substation OSLO
-        k: 2
-      matches: call_3
-      output: |-
-        [
-          {
-            "id": "http://example.com/resource/doc/1",
-            "text": "Transformer OSLO T1 is in Substation Oslo."
-          },
-          {
-            "id": "http://example.com/resource/doc/2",
-            "text": "Transformer OSLO T2 is in Substation Oslo."
-          }
-        ]
-  - name: sparql_query
-      args:
-        query: |2
-
-          PREFIX cimex: <https://rawgit2.com/statnett/Talk2PowerSystem/main/demo1/cimex/>
-          PREFIX cim: <https://cim.ucaiug.io/ns#>
-          PREFIX rank: <http://www.ontotext.com/owlim/RDFRank#>
-          PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-          select distinct ?transformer ?transformerName
-          where {
-              bind(<urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f> as ?substation)
-
-              ?transformer a cim:PowerTransformer ;
-                cim:Equipment.EquipmentContainer ?substation ;
-                cim:IdentifiedObject.name ?transformerName .
-          }
+        query: "\nPREFIX cimex: <https://rawgit2.com/statnett/Talk2PowerSystem/main/demo1/cimex/>\n\
+          PREFIX cim: <https://cim.ucaiug.io/ns#>\nPREFIX rank: <http://www.ontotext.com/owlim/RDFRank#>\n\
+          PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nselect distinct ?transformer\
+          \ ?transformerName\nwhere {\n    bind(<urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f>\
+          \ as ?substation)\n\n    ?transformer a cim:PowerTransformer ;\n      cim:Equipment.EquipmentContainer\
+          \ ?substation ;\n      cim:IdentifiedObject.name ?transformerName .\n}\n"
       output: '{"head": {"vars": ["transformer", "transformerName"]}, "results": {"bindings":
         [{"transformer": {"type": "uri", "value": "urn:uuid:f1769de8-9aeb-11e5-91da-b8763fd99c5f"},
         "transformerName": {"type": "literal", "value": "OSLO    T2"}}, {"transformer":
@@ -388,131 +300,153 @@ The output is a list of statistics for each question from the reference Q&A data
         "transformerName": {"type": "literal", "value": "OSLO    T1"}}]}}'
       output_media_type: application/sparql-results+json
       required_columns:
-        - transformer
-        - transformerName
+      - transformer
+      - transformerName
       matches: call_3b3zHJnBXwYYSg04BiFGAAgO
   status: success
-  actual_answer: |-
-    The following transformers are located within the Substation OSLO:
-    1. **OSLO T2** (IRI: `urn:uuid:f1769de8-9aeb-11e5-91da-b8763fd99c5f`)
-    2. **OSLO T1** (IRI: `urn:uuid:f1769dd6-9aeb-11e5-91da-b8763fd99c5f`)
-  answer_reference_claims_count: 2
-  answer_actual_claims_count: 2
-  answer_matching_claims_count: 2
-  answer_correctness_reason: The candidate answer contains exactly the transformers listed in the reference answer, asked in the question
-  answer_recall: 1.0
-  answer_precision: 1.0
-  answer_f1: 1.0
-  answer_relevance: 0.9
-  answer_relevance_cost: 0.0007
   actual_steps:
-  - name: retrieval
-    id: call_3
-    args:
-      query: transformers Substation OSLO
-      k: 2
-    status: success
-    output: |-
-      [
-        {
-          "id": "http://example.com/resource/doc/1",
-          "text": "Transformer OSLO T1 is in Substation Oslo."
-        },
-        {
-          "id": "http://example.com/resource/doc/2",
-          "text": "Transformer OSLO T2 is in Substation Oslo."
-        }
-      ]
-    retrieval_answer_recall: 1.0
-    retrieval_answer_recall_reason: The context contains all the transformers listed in the reference answer
-    retrieval_answer_recall_cost: 0.0007
-    retrieval_answer_precision: 1.0
-    retrieval_answer_precision_cost: 0.0003
-    retrieval_answer_f1: 1.0
-    retrieval_answer_f1_cost: 0.001
   - name: autocomplete_search
     args:
       query: OSLO
       result_class: cim:Substation
     id: call_3wIrBHIsInzAWzo8qwwYAkDD
     status: success
-    output: |-
-      {
-        "head": {
-          "vars": [
-            "iri",
-            "name",
-            "rank"
-          ]
-        },
-        "results": {
-          "bindings": [
-            {
-              "iri": {
-                "type": "uri",
-                "value": "urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f"
-              },
-              "name": {
-                "type": "literal",
-                "value": "OSLO"
-              },
-              "rank": {
-                "datatype": "http://www.w3.org/2001/XMLSchema#float",
-                "type": "literal",
-                "value": "0.01185"
-              }
-            }
-          ]
-        }
-      }
+    output: "{\n  \"head\": {\n    \"vars\": [\n      \"iri\",\n      \"name\",\n\
+      \      \"rank\"\n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n\
+      \        \"iri\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f\"\
+      \n        },\n        \"name\": {\n          \"type\": \"literal\",\n      \
+      \    \"value\": \"OSLO\"\n        },\n        \"rank\": {\n          \"datatype\"\
+      : \"http://www.w3.org/2001/XMLSchema#float\",\n          \"type\": \"literal\"\
+      ,\n          \"value\": \"0.01185\"\n        }\n      }\n    ]\n  }\n}"
+    execution_timestamp: '2025-12-17T09:15:53Z'
   - name: sparql_query
     args:
-      query: |-
-        SELECT ?transformer ?transformerName WHERE {
-          ?transformer a cim:PowerTransformer ;
-                       cim:Equipment.EquipmentContainer <urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f> ;
-                       cim:IdentifiedObject.name ?transformerName .
-        }
+      query: "SELECT ?transformer ?transformerName WHERE {\n  ?transformer a cim:PowerTransformer\
+        \ ;\n               cim:Equipment.EquipmentContainer <urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f>\
+        \ ;\n               cim:IdentifiedObject.name ?transformerName .\n}"
     id: call_3b3zHJnBXwYYSg04BiFGAAgO
     status: success
-    output: |-
-      {
-        "head": {
-          "vars": [
-            "transformer",
-            "transformerName"
-          ]
-        },
-        "results": {
-          "bindings": [
-            {
-              "transformer": {
-                "type": "uri",
-                "value": "urn:uuid:f1769de8-9aeb-11e5-91da-b8763fd99c5f"
-              },
-              "transformerName": {
-                "type": "literal",
-                "value": "OSLO    T2"
-              }
-            },
-            {
-              "transformer": {
-                "type": "uri",
-                "value": "urn:uuid:f1769dd6-9aeb-11e5-91da-b8763fd99c5f"
-              },
-              "transformerName": {
-                "type": "literal",
-                "value": "OSLO    T1"
-              }
-            }
-          ]
-        }
-      }
-  steps_score: 1
+    output: "{\n  \"head\": {\n    \"vars\": [\n      \"transformer\",\n      \"transformerName\"\
+      \n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n        \"transformer\"\
+      : {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769de8-9aeb-11e5-91da-b8763fd99c5f\"\
+      \n        },\n        \"transformerName\": {\n          \"type\": \"literal\"\
+      ,\n          \"value\": \"OSLO    T2\"\n        }\n      },\n      {\n     \
+      \   \"transformer\": {\n          \"type\": \"uri\",\n          \"value\": \"\
+      urn:uuid:f1769dd6-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"transformerName\"\
+      : {\n          \"type\": \"literal\",\n          \"value\": \"OSLO    T1\"\n\
+      \        }\n      }\n    ]\n  }\n}"
+    execution_timestamp: '2025-12-17T09:15:58Z'
+  steps_score: 1.0
   input_tokens: 221339
   output_tokens: 212
   total_tokens: 221551
   elapsed_sec: 6.601679801940918
+- template_id: list_all_transformers_within_Substation_SUBSTATION
+  question_id: 8bbea9a10876a04ad77a82fd2aedee40
+  question_text: List all transformers within Substation STAVANGER
+  reference_steps:
+  - - name: sparql_query
+      args:
+        query: "\nPREFIX cimex: <https://rawgit2.com/statnett/Talk2PowerSystem/main/demo1/cimex/>\n\
+          PREFIX cim: <https://cim.ucaiug.io/ns#>\nPREFIX rank: <http://www.ontotext.com/owlim/RDFRank#>\n\
+          PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nselect distinct ?transformer\
+          \ ?transformerName\nwhere {\n    bind(<urn:uuid:f1769664-9aeb-11e5-91da-b8763fd99c5f>\
+          \ as ?substation)\n\n    ?transformer a cim:PowerTransformer ;\n      cim:Equipment.EquipmentContainer\
+          \ ?substation ;\n      cim:IdentifiedObject.name ?transformerName .\n}\n"
+      output: '{"head": {"vars": ["transformer", "transformerName"]}, "results": {"bindings":
+        [{"transformer": {"type": "uri", "value": "urn:uuid:f1769e0c-9aeb-11e5-91da-b8763fd99c5f"},
+        "transformerName": {"type": "literal", "value": "STAVANGET1"}}]}}'
+      output_media_type: application/sparql-results+json
+      required_columns:
+      - transformer
+      - transformerName
+      matches: call_bU771FWvXCE8lbGdJnIWo8Y3
+  status: success
+  actual_steps:
+  - name: autocomplete_search
+    args:
+      query: STAVANGER
+      result_class: cim:Substation
+    id: call_xTv0ygObPFKMRGZ9pZc3xHOV
+    status: success
+    output: "{\n  \"head\": {\n    \"vars\": [\n      \"iri\",\n      \"name\",\n\
+      \      \"rank\"\n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n\
+      \        \"iri\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769664-9aeb-11e5-91da-b8763fd99c5f\"\
+      \n        },\n        \"name\": {\n          \"type\": \"literal\",\n      \
+      \    \"value\": \"STAVANGER\"\n        },\n        \"rank\": {\n          \"\
+      datatype\": \"http://www.w3.org/2001/XMLSchema#float\",\n          \"type\"\
+      : \"literal\",\n          \"value\": \"0.00976\"\n        }\n      }\n    ]\n\
+      \  }\n}"
+    execution_timestamp: '2025-12-17T09:16:03Z'
+  - name: sparql_query
+    args:
+      query: "SELECT ?transformer ?transformerName WHERE {\n  ?transformer a cim:PowerTransformer\
+        \ ;\n               cim:Equipment.EquipmentContainer ?substation ;\n     \
+        \          cim:IdentifiedObject.name ?transformerName .\n  FILTER(?substation\
+        \ = <urn:uuid:f1769664-9aeb-11e5-91da-b8763fd99c5f>)\n}"
+    id: call_bU771FWvXCE8lbGdJnIWo8Y3
+    status: success
+    output: "{\n  \"head\": {\n    \"vars\": [\n      \"transformer\",\n      \"transformerName\"\
+      \n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n        \"transformer\"\
+      : {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769e0c-9aeb-11e5-91da-b8763fd99c5f\"\
+      \n        },\n        \"transformerName\": {\n          \"type\": \"literal\"\
+      ,\n          \"value\": \"STAVANGET1\"\n        }\n      }\n    ]\n  }\n}"
+    execution_timestamp: '2025-12-17T09:16:08Z'
+  steps_score: 1.0
+  input_tokens: 221279
+  output_tokens: 193
+  total_tokens: 221472
+  elapsed_sec: 6.4518632888793945
+- template_id: list_all_substations_within_bidding_zone_REGION
+  question_id: d566b1e9da418ac83e520a66cc7af4d7
+  question_text: List all substations within bidding zone NO2 SGR
+  reference_steps:
+  - - name: sparql_query
+      args:
+        query: "\nPREFIX cimex: <https://rawgit2.com/statnett/Talk2PowerSystem/main/demo1/cimex/>\n\
+          PREFIX cim: <https://cim.ucaiug.io/ns#>\nPREFIX rank: <http://www.ontotext.com/owlim/RDFRank#>\n\
+          PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\nselect distinct ?substation\
+          \ ?substationName\nwhere {\n    bind(<urn:uuid:f176965f-9aeb-11e5-91da-b8763fd99c5f>\
+          \ as ?region)\n\n    ?substation a cim:Substation ;\n      cim:Substation.Region\
+          \ ?region ;\n      cim:IdentifiedObject.name ?substationName .\n}\n"
+      output: '{"head": {"vars": ["substation", "substationName"]}, "results": {"bindings":
+        [{"substation": {"type": "uri", "value": "urn:uuid:f1769670-9aeb-11e5-91da-b8763fd99c5f"},
+        "substationName": {"type": "literal", "value": "ARENDAL"}}, {"substation":
+        {"type": "uri", "value": "urn:uuid:f176968e-9aeb-11e5-91da-b8763fd99c5f"},
+        "substationName": {"type": "literal", "value": "BLAFALLI"}}, {"substation":
+        {"type": "uri", "value": "urn:uuid:f1769664-9aeb-11e5-91da-b8763fd99c5f"},
+        "substationName": {"type": "literal", "value": "STAVANGER"}}, {"substation":
+        {"type": "uri", "value": "urn:uuid:f1769676-9aeb-11e5-91da-b8763fd99c5f"},
+        "substationName": {"type": "literal", "value": "KRISTIA_HVDC"}}, {"substation":
+        {"type": "uri", "value": "urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f"},
+        "substationName": {"type": "literal", "value": "KVILLDAL"}}, {"substation":
+        {"type": "uri", "value": "urn:uuid:f176966a-9aeb-11e5-91da-b8763fd99c5f"},
+        "substationName": {"type": "literal", "value": "SANDEFJORD"}}, {"substation":
+        {"type": "uri", "value": "urn:uuid:f176965a-9aeb-11e5-91da-b8763fd99c5f"},
+        "substationName": {"type": "literal", "value": "KRISTIANSAND"}}, {"substation":
+        {"type": "uri", "value": "urn:uuid:f176967c-9aeb-11e5-91da-b8763fd99c5f"},
+        "substationName": {"type": "literal", "value": "FEDA_HVDC"}}]}}'
+      output_media_type: application/sparql-results+json
+      required_columns:
+      - substation
+      - substationName
+      ordered: false
+  status: success
+  actual_steps:
+  - name: autocomplete_search
+    args:
+      query: NO2 SGR
+      result_class: nc:BiddingZone
+    id: call_3ObjZ2l9hgmU3dqQ0JvwemGz
+    status: success
+    output: "{\n  \"head\": {\n    \"vars\": [\n      \"iri\",\n      \"name\",\n\
+      \      \"rank\"\n    ]\n  },\n  \"results\": {\n    \"bindings\": []\n  }\n}"
+    execution_timestamp: '2025-12-17T09:17:23Z'
+  steps_score: 0.0
+  input_tokens: 147188
+  output_tokens: 58
+  total_tokens: 147246
+  elapsed_sec: 2.8653159141540527
 ```
 
 ### Output Keys
@@ -520,9 +454,9 @@ The output is a list of statistics for each question from the reference Q&A data
 - `template_id`: the template id
 - `question_id`: the question id
 - `question_text`: the natural language query
-- `reference_steps`: (optional) copy of the expected steps in the Q&A dataset, if specified there
-- `reference_answer`: (optional) copy of the expected answer in the Q&A dataset, if specified there
 - `status`: "success" or "error", indicating whether the evaluation succeeded
+- `reference_steps`: (optional) copy of the expected steps in the Q&A dataset, if specified there. Additional key "matches" is added to those steps, which are matched 
+- `reference_answer`: (optional) copy of the expected answer in the Q&A dataset, if specified there
 - `actual_answer`: (optional) copy of the response text in the evaluation target, if specified there
 - `answer_reference_claims_count`: (optional) number of claims extracted from the reference answer, if a reference answer and actual answer are available
 - `answer_actual_claims_count`: (optional) number of claims extracted from the answer being evaluated, if a reference answer and actual answer are available
@@ -534,16 +468,13 @@ The output is a list of statistics for each question from the reference Q&A data
 - `answer_f1`: (optional) Harmonic mean of `answer_recall` and `answer_precision`
 - `answer_relevance`: (optional) The value representing how relevant is the actual answer to the question, computed using [RAGAS answer relevance](https://docs.ragas.io/en/v0.3.3/concepts/metrics/available_metrics/answer_relevance/)
 - `answer_relevance_error`: (optional) error message if answer relevance evaluation failed
-- `answer_relevance_cost`: The LLM use cost of computing `answer_relevance`, in US dollars
+- `answer_relevance_cost`: (optional) The LLM use cost of computing `answer_relevance`, in US dollars
 - `actual_steps`: (optional) copy of the steps in the evaluation target, if specified there
-- `steps_score`: a real number between 0 and 1, computed by comparing the results of the last executed steps to the output of the reference's last group of steps.
-    - If there is no match in the actual steps, then the score is `0.0`
-    - If the executed step's name is "retrieval" and the last reference group contains a retrieval step, then the score is the [recall at k](#context-recallk) of the retrieved document ids with respect to the reference.
-    - Otherwise, the score is the number of the matched steps on the last group divided by the total number of steps in the last group.
-- `input_tokens`: input tokens usage
-- `output_tokens`: output tokens usage
-- `total_tokens`: total tokens usage
-- `elapsed_sec`: elapsed seconds
+- `steps_score`: (optional) a real number between 0 and 1, see how step score is calculated in the section [Steps score](#Steps-score)
+- `input_tokens`: (optional) input tokens usage
+- `output_tokens`: (optional) output tokens usage
+- `total_tokens`: (optional) total tokens usage
+- `elapsed_sec`: (optional) elapsed seconds
 
 All `actual_steps` with `name` "retrieval" contain:
 - `retrieval_answer_recall`: (optional) recall of the retrieved context with respect to the reference answer, if evaluation succeeds
@@ -561,10 +492,10 @@ All `actual_steps` with `name` "retrieval" contain:
 - `retrieval_context_precision_error`: (optional) error message if `retrieval_context_precision` evaluation fails
 - `retrieval_context_f1`: (optional) F1 score of the retrieved context with respect to the reference answer, if `retrieval_context_recall` and `retrieval_context_precision` succeed
 
-
 #### Aggregates Keys
 
-The `aggregates` object provides aggregated evaluation metrics. These aggregates support analysis of agent quality, token efficiency, and execution performance. Aggregates are computed:
+The `aggregates` object provides aggregated evaluation metrics. These aggregates support analysis of agent quality, 
+token efficiency, and execution performance. Aggregates are computed:
 1. per question template, and
 1. over all questions in the dataset, using micro and macro averaging
 
@@ -1010,7 +941,42 @@ macro:
     mean: 25.911653497483996
 ```
 
-### SPARQL queries comparison
+### Steps score
+
+The steps score is a real number in the interval [0, 1], 
+which indicates how closely the actual steps match to the reference ones.
+A score of 1 indicates a perfect match.
+
+Going in reverse order of the reference groups and in reverse order of the actual steps, 
+for each reference group we try to match each step in the group to an actual step:
+- If all steps from the current reference group are matched, we proceed to the previous group, 
+but we only search among the actual steps before the earliest actual step already matched for the current group.
+Thus, we ignore the execution order of steps within a reference group, but groups are matched in order: 
+actual steps that match earlier groups must be executed before all steps matching later groups.
+- If some steps in the current reference group are not matched, then the matching stops, 
+and the score is computed from the matches found so far.
+
+An actual step can match at most one reference step, and only if the actual step is successful 
+(i.e., it didn’t result in an error).
+There are a few ways a reference step can match an actual one. In all cases except for the "retrieval" steps,
+the matching score is either 0 or 1. A score above 0 indicates a match.
+
+- if both are named "sparql_query" and the "output_media_type" of the reference step is "application/sparql-results+json", 
+then we try to match them using the [SPARQL queries comparison algorithm](#sparql-queries-comparison).
+- if both are named "retrieval" and the reference step has "output", then we compute [recall@k](#context-recallk).
+- if both are named "retrieve_time_series", then we check if the arguments of the steps are matching.
+- if both are named "retrieve_data_points", then we check if the arguments of the steps are matching.
+- if the reference step is named "iri_discovery" and the actual step name is "autocomplete_search",
+then check if the IRI specified as "output" of the "iri_discovery" step is present in the "output" of the "autocomplete_search".
+- if the reference and actual step names are the same and 
+the "output_media_type" of the reference step is "application/json", then the steps match,
+if the json outputs are the same. 
+- we fallback to match the outputs of the two steps. 
+
+The final steps score is the accumulated sum for all reference groups divided by their total number.
+The score for an individual reference group is the accumulated score for each step in this group divided by their total number.
+
+#### SPARQL queries comparison
 
 The algorithm iterates over all subsets of columns in the actual result of the same size as in the reference result.
 For each subset, it compares the set of columns (skipping optional columns).
