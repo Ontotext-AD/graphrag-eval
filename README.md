@@ -1127,3 +1127,64 @@ average_precision(
     retrieved_docs=[1, 4, 3, 5, 7]
 ) # ~=> 0.8056
 ```
+
+### Custom Evaluation (experimental)
+
+You (the user) can define your own LLM-based metrics to evaluate the system 
+outputs. To do this, specify its name, inputs, outputs and instructions in a 
+YAML file and pass the file path as a parameter to `run_evaluation()`. This 
+will return your output metrics alongside the standard metrics described 
+in previous sections.
+
+One configuration file can define multiple custom evaluations, each of which
+will be done as a separate query to the LLM. Each evaluation can have multiple 
+outputs. The format is shown in the example sections below.
+
+#### Example Custom Evaluation Configuration File
+
+```YAML
+  name: custom_1
+  inputs:
+    - question
+    - actual_answer
+    - reference_answer
+    - actual_context
+    - reference_context
+    - actual_steps
+    - reference_steps
+  steps_keys:
+    - name
+    - args
+    - output
+  instructions: |
+    Given the question, evaluate the actual answer based on the
+    reference answer.
+    
+    Also evaluate the actual context based on the reference context.
+    
+    Also evaluate the actual steps based on the reference steps.
+  outputs:
+    custom_1_answer_score: fraction between 0 and 1
+    custom_1_answer_reason: reason for your evaluation of the answer
+    custom_1_context_score: fraction between 0 and 1
+    custom_1_context_reason: reason for your evaluation of the context
+    custom_1_steps_score: fraction between 0 and 1
+    custom_1_steps_reason: reason for your evaluation of the steps
+```
+
+#### Example Call to Evaluate Using Custom Metrics
+
+```python
+evaluation_results = run_evaluation(
+    reference_qas, 
+    chat_responses, 
+    "my_project/custom_eval.yaml"
+)
+```
+
+#### Recommendations for Custom Evaluations
+
+1. Specify only several outputs in each evaluation
+1. Request an explanation output for output quantities you ask the LLM to count
+or estimate. You can ask for one explanation per quantity or one shared 
+explanation for 2-3 quantities
