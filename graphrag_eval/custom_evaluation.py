@@ -149,5 +149,6 @@ class CustomEvaluator:
 def parse_config(config_file_path: str | Path | None) -> list[CustomEvaluator]:
         if config_file_path is None:
             return []
-        config = yaml.safe_load(open(config_file_path))
+        with open(config_file_path) as f:
+            config = yaml.safe_load(f)
         return [CustomEvaluator(**c) for c in config]
