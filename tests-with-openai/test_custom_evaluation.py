@@ -1,11 +1,11 @@
 from pathlib import Path
 
 import yaml
-from graphrag_eval.custom_evaluation import CustomEvaluator
 from langevals_ragas.lib.common import RagasResult, Money
 
 from graphrag_eval import (
     answer_correctness,
+    custom_evaluation,
     run_evaluation,
 )
 from graphrag_eval.steps.retrieval_answer import (
@@ -18,6 +18,7 @@ from graphrag_eval.steps.retrieval_context_texts import (
 )
 from graphrag_eval.answer_relevance import RagasResponseRelevancyEvaluator
 from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+from graphrag_eval.custom_evaluation import CustomEvaluator
 from tests.util import read_responses
 
 
@@ -85,7 +86,12 @@ def _patch_standard(monkeypatch):
         "call_llm",
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
-    
+    monkeypatch.setattr(
+        custom_evaluation,
+        "OpenAI",
+        lambda: None
+    )
+
 
 def test_run_custom_evaluation_ok(monkeypatch):
     reference_data = yaml.safe_load(
@@ -142,14 +148,6 @@ def test_run_custom_evaluation_missing_reference_steps(monkeypatch):
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     _patch_standard(monkeypatch)
-    monkeypatch.setattr(
-        CustomEvaluator,
-        "call_llm",
-        lambda *_: \
-            "0.1\tCustom answer reason" \
-            "\t0.2\tCustom context reason" \
-            "\t0.3\tCustom steps reason"
-    )
     del reference_data[0]["questions"][0]["reference_steps"]
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     custom_eval_config_file_path = DATA_DIR / "custom-eval-config.yaml"
@@ -169,14 +167,6 @@ def test_run_custom_evaluation_missing_actual_steps(monkeypatch):
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     _patch_standard(monkeypatch)
-    monkeypatch.setattr(
-        CustomEvaluator,
-        "call_llm",
-        lambda *_: \
-            "0.1\tCustom answer reason" \
-            "\t0.2\tCustom context reason" \
-            "\t0.3\tCustom steps reason"
-    )
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     del actual_responses["c10bbc8dce98a4b8832d125134a16153"]["actual_steps"]
     custom_eval_config_file_path = DATA_DIR / "custom-eval-config.yaml"
@@ -196,14 +186,6 @@ def test_run_custom_evaluation_missing_actual_answer(monkeypatch):
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     _patch_standard(monkeypatch)
-    monkeypatch.setattr(
-        CustomEvaluator,
-        "call_llm",
-        lambda *_: \
-            "0.1\tCustom answer reason" \
-            "\t0.2\tCustom context reason" \
-            "\t0.3\tCustom steps reason"
-    )
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     del actual_responses["c10bbc8dce98a4b8832d125134a16153"]["actual_answer"]
     custom_eval_config_file_path = DATA_DIR / "custom-eval-config.yaml"
