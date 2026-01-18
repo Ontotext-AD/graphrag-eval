@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import yaml
-from graphrag_eval.custom_evaluation import CustomEvaluator
 from langevals_ragas.lib.common import RagasResult, Money
 
 from graphrag_eval import (
