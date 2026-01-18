@@ -54,12 +54,12 @@ def run_evaluation(
                             actual_result,
                         )
                     )
-            for evaluator in custom_evaluators:
-                custom_metrics = evaluator.evaluate(question, actual_result)
-                eval_result.update(**custom_metrics)
             eval_result.update(
                 evaluate_steps(question, actual_result)
             )
+            for evaluator in custom_evaluators:
+                custom_metrics = evaluator.evaluate(question, actual_result)
+                eval_result.update(**custom_metrics)
             for key in "input_tokens", "output_tokens", "total_tokens", "elapsed_sec":
                 if key in actual_result:
                     eval_result[key] = actual_result[key]

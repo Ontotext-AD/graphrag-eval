@@ -19,6 +19,15 @@ def format_input_template(input_config: str | dict[str, list[str]]) -> str:
     return f"# {header}\n{{{k}}}"
 
 
+def format_context(steps: list[dict[str, str]]) -> str:
+    last_step_output = steps[-1]["output"]
+    try:
+        context_str = json.loads(last_step_output)
+        return json.dumps(context_str, indent=2)
+    except json.JSONDecodeError:
+        return last_step_output
+
+
 class CustomEvaluator:
     def __init__(
         self, 
@@ -77,6 +86,11 @@ class CustomEvaluator:
             steps_out.append(step_out)        
         return json.dumps(steps_out, indent=2)
     
+    def error(self, msg: str) -> dict:
+        result = {k: None for k in self.output_variables}
+        result[self.metric_name + '_error'] = msg
+        return result
+
     def parse_outputs(self, response: str) -> dict[str, str | None]:
         vals = response.split("\t")
         n_act = len(vals)
@@ -90,35 +104,44 @@ class CustomEvaluator:
                     pass
                 result[k] = v
             return result
-        msg = f"Expected {n_exp} tab-separated values, got: {response}"
-        result = dict(zip(self.output_variables, [None] * n_exp))
-        result[self.metric_name + '_error'] = msg
-        return result
+        return self.error(f"Expected {n_exp} tab-separated values, got: {response}")
 
     def evaluate(self, reference: dict, actual: dict) -> dict[str, str | None]:
         inputs = {}
         if "question" in self.input_variables:
+            if "question_text" not in reference:
+                return self.error("Missing 'question_text' in reference")
             inputs["question"] = reference["question_text"]
         if "reference_answer" in self.input_variables:
+            if "reference_answer" not in reference:
+                return self.error("Missing 'reference_answer' in reference")
             inputs["reference_answer"] = reference["reference_answer"]
         if "reference_context" in self.input_variables:
-            context_str = json.loads(reference["reference_steps"][-1][-1]["output"])
-            inputs["reference_context"] = json.dumps(context_str, indent=2)
+            if "reference_steps" not in reference:
+                return self.error("Reference missing key 'reference_steps'")
+            ref_step = reference["reference_steps"][-1]
+            inputs["reference_context"] = format_context(ref_step)
         if "reference_steps" in self.input_variables:
-            formatted_steps = [self.format_steps(ss) for ss in reference["reference_steps"]]
+            if "reference_steps" not in reference:
+                return self.error("Reference missing key 'reference_steps'")
+            formatted_steps = [
+                self.format_steps(ss) 
+                for ss in reference["reference_steps"]
+            ]
             inputs["reference_steps"] = "\n\n".join(formatted_steps)
         if "actual_answer" in self.input_variables:
+            if "actual_answer" not in actual:
+                return self.error("Actual output missing 'actual_answer'")
             inputs["actual_answer"] = actual["actual_answer"]
         if "actual_context" in self.input_variables:
-            context_str = json.loads(actual["actual_steps"][-1]["output"])
-            inputs["actual_context"] = json.dumps(context_str, indent=2)
-            with open("temp2.txt", "w") as f:
-                f.write(inputs["actual_context"])
+            if "actual_steps" not in actual:
+                return self.error("Actual output missing 'actual_steps'")
+            inputs["actual_context"] = format_context(actual["actual_steps"])
         if "actual_steps" in self.input_variables:
+            if "actual_steps" not in actual:
+                return self.error("Actual output missing 'actual_steps'")
             inputs["actual_steps"] = self.format_steps(actual["actual_steps"])
         prompt = self.prompt_template.format(**inputs)
-        with open("tests-with-openai/test_data/prompt.md", "w") as f:
-            f.write(prompt)
         response = self.call_llm(prompt)
         return self.parse_outputs(response)
 

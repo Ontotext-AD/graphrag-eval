@@ -1,0 +1,80 @@
+- actual_answer: 'The following transformers are located within the Substation OSLO:
+
+
+    1. **OSLO T2** (IRI: `urn:uuid:f1769de8-9aeb-11e5-91da-b8763fd99c5f`)
+
+    2. **OSLO T1** (IRI: `urn:uuid:f1769dd6-9aeb-11e5-91da-b8763fd99c5f`)'
+  actual_steps:
+  - args:
+      k: 2
+      query: transformers Substation OSLO
+    id: call_3
+    name: retrieval
+    output: "[\n  {\n    \"id\": \"http://example.com/resource/doc/1\",\n    \"text\"\
+      : \"Transformer OSLO T1 is in Substation Oslo.\"\n  },\n  {\n    \"id\": \"\
+      http://example.com/resource/doc/2\",\n    \"text\": \"Transformer OSLO T2 is\
+      \ in Substation Oslo.\"\n  }\n]"
+    retrieval_answer_f1: 0.9
+    retrieval_answer_f1_cost: 0.0014
+    retrieval_answer_precision: 0.9
+    retrieval_answer_precision_cost: 0.0007
+    retrieval_answer_precision_reason: retrieval answer precision reason
+    retrieval_answer_recall: 0.9
+    retrieval_answer_recall_cost: 0.0007
+    retrieval_answer_recall_reason: retrieval answer recall reason
+    status: success
+  - args:
+      query: OSLO
+      result_class: cim:Substation
+    id: call_3wIrBHIsInzAWzo8qwwYAkDD
+    name: autocomplete_search
+    output: "{\n  \"head\": {\n    \"vars\": [\n      \"iri\",\n      \"name\",\n\
+      \      \"rank\"\n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n\
+      \        \"iri\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f\"\
+      \n        },\n        \"name\": {\n          \"type\": \"literal\",\n      \
+      \    \"value\": \"OSLO\"\n        },\n        \"rank\": {\n          \"datatype\"\
+      : \"http://www.w3.org/2001/XMLSchema#float\",\n          \"type\": \"literal\"\
+      ,\n          \"value\": \"0.01185\"\n        }\n      }\n    ]\n  }\n}"
+    status: success
+  - args:
+      query: "SELECT ?transformer ?transformerName WHERE {\n  ?transformer a cim:PowerTransformer\
+        \ ;\n               cim:Equipment.EquipmentContainer <urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f>\
+        \ ;\n               cim:IdentifiedObject.name ?transformerName .\n}"
+    id: call_3b3zHJnBXwYYSg04BiFGAAgO
+    name: sparql_query
+    output: "{\n  \"head\": {\n    \"vars\": [\n      \"transformer\",\n      \"transformerName\"\
+      \n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n        \"transformer\"\
+      : {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769de8-9aeb-11e5-91da-b8763fd99c5f\"\
+      \n        },\n        \"transformerName\": {\n          \"type\": \"literal\"\
+      ,\n          \"value\": \"OSLO    T2\"\n        }\n      },\n      {\n     \
+      \   \"transformer\": {\n          \"type\": \"uri\",\n          \"value\": \"\
+      urn:uuid:f1769dd6-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"transformerName\"\
+      : {\n          \"type\": \"literal\",\n          \"value\": \"OSLO    T1\"\n\
+      \        }\n      }\n    ]\n  }\n}"
+    status: success
+  answer_actual_claims_count: 2
+  answer_correctness_reason: answer correctness reason
+  answer_f1: 1.0
+  answer_matching_claims_count: 2
+  answer_precision: 1.0
+  answer_recall: 1.0
+  answer_reference_claims_count: 2
+  answer_relevance: 0.9
+  answer_relevance_cost: 0.0007
+  answer_relevance_reason: answer relevance reason
+  custom_1_answer_reason: null
+  custom_1_answer_score: null
+  custom_1_context_reason: null
+  custom_1_context_score: null
+  custom_1_error: Reference missing key 'reference_steps'
+  custom_1_steps_reason: null
+  custom_1_steps_score: null
+  elapsed_sec: 6.601679801940918
+  input_tokens: 221339
+  output_tokens: 212
+  question_id: c10bbc8dce98a4b8832d125134a16153
+  question_text: List all transformers within Substation OSLO
+  reference_answer: OSLO T1, OSLO T2
+  status: success
+  template_id: list_all_transformers_within_Substation_SUBSTATION
+  total_tokens: 221551

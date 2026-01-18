@@ -1303,6 +1303,24 @@ evaluation_results = run_evaluation(
   total_tokens: 221551
 ```
 
+#### Output in Case of Evaluation Error
+
+If there is an error during evaluation, the output will have `null` for all
+custom evaluation specified output keys and will have an additional key 
+explaining the error. The key will be `{name}_error` where `name` is the custom
+evaluation name.
+
+There are three types of errors:
+1. The reference input is missing keys requested in the custom evaluation 
+configuration. Example: 
+`custom_1_error: Reference missing key 'reference_steps'`
+1. The actual output to be evaluated is missing keys requested in the custom
+evaluation configuration.  Example: 
+`custom_1_error: Actual output missing 'actual_steps'`
+1. The evaluating LLM output does not conform to the customevaluation 
+configuration. Example: 
+`custom_1_error: "Expected 6 tab-separated values, got: 0.1\tCustom answer reason"`
+
 #### Recommendations for Custom Evaluations
 
 1. Specify only several outputs in each evaluation
