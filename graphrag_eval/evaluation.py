@@ -1,7 +1,6 @@
 from pathlib import Path
 
-from .custom_evaluation import parse_config
-from .steps.evaluation import evaluate_steps
+from .steps.evaluation import get_steps_evaluation_result_dict
 
 
 def run_evaluation(
@@ -12,7 +11,10 @@ def run_evaluation(
     # Output metrics are not nested, for simpler aggregation
     answer_correctness_evaluator = None
     evaluation_results = []
-    custom_evaluators = parse_config(custom_eval_config_file_path)
+    custom_evaluators = []
+    if custom_eval_config_file_path:
+        from .custom_evaluation import parse_config
+        custom_evaluators = parse_config(custom_eval_config_file_path)
     for template in qa_dataset:
         template_id = template["template_id"]
         for question in template["questions"]:
