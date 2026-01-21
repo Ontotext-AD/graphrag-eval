@@ -64,7 +64,7 @@ To evaluate answers and/or steps:
 1. Call the evaluation function with the reference data and target data: section [Usage Code](#Usage-Code)
 1. Call the aggregation function with the evaluation results: section [Usage Code](#Usage-Code)
 
-Answer evaluation (correctness and relevance) uses the LLM `openai/gpt-4o-mini`.
+Answer evaluation (correctness and relevance) and [custom evaluation](#Custom-Evaluation-(Experimental)) use the LLM `openai/gpt-4o-mini`.
 
 ### Reference Q&A Data
 
@@ -1128,7 +1128,7 @@ average_precision(
 ) # ~=> 0.8056
 ```
 
-### Custom Evaluation (experimental)
+### Custom Evaluation (Experimental)
 
 You (the user) can define your own LLM-based metrics to evaluate the system 
 outputs. To do this, specify its name, inputs, outputs and instructions in a 
