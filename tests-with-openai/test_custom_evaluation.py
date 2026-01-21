@@ -5,6 +5,7 @@ from langevals_ragas.lib.common import RagasResult, Money
 
 from graphrag_eval import (
     answer_correctness,
+    compute_aggregates,
     custom_evaluation,
     run_evaluation,
 )
@@ -117,7 +118,11 @@ def test_run_custom_evaluation_ok(monkeypatch):
         (DATA_DIR / "evaluation_4.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
-
+    aggregates = compute_aggregates(evaluation_results)
+    expected_aggregates = yaml.safe_load(
+        (DATA_DIR / "evaluation_summary_4.yaml").read_text(encoding="utf-8")
+    )
+    assert expected_aggregates == aggregates
 
 def test_run_custom_evaluation_llm_output_error(monkeypatch):
     reference_data = yaml.safe_load(
@@ -141,6 +146,11 @@ def test_run_custom_evaluation_llm_output_error(monkeypatch):
         (DATA_DIR / "evaluation_5.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
+    aggregates = compute_aggregates(evaluation_results)
+    expected_aggregates = yaml.safe_load(
+        (DATA_DIR / "evaluation_summary_5.yaml").read_text(encoding="utf-8")
+    )
+    assert expected_aggregates == aggregates
 
 
 def test_run_custom_evaluation_missing_reference_steps(monkeypatch):
@@ -160,6 +170,11 @@ def test_run_custom_evaluation_missing_reference_steps(monkeypatch):
         (DATA_DIR / "evaluation_6.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
+    aggregates = compute_aggregates(evaluation_results)
+    expected_aggregates = yaml.safe_load(
+        (DATA_DIR / "evaluation_summary_6.yaml").read_text(encoding="utf-8")
+    )
+    assert expected_aggregates == aggregates
 
 
 def test_run_custom_evaluation_missing_actual_steps(monkeypatch):
@@ -179,6 +194,11 @@ def test_run_custom_evaluation_missing_actual_steps(monkeypatch):
         (DATA_DIR / "evaluation_7.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
+    aggregates = compute_aggregates(evaluation_results)
+    expected_aggregates = yaml.safe_load(
+        (DATA_DIR / "evaluation_summary_7.yaml").read_text(encoding="utf-8")
+    )
+    assert expected_aggregates == aggregates
 
 
 def test_run_custom_evaluation_missing_actual_answer(monkeypatch):
@@ -198,3 +218,8 @@ def test_run_custom_evaluation_missing_actual_answer(monkeypatch):
         (DATA_DIR / "evaluation_8.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
+    aggregates = compute_aggregates(evaluation_results)
+    expected_aggregates = yaml.safe_load(
+        (DATA_DIR / "evaluation_summary_8.yaml").read_text(encoding="utf-8")
+    )
+    assert expected_aggregates == aggregates
