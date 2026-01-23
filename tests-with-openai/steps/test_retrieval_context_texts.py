@@ -1,114 +1,55 @@
-from collections import namedtuple
-from pytest import approx
+import os
+from unittest.mock import AsyncMock, MagicMock
 
-from langevals_ragas.lib.common import RagasResult, Money
-
-from graphrag_eval.steps.retrieval_context_texts import (
-    RagasContextPrecisionEvaluator,
-    RagasContextRecallEvaluator,
-    get_retrieval_evaluation_dict,
-)
+import pytest
 
 
-context_1_dict = {
-    "id": "1",
-    "text": "Oxygen turns the sky blue"
-}
+@pytest.fixture(scope="session", autouse=True)
+def set_env():
+    os.environ["OPENAI_API_KEY"] = "fake-key"
 
 
-def test_get_retrieval_evaluation_dict_success(monkeypatch):
+@pytest.mark.asyncio
+async def test_get_retrieval_evaluation_dict_success(monkeypatch):
+    from graphrag_eval.steps import retrieval_context_texts
+
+    mock_result_recall = MagicMock()
+    mock_result_recall.value = 0.9
     monkeypatch.setattr(
-        RagasContextRecallEvaluator,
-        'evaluate',
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="retrieval context recall reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
+        retrieval_context_texts.ContextEntityRecall,
+        'ascore',
+        AsyncMock(return_value=mock_result_recall)
     )
-    monkeypatch.setattr(
-        RagasContextPrecisionEvaluator,
-        'evaluate',
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.6,
-            details="retrieval context precision reason",
-            cost=Money(currency="USD", amount=0.0003)
-        )
-    )
-    eval_result_dict = get_retrieval_evaluation_dict(
-        reference_contexts=[context_1_dict],
-        actual_contexts=[context_1_dict],
-    )
-    assert approx(eval_result_dict) == {
-        "retrieval_context_recall": 0.9,
-        "retrieval_context_recall_reason": "retrieval context recall reason",
-        "retrieval_context_recall_cost": 0.0007,
-        "retrieval_context_precision": 0.6,
-        "retrieval_context_precision_reason": "retrieval context precision reason",
-        "retrieval_context_precision_cost": 0.0003,
-        "retrieval_context_f1": 0.72,
-        "retrieval_context_f1_cost": 0.0010,
-    }
 
-
-def test_get_retrieval_evaluation_dict_recall_success_precision_error(monkeypatch):
-    monkeypatch.setattr(
-        RagasContextRecallEvaluator,
-        "evaluate",
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="retrieval context recall reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
-    )
-    monkeypatch.setattr(
-        RagasContextPrecisionEvaluator,
-        "evaluate",
-        lambda *_: namedtuple("RagasResult", ["status", "details", "cost"])(
-            status="error",
-            details="retrieval context precision error",
-            cost=Money(currency="USD", amount=0.0003)
-        )
-    )
-    eval_result_dict = get_retrieval_evaluation_dict(
-        reference_contexts=[context_1_dict],
-        actual_contexts=[context_1_dict],
+    eval_result_dict = await retrieval_context_texts.get_retrieval_evaluation_dict(
+        reference_answer="Oxygen turns the sky blue",
+        actual_contexts=[{
+            "id": "1",
+            "text": "Oxygen turns the sky blue"
+        }],
     )
     assert eval_result_dict == {
         "retrieval_context_recall": 0.9,
-        "retrieval_context_recall_reason": "retrieval context recall reason",
-        "retrieval_context_recall_cost": 0.0007,
-        "retrieval_context_precision_error": "retrieval context precision error"
     }
 
 
-def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
+@pytest.mark.asyncio
+async def test_get_retrieval_evaluation_dict_error(monkeypatch):
+    from graphrag_eval.steps import retrieval_context_texts
+
     monkeypatch.setattr(
-        RagasContextRecallEvaluator,
-        "evaluate",
-        lambda *_: namedtuple("RagasResult", ["status", "details", "cost"])(
-            status="error",
-            details="retrieval context recall error",
-            cost=Money(currency="USD", amount=0.0003)
-        )
+        retrieval_context_texts.ContextEntityRecall,
+        'ascore',
+        AsyncMock(side_effect=Exception("some error"))
     )
-    monkeypatch.setattr(
-        RagasContextPrecisionEvaluator,
-        "evaluate",
-        lambda *_: namedtuple("RagasResult", ["status", "details", "cost"])(
-            status="error",
-            details="retrieval context precision error",
-            cost=Money(currency="USD", amount=0.0003)
-        )
-    )
-    eval_result_dict = get_retrieval_evaluation_dict(
-        reference_contexts=[context_1_dict],
-        actual_contexts=[context_1_dict],
+
+    eval_result_dict = await retrieval_context_texts.get_retrieval_evaluation_dict(
+        reference_answer="Oxygen turns the sky blue",
+        actual_contexts=[{
+            "id": "1",
+            "text": "Oxygen turns the sky blue"
+        }],
     )
     assert eval_result_dict == {
-        "retrieval_context_recall_error": "retrieval context recall error",
-        "retrieval_context_precision_error": "retrieval context precision error",
+        "retrieval_context_recall_error": "some error"
     }

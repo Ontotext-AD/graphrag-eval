@@ -8,7 +8,6 @@ METRICS = [
     "answer_recall",
     "answer_precision",
     "answer_relevance",
-    "answer_relevance_cost",
     "answer_f1",
     "steps_score",
     "input_tokens",
@@ -19,17 +18,9 @@ METRICS = [
 STEPS_METRICS = {
     "retrieval": [
         "retrieval_answer_precision",
-        "retrieval_answer_precision_cost",
         "retrieval_answer_recall",
-        "retrieval_answer_recall_cost",
         "retrieval_answer_f1",
-        "retrieval_answer_f1_cost",
-        "retrieval_context_precision",
-        "retrieval_context_precision_cost",
         "retrieval_context_recall",
-        "retrieval_context_recall_cost",
-        "retrieval_context_f1",
-        "retrieval_context_f1_cost",
     ]
 }
 RETAINED_METRICS = [

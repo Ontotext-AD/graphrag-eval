@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 import yaml
 
 from graphrag_eval import (
@@ -9,7 +10,6 @@ from graphrag_eval import (
 from graphrag_eval.aggregation import stats_for_series
 from graphrag_eval.steps.evaluation import evaluate_steps
 from .util import read_responses
-
 
 DATA_DIR = Path(__file__).parent / "test_data"
 
@@ -52,13 +52,14 @@ def test_stats_for_series():
     }
 
 
-def test_run_evaluation_and_compute_aggregates():
+@pytest.mark.asyncio
+async def test_run_evaluation_and_compute_aggregates():
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     responses_path = DATA_DIR / "actual_responses_1.jsonl"
     actual_responses = read_responses(responses_path)
-    evaluation_results = run_evaluation(reference_data, actual_responses)
+    evaluation_results = await run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_1.yaml").read_text(
             encoding="utf-8"
@@ -74,13 +75,14 @@ def test_run_evaluation_and_compute_aggregates():
     assert expected_aggregates == aggregates
 
 
-def test_run_evaluation_and_compute_aggregates_all_errors():
+@pytest.mark.asyncio
+async def test_run_evaluation_and_compute_aggregates_all_errors():
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     responses_path = DATA_DIR / "actual_responses_2.jsonl"
     actual_responses = read_responses(responses_path)
-    evaluation_results = run_evaluation(reference_data, actual_responses)
+    evaluation_results = await run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_2.yaml").read_text(
             encoding="utf-8"

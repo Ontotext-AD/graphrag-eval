@@ -1,9 +1,9 @@
 from .steps.evaluation import get_steps_evaluation_result_dict
 
 
-def run_evaluation(
-        qa_dataset: list[dict],
-        responses_dict: dict,
+async def run_evaluation(
+    qa_dataset: list[dict],
+    responses_dict: dict,
 ) -> list[dict]:
     # Output metrics are not nested, for simpler aggregation
     answer_correctness_evaluator = None
@@ -33,7 +33,7 @@ def run_evaluation(
                 eval_result["actual_answer"] = actual_result["actual_answer"]
                 from graphrag_eval import answer_relevance
                 eval_result.update(
-                    answer_relevance.get_relevance_dict(
+                    await answer_relevance.get_relevance_dict(
                         question["question_text"],
                         actual_result["actual_answer"],
                     )
@@ -51,7 +51,7 @@ def run_evaluation(
                     )
 
             eval_result.update(
-                get_steps_evaluation_result_dict(question, actual_result)
+                await get_steps_evaluation_result_dict(question, actual_result)
             )
             for key in "input_tokens", "output_tokens", "total_tokens", "elapsed_sec":
                 if key in actual_result:
