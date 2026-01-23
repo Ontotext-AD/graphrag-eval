@@ -38,8 +38,6 @@
 
     2. **OSLO T1** (IRI: `urn:uuid:f1769dd6-9aeb-11e5-91da-b8763fd99c5f`)'
   answer_relevance: 0.9
-  answer_relevance_cost: 0.0007
-  answer_relevance_reason: answer relevance reason
   answer_reference_claims_count: 2
   answer_actual_claims_count: 2
   answer_matching_claims_count: 2
@@ -60,21 +58,9 @@
       \ in Substation Oslo.\"\n  }\n]"
     execution_timestamp: '2025-12-17T09:16:39Z'
     retrieval_answer_recall: 0.9
-    retrieval_answer_recall_cost: 0.0007
-    retrieval_answer_recall_reason: retrieval answer recall reason
     retrieval_answer_precision: 0.9
-    retrieval_answer_precision_cost: 0.0007
-    retrieval_answer_precision_reason: retrieval answer precision reason
     retrieval_answer_f1: 0.9
-    retrieval_answer_f1_cost: 0.0014
     retrieval_context_recall: 0.9
-    retrieval_context_recall_reason: retrieval context recall reason
-    retrieval_context_recall_cost: 0.0007
-    retrieval_context_precision: 0.9
-    retrieval_context_precision_reason: retrieval context precision reason
-    retrieval_context_precision_cost: 0.0007
-    retrieval_context_f1: 0.9
-    retrieval_context_f1_cost: 0.0014
   - name: autocomplete_search
     args:
       query: OSLO

@@ -32,12 +32,6 @@ per_template:
       mean: 0.9
       median: 0.9
       sum: 0.9
-    answer_relevance_cost:
-      min: 0.0007
-      max: 0.0007
-      mean: 0.0007
-      median: 0.0007
-      sum: 0.0007
     input_tokens:
       sum: 221339
       mean: 221339
@@ -95,12 +89,6 @@ micro:
     mean: 0.9
     median: 0.9
     sum: 0.9
-  answer_relevance_cost:
-    min: 0.0007
-    max: 0.0007
-    mean: 0.0007
-    median: 0.0007
-    sum: 0.0007
   input_tokens:
     sum: 221339
     mean: 221339
@@ -136,8 +124,6 @@ macro:
     mean: 1.0
   answer_relevance:
     mean: 0.9
-  answer_relevance_cost:
-    mean: 0.0007
   input_tokens:
     mean: 221339
   output_tokens:

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 import yaml
 
 from graphrag_eval import (
@@ -51,13 +52,14 @@ def test_stats_for_series():
     }
 
 
-def test_run_evaluation_and_compute_aggregates():
+@pytest.mark.asyncio
+async def test_run_evaluation_and_compute_aggregates():
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     responses_path = DATA_DIR / "actual_responses_1.jsonl"
     actual_responses = read_responses(responses_path)
-    evaluation_results = run_evaluation(reference_data, actual_responses)
+    evaluation_results = await run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_1.yaml").read_text(
             encoding="utf-8"
@@ -73,13 +75,14 @@ def test_run_evaluation_and_compute_aggregates():
     assert expected_aggregates == aggregates
 
 
-def test_run_evaluation_and_compute_aggregates_all_errors():
+@pytest.mark.asyncio
+async def test_run_evaluation_and_compute_aggregates_all_errors():
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     responses_path = DATA_DIR / "actual_responses_2.jsonl"
     actual_responses = read_responses(responses_path)
-    evaluation_results = run_evaluation(reference_data, actual_responses)
+    evaluation_results = await run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_2.yaml").read_text(
             encoding="utf-8"
@@ -235,13 +238,14 @@ def test_calculate_steps_score_expected_select_actual_ask_and_then_select():
     assert expected_steps[-1][0]["matches"] == "call_3qJK186HZj1twnr6x976slHN"
 
 
-def test_evaluate_timeseries_steps_with_2_reference_sparql_queries():
+@pytest.mark.asyncio
+async def test_evaluate_timeseries_steps_with_2_reference_sparql_queries():
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_2.yaml").read_text(encoding="utf-8")
     )
     responses_path = DATA_DIR / "actual_responses_3.jsonl"
     actual_responses = read_responses(responses_path)
-    evaluation_results = run_evaluation(reference_data, actual_responses)
+    evaluation_results = await run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_4.yaml").read_text(
             encoding="utf-8"
@@ -250,13 +254,14 @@ def test_evaluate_timeseries_steps_with_2_reference_sparql_queries():
     assert expected_evaluation_results == evaluation_results
 
 
-def test_evaluate_timeseries_steps_with_1_reference_sparql_query():
+@pytest.mark.asyncio
+async def test_evaluate_timeseries_steps_with_1_reference_sparql_query():
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_3.yaml").read_text(encoding="utf-8")
     )
     responses_path = DATA_DIR / "actual_responses_3.jsonl"
     actual_responses = read_responses(responses_path)
-    evaluation_results = run_evaluation(reference_data, actual_responses)
+    evaluation_results = await run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_5.yaml").read_text(
             encoding="utf-8"
@@ -265,13 +270,14 @@ def test_evaluate_timeseries_steps_with_1_reference_sparql_query():
     assert expected_evaluation_results == evaluation_results
 
 
-def test_evaluate_timeseries_steps_with_1_iri_discovery():
+@pytest.mark.asyncio
+async def test_evaluate_timeseries_steps_with_1_iri_discovery():
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_4.yaml").read_text(encoding="utf-8")
     )
     responses_path = DATA_DIR / "actual_responses_3.jsonl"
     actual_responses = read_responses(responses_path)
-    evaluation_results = run_evaluation(reference_data, actual_responses)
+    evaluation_results = await run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_6.yaml").read_text(
             encoding="utf-8"

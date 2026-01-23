@@ -97,8 +97,7 @@ class AnswerCorrectnessEvaluator:
         reference: dict,
         actual: dict,
     ):
-        result = {}
-        result["reference_answer"] = reference["reference_answer"]
+        result = {"reference_answer": reference["reference_answer"]}
         num_ref_claims, num_actual_claims, num_matching_claims, reason, error = \
         self.evaluate_answer(
             reference["question_text"],
