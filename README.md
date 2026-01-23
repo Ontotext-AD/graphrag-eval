@@ -32,6 +32,17 @@ or add the following dependency in your `pyproject.toml` file:
 graphrag-eval = {version = "*", extras = ["ragas"]}
 ```
 
+To use a [custom evaluation](#Custom-Evaluation-(Experimental)):
+
+```bash
+pip install graphrag-eval[custom]
+```
+
+or add the following dependency in your `pyproject.toml` file:
+```toml
+graphrag-eval = {version = "*", extras = ["custom"]}
+```
+
 ## Maintainers
 
 Developed and maintained by [Graphwise](https://graphwise.ai/).
