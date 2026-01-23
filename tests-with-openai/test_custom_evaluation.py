@@ -26,7 +26,7 @@ from tests.util import read_responses
 DATA_DIR = Path(__file__).parent / "test_data"
 
 
-def _patch_common(monkeypatch):
+def _mock_common_calls(monkeypatch):
     monkeypatch.setattr(
         RagasResponseRelevancyEvaluator,
         'evaluate',
@@ -98,7 +98,7 @@ def test_run_custom_evaluation_ok(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
-    _patch_common(monkeypatch)
+    _mock_common_calls(monkeypatch)
     monkeypatch.setattr(
         CustomEvaluator,
         "call_llm",
@@ -128,7 +128,7 @@ def test_run_custom_evaluation_llm_output_error(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
-    _patch_common(monkeypatch)
+    _mock_common_calls(monkeypatch)
     monkeypatch.setattr(
         CustomEvaluator,
         "call_llm",
@@ -157,7 +157,7 @@ def test_run_custom_evaluation_missing_reference_steps(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
-    _patch_common(monkeypatch)
+    _mock_common_calls(monkeypatch)
     del reference_data[0]["questions"][0]["reference_steps"]
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     custom_eval_config_file_path = DATA_DIR / "custom-eval-config.yaml"
@@ -181,7 +181,7 @@ def test_run_custom_evaluation_missing_actual_steps(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
-    _patch_common(monkeypatch)
+    _mock_common_calls(monkeypatch)
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     del actual_responses["c10bbc8dce98a4b8832d125134a16153"]["actual_steps"]
     custom_eval_config_file_path = DATA_DIR / "custom-eval-config.yaml"
@@ -205,7 +205,7 @@ def test_run_custom_evaluation_missing_actual_answer(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
-    _patch_common(monkeypatch)
+    _mock_common_calls(monkeypatch)
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     del actual_responses["c10bbc8dce98a4b8832d125134a16153"]["actual_answer"]
     custom_eval_config_file_path = DATA_DIR / "custom-eval-config.yaml"
