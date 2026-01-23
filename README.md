@@ -4,7 +4,7 @@
 
 # QA Evaluation
 
-This is a Python module for assessing the quality of question-answering systems such as ones based on LLM agents, based on a set of questions and reference answers for them. This includes evaluating the final answer and the steps used to reach the answer (such as orchestrated and executed steps), compared to the given reference steps.
+This is a Python module for assessing the quality of question-answering systems such as ones based on LLM agents, based on a set of questions and reference answers for them. This includes evaluating the final answer and the steps used to reach the answer (such as orchestrated and executed steps), compared to the given reference steps. The library provides built-in evaluation metrics and allows the user to define their own metric.
 
 ## License
 
