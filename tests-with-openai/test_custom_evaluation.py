@@ -99,13 +99,12 @@ def test_run_custom_evaluation_ok(monkeypatch):
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     _mock_common_calls(monkeypatch)
-    monkeypatch.setattr(
-        CustomEvaluator,
-        "call_llm",
-        lambda *_: \
-            "0.1\tCustom answer reason" \
-            "\t0.3\tCustom steps reason"
-    )
+    captured_prompt = ''
+    def mock_call_llm(self, prompt):
+        nonlocal captured_prompt
+        captured_prompt = prompt
+        return "0.1\tCustom answer reason\t0.3\tCustom steps reason"
+    monkeypatch.setattr(CustomEvaluator, "call_llm", mock_call_llm)
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     custom_eval_config_file_path = DATA_DIR / "custom-eval-config.yaml"
     evaluation_results = run_evaluation(
@@ -113,6 +112,9 @@ def test_run_custom_evaluation_ok(monkeypatch):
         actual_responses, 
         custom_eval_config_file_path
     )
+    with open(DATA_DIR / "custom-eval-prompt-1.txt") as f:
+        expected_prompt = f.read()
+    assert captured_prompt.strip() == expected_prompt.strip()
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_4.yaml").read_text(encoding="utf-8")
     )
