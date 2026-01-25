@@ -70,13 +70,11 @@
   answer_relevance: 0.9
   answer_relevance_cost: 0.0007
   answer_relevance_reason: answer relevance reason
-  custom_1_answer_reason: null
   custom_1_answer_score: null
-  custom_1_context_reason: null
-  custom_1_context_score: null
-  custom_1_error: "Expected 6 tab-separated values, got: 0.1\tCustom answer reason"
-  custom_1_steps_reason: null
+  custom_1_answer_reason: null
   custom_1_steps_score: null
+  custom_1_steps_reason: null
+  custom_1_error: "Expected 4 tab-separated values, got: 0.1\tCustom answer reason"
   elapsed_sec: 6.601679801940918
   input_tokens: 221339
   output_tokens: 212

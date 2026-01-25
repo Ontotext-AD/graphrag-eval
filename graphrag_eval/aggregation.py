@@ -1,8 +1,10 @@
 import json
 from collections import defaultdict
 from collections.abc import Sequence
+from pathlib import Path
 from statistics import mean, median
 from typing import Any, Collection, Iterable
+
 
 METRICS = [
     "answer_recall",
@@ -64,10 +66,11 @@ def update_step_metrics(
 def update_stats(
     sample: dict[str, float | int],
     template_stats: dict[str, list[float | int]],
+    custom_metrics: list[str] = [],
 ):
-    for metric in METRICS:
+    for metric in METRICS + custom_metrics:
         value = sample.get(metric)
-        if value is not None:
+        if isinstance(value, (float, int)):
             template_stats[metric].append(value)
 
 
@@ -100,6 +103,7 @@ def compute_per_template_stats(
     stats_per_template: dict[str, dict[str, Sequence[int]]],
     steps_summary_per_template: dict[str, dict[str, dict[str, int]]],
     step_metrics_per_template: dict[str, dict[str, Sequence[int]]],
+    custom_metrics: list[str] = [],
 ) -> dict[str, dict[str, Any]]:
     summary = {}
 
@@ -110,7 +114,7 @@ def compute_per_template_stats(
             "number_of_error_samples": n_by_status["error"],
             "number_of_success_samples": n_by_status["success"],
         }
-        for metric in METRICS:
+        for metric in METRICS + custom_metrics:
             series = stats_per_template[template_id].get(metric, [])
             if series or metric in RETAINED_METRICS:
                 summary[template_id][metric] = stats_for_series(series)
@@ -135,13 +139,14 @@ def compute_micro_stats(
     stats_per_template: dict[str, dict[str, Sequence[int]]],
     steps_summary_per_template: dict[str, dict[str, dict[str, int]]],
     step_metrics_per_template: dict[str, dict[str, Sequence[int]]],
+    custom_metrics: list[str] = []
 ) -> dict:
     values = number_of_samples_per_template_by_status.values()
     micro_summary = defaultdict(dict, {
         "number_of_error_samples": sum(v["error"] for v in values),
         "number_of_success_samples": sum(v["success"] for v in values)
     })
-    for metric in METRICS:
+    for metric in METRICS + custom_metrics:
         series = [
             i
             for values in stats_per_template.values()
@@ -195,11 +200,19 @@ def compute_macro_stats(
     return dict(macro_summary)
 
 
-def compute_aggregates(samples: list[dict]) -> dict:
+def compute_aggregates(
+    samples: list[dict],
+    custom_eval_config_file_path: str | Path | None = None,
+) -> dict:
     number_of_samples_per_template_by_status = defaultdict(lambda: defaultdict(int))
     stats_per_template = defaultdict(lambda: defaultdict(list))
     steps_summary_per_template = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
     step_metrics_per_template = defaultdict(lambda: defaultdict(list))
+    custom_metrics = []
+    if custom_eval_config_file_path:
+        from .custom_evaluation import parse_config
+        evaluators = parse_config(custom_eval_config_file_path)
+        custom_metrics = [m for e in evaluators for m in e.output_variables]
 
     # Compute per-template stats
     templates_ids = set()
@@ -211,7 +224,7 @@ def compute_aggregates(samples: list[dict]) -> dict:
             number_of_samples_per_template_by_status[template_id]["error"] += 1
         else:
             number_of_samples_per_template_by_status[template_id]["success"] += 1
-        update_stats(sample, stats_per_template[template_id])
+        update_stats(sample, stats_per_template[template_id], custom_metrics)
         update_steps_summary(sample, steps_summary_per_template[template_id])
         update_step_metrics(sample, step_metrics_per_template[template_id])
 
@@ -222,12 +235,14 @@ def compute_aggregates(samples: list[dict]) -> dict:
             stats_per_template,
             steps_summary_per_template,
             step_metrics_per_template,
+            custom_metrics,
         ),
         "micro": compute_micro_stats(
             number_of_samples_per_template_by_status,
             stats_per_template,
             steps_summary_per_template,
-            step_metrics_per_template
+            step_metrics_per_template,
+            custom_metrics,
         )
     }
     summary["macro"] = compute_macro_stats(summary["per_template"])

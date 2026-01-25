@@ -8,6 +8,7 @@ from openai import OpenAI
 LLM_MODEL = "gpt-4o-mini"
 TEMPERATURE = 0.0
 
+
 def format_input_template(input_config: str | dict[str, list[str]]) -> str:
     if isinstance(input_config, str):
         k = input_config
@@ -19,28 +20,21 @@ def format_input_template(input_config: str | dict[str, list[str]]) -> str:
     return f"# {header}\n{{{k}}}"
 
 
-def format_context(steps: list[dict[str, str]]) -> str:
-    last_step_output = steps[-1]["output"]
-    try:
-        context_str = json.loads(last_step_output)
-        return json.dumps(context_str, indent=2)
-    except json.JSONDecodeError:
-        return last_step_output
-
-
 class CustomEvaluator:
     def __init__(
         self, 
         name: str,
         inputs: list[str],
-        steps_keys: list[str],
         outputs: dict[str, str],
         instructions: str,
+        steps_name: str,
+        steps_keys: list[str] | None = None,
         temperature : float = TEMPERATURE
     ):
         self.metric_name = name
         self.input_variables = inputs
-        self.steps_keys = steps_keys
+        self.steps_name = steps_name
+        self.steps_keys = steps_keys or ["args", "output"]
         outputs_tuples = list(outputs.items())
         self.output_variables = list(zip(*outputs_tuples))[0]
         inputs_template = "\n\n".join(format_input_template(i) for i in inputs)
@@ -66,13 +60,12 @@ class CustomEvaluator:
             return str(e).replace("\n", "    ")
 
     def format_steps(self, steps: list) -> str:
-        steps_out = []
+        steps_formatted = []
         for step in steps:
             if isinstance(step, str):
-                try:
-                    step = json.loads(step)
-                except json.JSONDecodeError:
-                    pass
+                step = json.loads(step)
+            if step["name"] != self.steps_name:
+                continue
             step_out = {}
             for k in self.steps_keys:
                 val = step.get(k)
@@ -83,8 +76,8 @@ class CustomEvaluator:
                         step_out[k] = val
                 else:
                     step_out[k] = val
-            steps_out.append(step_out)        
-        return json.dumps(steps_out, indent=2)
+            steps_formatted.append(step_out)        
+        return json.dumps(steps_formatted, indent=2)
     
     def error(self, msg: str) -> dict:
         result = {k: None for k in self.output_variables}
@@ -116,31 +109,34 @@ class CustomEvaluator:
             if "reference_answer" not in reference:
                 return self.error("Missing 'reference_answer' in reference")
             inputs["reference_answer"] = reference["reference_answer"]
-        if "reference_context" in self.input_variables:
-            if "reference_steps" not in reference:
-                return self.error("Reference missing key 'reference_steps'")
-            ref_step = reference["reference_steps"][-1]
-            inputs["reference_context"] = format_context(ref_step)
-        if "reference_steps" in self.input_variables:
-            if "reference_steps" not in reference:
-                return self.error("Reference missing key 'reference_steps'")
-            formatted_steps = [
-                self.format_steps(ss) 
-                for ss in reference["reference_steps"]
-            ]
-            inputs["reference_steps"] = "\n\n".join(formatted_steps)
         if "actual_answer" in self.input_variables:
             if "actual_answer" not in actual:
                 return self.error("Actual output missing 'actual_answer'")
             inputs["actual_answer"] = actual["actual_answer"]
-        if "actual_context" in self.input_variables:
-            if "actual_steps" not in actual:
-                return self.error("Actual output missing 'actual_steps'")
-            inputs["actual_context"] = format_context(actual["actual_steps"])
+        if "reference_steps" in self.input_variables \
+        or "actual_steps" in self.input_variables:
+            if not self.steps_name:
+                msg = "Field 'steps_name' is required for input 'steps'"
+                return self.error(msg)
+        if "reference_steps" in self.input_variables:
+            if "reference_steps" not in reference:
+                return self.error("Reference missing key 'reference_steps'")
+            try:
+                formatted_steps_lists = [
+                    self.format_steps(ss) 
+                    for ss in reference["reference_steps"]
+                ]
+            except json.JSONDecodeError:
+                return self.error("Malformed reference step JSON")
+            inputs["reference_steps"] = "\n\n".join(formatted_steps_lists)
         if "actual_steps" in self.input_variables:
             if "actual_steps" not in actual:
                 return self.error("Actual output missing 'actual_steps'")
-            inputs["actual_steps"] = self.format_steps(actual["actual_steps"])
+            try:
+                formatted_steps_lists = self.format_steps(actual["actual_steps"])
+            except json.JSONDecodeError:
+                return self.error("Malformed actual step JSON")
+            inputs["actual_steps"] = formatted_steps_lists
         prompt = self.prompt_template.format(**inputs)
         response = self.call_llm(prompt)
         return self.parse_outputs(response)

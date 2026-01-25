@@ -61,8 +61,6 @@
   answer_f1: 1.0
   custom_1_answer_reason: null
   custom_1_answer_score: null
-  custom_1_context_reason: null
-  custom_1_context_score: null
   custom_1_error: Actual output missing 'actual_steps'
   custom_1_steps_reason: null
   custom_1_steps_score: null

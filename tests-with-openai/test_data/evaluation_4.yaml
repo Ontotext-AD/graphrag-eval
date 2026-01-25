@@ -72,8 +72,6 @@
   answer_relevance_reason: answer relevance reason
   custom_1_answer_reason: Custom answer reason
   custom_1_answer_score: 0.1
-  custom_1_context_reason: Custom context reason
-  custom_1_context_score: 0.2
   custom_1_steps_reason: Custom steps reason
   custom_1_steps_score: 0.3
   elapsed_sec: 6.601679801940918

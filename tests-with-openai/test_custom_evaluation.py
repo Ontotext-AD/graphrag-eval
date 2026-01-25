@@ -104,7 +104,6 @@ def test_run_custom_evaluation_ok(monkeypatch):
         "call_llm",
         lambda *_: \
             "0.1\tCustom answer reason" \
-            "\t0.2\tCustom context reason" \
             "\t0.3\tCustom steps reason"
     )
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
@@ -118,11 +117,15 @@ def test_run_custom_evaluation_ok(monkeypatch):
         (DATA_DIR / "evaluation_4.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
-    aggregates = compute_aggregates(evaluation_results)
+    aggregates = compute_aggregates(
+        evaluation_results,
+        custom_eval_config_file_path
+    )
     expected_aggregates = yaml.safe_load(
         (DATA_DIR / "evaluation_summary_4.yaml").read_text(encoding="utf-8")
     )
     assert expected_aggregates == aggregates
+
 
 def test_run_custom_evaluation_llm_output_error(monkeypatch):
     reference_data = yaml.safe_load(
@@ -146,12 +149,15 @@ def test_run_custom_evaluation_llm_output_error(monkeypatch):
         (DATA_DIR / "evaluation_5.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
-    aggregates = compute_aggregates(evaluation_results)
+    aggregates = compute_aggregates(
+        evaluation_results,
+        custom_eval_config_file_path
+    )
     expected_aggregates = yaml.safe_load(
-        (DATA_DIR / "evaluation_summary_5.yaml").read_text(encoding="utf-8")
+        (DATA_DIR / "evaluation_summary_1.yaml").read_text(encoding="utf-8")
     )
     assert expected_aggregates == aggregates
-
+    
 
 def test_run_custom_evaluation_missing_reference_steps(monkeypatch):
     reference_data = yaml.safe_load(
@@ -170,7 +176,10 @@ def test_run_custom_evaluation_missing_reference_steps(monkeypatch):
         (DATA_DIR / "evaluation_6.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
-    aggregates = compute_aggregates(evaluation_results)
+    aggregates = compute_aggregates(
+        evaluation_results,
+        custom_eval_config_file_path
+    )
     expected_aggregates = yaml.safe_load(
         (DATA_DIR / "evaluation_summary_6.yaml").read_text(encoding="utf-8")
     )
@@ -194,9 +203,12 @@ def test_run_custom_evaluation_missing_actual_steps(monkeypatch):
         (DATA_DIR / "evaluation_7.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
-    aggregates = compute_aggregates(evaluation_results)
+    aggregates = compute_aggregates(
+        evaluation_results,
+        custom_eval_config_file_path
+    )
     expected_aggregates = yaml.safe_load(
-        (DATA_DIR / "evaluation_summary_7.yaml").read_text(encoding="utf-8")
+        (DATA_DIR / "evaluation_summary_3.yaml").read_text(encoding="utf-8")
     )
     assert expected_aggregates == aggregates
 
@@ -218,7 +230,10 @@ def test_run_custom_evaluation_missing_actual_answer(monkeypatch):
         (DATA_DIR / "evaluation_8.yaml").read_text(encoding="utf-8")
     )
     assert expected_evaluation_results == evaluation_results
-    aggregates = compute_aggregates(evaluation_results)
+    aggregates = compute_aggregates(
+        evaluation_results,
+        custom_eval_config_file_path
+    )
     expected_aggregates = yaml.safe_load(
         (DATA_DIR / "evaluation_summary_8.yaml").read_text(encoding="utf-8")
     )

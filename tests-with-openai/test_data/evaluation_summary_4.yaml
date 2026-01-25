@@ -74,6 +74,18 @@ micro:
     median: 0.0007
     min: 0.0007
     sum: 0.0007
+  custom_1_answer_score:
+    max: 0.1
+    mean: 0.1
+    median: 0.1
+    min: 0.1
+    sum: 0.1
+  custom_1_steps_score:
+    max: 0.3
+    mean: 0.3
+    median: 0.3
+    min: 0.3
+    sum: 0.3
   elapsed_sec:
     max: 6.601679801940918
     mean: 6.601679801940918
@@ -219,6 +231,18 @@ per_template:
       median: 0.0007
       min: 0.0007
       sum: 0.0007
+    custom_1_answer_score:
+      max: 0.1
+      mean: 0.1
+      median: 0.1
+      min: 0.1
+      sum: 0.1
+    custom_1_steps_score:
+      max: 0.3
+      mean: 0.3
+      median: 0.3
+      min: 0.3
+      sum: 0.3
     elapsed_sec:
       max: 6.601679801940918
       mean: 6.601679801940918

@@ -1,5 +1,4 @@
--
-  actual_steps:
+- actual_steps:
   - args:
       k: 2
       query: transformers Substation OSLO
@@ -57,8 +56,6 @@
     status: success
   custom_1_answer_reason: null
   custom_1_answer_score: null
-  custom_1_context_reason: null
-  custom_1_context_score: null
   custom_1_error: Actual output missing 'actual_answer'
   custom_1_steps_reason: null
   custom_1_steps_score: null

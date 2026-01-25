@@ -64,8 +64,6 @@
   answer_relevance_reason: answer relevance reason
   custom_1_answer_reason: null
   custom_1_answer_score: null
-  custom_1_context_reason: null
-  custom_1_context_score: null
   custom_1_error: Reference missing key 'reference_steps'
   custom_1_steps_reason: null
   custom_1_steps_score: null
