@@ -1195,7 +1195,7 @@ This is an example of the format and may not create accurate evaluations.
 
 ```python
 evaluation_results = run_evaluation(
-    reference_qas, 
+    reference_qa_dataset, 
     chat_responses, 
     "my_project/custom_eval.yaml"
 )
