@@ -9,15 +9,9 @@ LLM_MODEL = "gpt-4o-mini"
 TEMPERATURE = 0.0
 
 
-def format_input_template(input_config: str | dict[str, list[str]]) -> str:
-    if isinstance(input_config, str):
-        k = input_config
-    elif isinstance(input_config, dict):
-        k = list(input_config.keys())[0]
-    else:
-        raise ValueError(f"Invalid input format: {input_config}")
-    header = k.replace("_", " ").capitalize()
-    return f"# {header}\n{{{k}}}"
+def create_input_template(input_key: str) -> str:
+    header = input_key.replace("_", " ").capitalize()
+    return f"# {header}\n{{{input_key}}}"
 
 
 class CustomEvaluator:
@@ -37,9 +31,9 @@ class CustomEvaluator:
         self.steps_keys = steps_keys
         outputs_tuples = list(outputs.items())
         self.output_variables = list(zip(*outputs_tuples))[0]
-        inputs_template = "\n\n".join(format_input_template(i) for i in inputs)
+        inputs_template = "\n\n".join(create_input_template(k) for k in inputs)
         output_instructions = "Output the following values separated by tabs:"\
-            + "".join(f"\n- {n}: {d}" for n, d in outputs_tuples)
+            + "".join(f"\n- {k}: {desc}" for k, desc in outputs_tuples)
         self.prompt_template = "\n\n".join([
             instructions.strip(),
             output_instructions,
