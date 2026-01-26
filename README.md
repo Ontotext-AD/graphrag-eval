@@ -4,7 +4,7 @@
 
 # QA Evaluation
 
-This is a Python module for assessing the quality of question-answering systems such as ones based on LLM agents, based on a set of questions and reference answers for them. This includes evaluating the final answer and the steps used to reach the answer (such as orchestrated and executed steps), compared to the given reference steps. The library provides built-in evaluation metrics and allows the user to define their own metric.
+This is a Python module for assessing the quality of question-answering systems such as ones based on LLM agents, based on a set of questions and reference answers for them. This includes evaluating the final answer and the steps used to reach the answer (such as orchestrated and executed steps), compared to the given reference steps. The library provides built-in evaluation metrics and allows the user to define their own (custom) metrics.
 
 ## License
 
@@ -35,12 +35,12 @@ graphrag-eval = {version = "*", extras = ["ragas"]}
 To use a [custom evaluation](#Custom-Evaluation-(Experimental)):
 
 ```bash
-pip install graphrag-eval[custom-eval]
+pip install graphrag-eval[custom-metrics]
 ```
 
 or add the following dependency in your `pyproject.toml` file:
 ```toml
-graphrag-eval = {version = "*", extras = ["custom-eval"]}
+graphrag-eval = {version = "*", extras = ["custom-metrics"]}
 ```
 
 ## Maintainers

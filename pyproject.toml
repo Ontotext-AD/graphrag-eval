@@ -36,11 +36,11 @@ litellm = "1.61.20"
 [tool.poetry.group.ragas]
 optional = true
 
-[tool.poetry.group.custom-eval.dependencies]
+[tool.poetry.group.custom-metrics.dependencies]
 pyyaml = "6.0.3"
 litellm = "1.61.20"
 
-[tool.poetry.group.custom-eval]
+[tool.poetry.group.custom-metrics]
 optional = true
 
 [tool.poetry.group.test.dependencies]
