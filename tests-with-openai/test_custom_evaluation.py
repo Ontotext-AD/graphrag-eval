@@ -125,7 +125,7 @@ def test_run_custom_evaluation_ok(monkeypatch):
         custom_eval_config_file_path
     )
     for i in range(3):
-        with open(DATA_DIR / f"custom_eval_prompt_{i + 1}.md") as f:
+        with open(DATA_DIR / f"custom_eval_prompt_{i + 1}.txt") as f:
             assert captured_prompts[i].strip() == f.read().strip()
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_4.yaml").read_text(encoding="utf-8")
