@@ -2,6 +2,7 @@ from pathlib import Path
 
 import yaml
 from langevals_ragas.lib.common import RagasResult, Money
+from pytest import raises
 
 from graphrag_eval import (
     answer_correctness,
@@ -127,6 +128,42 @@ def test_run_custom_evaluation_ok(monkeypatch):
         (DATA_DIR / "evaluation_summary_4.yaml").read_text(encoding="utf-8")
     )
     assert expected_aggregates == aggregates
+
+
+def test_run_custom_evaluation_config_error(monkeypatch):
+    reference_data = yaml.safe_load(
+        (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
+    )
+    actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
+    custom_eval_config_file_path = DATA_DIR / "custom-eval-config.yaml"
+    with open(custom_eval_config_file_path, encoding="utf-8") as f:
+        correct_config = yaml.safe_load(f)
+    
+    error_configs = [{}, [[]]]    
+    keys = [
+        "name", "inputs", "instructions", "outputs", "steps_name", "steps_keys"
+    ]
+    for key in keys:
+        error_config = correct_config.copy()
+        del error_config[0][key]
+        error_configs.append(error_config)
+    
+    error_config = correct_config.copy()
+    error_config[0]["reference_steps"] = {}
+    error_configs.append(error_config)
+    
+    error_config = correct_config.copy()
+    error_config[0]["actual_steps"] = {}
+    error_configs.append(error_config)
+
+    for config in error_configs:
+        monkeypatch.setattr(yaml, "safe_load", lambda _: config)
+        with raises(custom_evaluation.ConfigError):
+            run_evaluation(
+                reference_data, 
+                actual_responses, 
+                custom_eval_config_file_path
+            )
 
 
 def test_run_custom_evaluation_llm_output_error(monkeypatch):

@@ -34,7 +34,7 @@ class CustomEvaluator:
         self.metric_name = name
         self.input_variables = inputs
         self.steps_name = steps_name
-        self.steps_keys = steps_keys or ["args", "output"]
+        self.steps_keys = steps_keys
         outputs_tuples = list(outputs.items())
         self.output_variables = list(zip(*outputs_tuples))[0]
         inputs_template = "\n\n".join(format_input_template(i) for i in inputs)
@@ -113,11 +113,6 @@ class CustomEvaluator:
             if "actual_answer" not in actual:
                 return self.error("Actual output missing 'actual_answer'")
             inputs["actual_answer"] = actual["actual_answer"]
-        if "reference_steps" in self.input_variables \
-        or "actual_steps" in self.input_variables:
-            if not self.steps_name:
-                msg = "Field 'steps_name' is required for input 'steps'"
-                return self.error(msg)
         if "reference_steps" in self.input_variables:
             if "reference_steps" not in reference:
                 return self.error("Reference missing key 'reference_steps'")
@@ -142,9 +137,52 @@ class CustomEvaluator:
         return self.parse_outputs(response)
 
 
+MANDATORY_KEYS = ["name", "inputs", "instructions", "outputs"]
+
+
+class ConfigError(Exception):
+    pass
+
+
+def _check_config(msg_prefix: str, config: dict) -> None:
+    if not isinstance(config, dict):
+        raise ConfigError(f"{msg_prefix} should be a dict, got {type(config)}")
+    for key in MANDATORY_KEYS:
+        if key not in config:
+            raise ConfigError(f"{msg_prefix} should have key '{key}'")
+    if "reference_steps" in config:
+        if not isinstance(config["reference_steps"], list):
+            msg_ = f"{msg_prefix} key 'reference_steps' should be a list"
+            raise ConfigError(msg_)
+    if "actual_steps" in config:
+        if not isinstance(config["actual_steps"], list):
+            msg_ = f"{msg_prefix} key 'actual_steps' should be a list"
+            raise ConfigError(msg_)
+    if "reference_steps" in config or "actual_steps" in config:
+        if "steps_name" not in config:
+            raise ConfigError(f"{msg_prefix} should have key 'steps_name'")
+        if "steps_keys" not in config:
+            raise ConfigError(f"{msg_prefix} should have key 'steps_keys'")
+        if config["steps_keys"] not in ["args", "output"]:
+            raise ConfigError(
+                f"{msg_prefix} key 'steps_keys' values can be any of "
+                "'args', 'output'"
+            )
+    
+
 def parse_config(config_file_path: str | Path | None) -> list[CustomEvaluator]:
         if config_file_path is None:
             return []
-        with open(config_file_path, encoding="utf-8") as f:
-            config = yaml.safe_load(f)
-        return [CustomEvaluator(**c) for c in config]
+        try:
+            with open(config_file_path, encoding="utf-8") as f:
+                config = yaml.safe_load(f)
+        except FileNotFoundError:
+            raise ConfigError(f"Config file not found at {config_file_path}")
+        msg = "Custom configuration"
+        if not isinstance(config, list):
+            raise ConfigError(f"{msg} should be a list, got {type(config)}")
+        evaluators = []
+        for i, c in enumerate(config):
+            _check_config(f"{msg} {i}", c)
+            evaluators.append(CustomEvaluator(**c))
+        return evaluators
