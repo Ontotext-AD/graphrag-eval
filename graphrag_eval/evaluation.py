@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from .steps.evaluation import get_steps_evaluation_result_dict
+from .steps.evaluation import evaluate_steps
 
 
 def run_evaluation(
