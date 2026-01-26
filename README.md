@@ -1181,9 +1181,9 @@ This is an example of the format and may not create accurate evaluations.
   steps_name: sparql
   instructions: |
     Divide the reference answer into claims and try to match each claim to the
-    SPARQL query results. Count:
-    * number of reference claims
-    * number of SPARQL results 
+    SPARQL query results. Count the:
+    * reference claims
+    * SPARQL results
     * matching claims
   outputs:
     sparql_recall: Number of matching claims as a fraction of reference claims (fraction 0-1)
