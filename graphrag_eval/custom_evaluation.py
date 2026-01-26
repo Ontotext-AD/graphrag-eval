@@ -39,7 +39,7 @@ class CustomEvaluator:
         self.output_variables = list(zip(*outputs_tuples))[0]
         inputs_template = "\n\n".join(format_input_template(i) for i in inputs)
         output_instructions = "Output the following values separated by tabs:"\
-            + "".join(f"\n* {n}: {d}" for n, d in outputs_tuples)
+            + "".join(f"\n- {n}: {d}" for n, d in outputs_tuples)
         self.prompt_template = "\n\n".join([
             instructions.strip(),
             output_instructions,
@@ -103,15 +103,15 @@ class CustomEvaluator:
         inputs = {}
         if "question" in self.input_variables:
             if "question_text" not in reference:
-                return self.error("Missing 'question_text' in reference")
+                return self.error("Reference missing key 'question_text'")
             inputs["question"] = reference["question_text"]
         if "reference_answer" in self.input_variables:
             if "reference_answer" not in reference:
-                return self.error("Missing 'reference_answer' in reference")
+                return self.error("Reference missing key 'reference_answer'")
             inputs["reference_answer"] = reference["reference_answer"]
         if "actual_answer" in self.input_variables:
             if "actual_answer" not in actual:
-                return self.error("Actual output missing 'actual_answer'")
+                return self.error("Actual output missing key 'actual_answer'")
             inputs["actual_answer"] = actual["actual_answer"]
         if "reference_steps" in self.input_variables:
             if "reference_steps" not in reference:
@@ -126,7 +126,7 @@ class CustomEvaluator:
             inputs["reference_steps"] = "\n\n".join(formatted_steps_lists)
         if "actual_steps" in self.input_variables:
             if "actual_steps" not in actual:
-                return self.error("Actual output missing 'actual_steps'")
+                return self.error("Actual output missing key 'actual_steps'")
             try:
                 formatted_steps_lists = self.format_steps(actual["actual_steps"])
             except json.JSONDecodeError:

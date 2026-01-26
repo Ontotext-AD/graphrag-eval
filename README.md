@@ -1169,7 +1169,7 @@ This is an example of the format and may not create accurate evaluations.
     Evaluate how relevant is the answer to the question.
   outputs:
     my_answer_relevance: fraction between 0 and 1
-    my_answer_relevance_eval_reason: reason for your evaluation
+    my_answer_relevance_reason: reason for your evaluation
 -
   name: sparql_llm_evaluation
   inputs:
@@ -1182,13 +1182,13 @@ This is an example of the format and may not create accurate evaluations.
   instructions: |
     Divide the reference answer into claims and try to match each claim to the
     SPARQL query results. Count the:
-    * reference claims
-    * SPARQL results
-    * matching claims
+    - reference claims
+    - SPARQL results
+    - matching claims
   outputs:
     sparql_recall: Number of matching claims as a fraction of reference claims (fraction 0-1)
     sparql_precision: Number of matching claims as a fraction of SPARQL results (fraction 0-1)
-    sparql_eval_reason: reason for your evaluation
+    sparql_reason: reason for your evaluation
 ```
 
 #### Example Call to Evaluate Using Custom Metrics
@@ -1210,10 +1210,10 @@ that it has the following additional keys and example values:
 
 ```yaml
   my_answer_relevance: 0.9
-  my_answer_relevance_eval_reason: The answer contains relevant information except for the sentence about total revenue.
+  my_answer_relevance_eval_reason: The answer contains relevant information except for the sentence about total revenue
   sparql_recall: 0.75
   sparql_precision: 0.6
-  sparql_eval_reason: The reference answer has 4 claims; there are 5 SPARQL results; 3 claims match.
+  sparql_eval_reason: The reference answer has 4 claims; there are 5 SPARQL results; 3 claims match
 ```
 
 #### Output in Case of Evaluation Error

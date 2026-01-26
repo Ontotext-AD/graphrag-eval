@@ -177,10 +177,11 @@ def compute_micro_stats(
 
 
 def compute_macro_stats(
-    summary_per_template: dict[str, dict[str, dict[str, Any]]]
+    summary_per_template: dict[str, dict[str, dict[str, Any]]],
+    custom_metrics: list[str] = []
 ) -> dict:
     macro_summary = defaultdict(dict)
-    for metric in METRICS:
+    for metric in METRICS + custom_metrics:
         means = [
             values[metric]["mean"]
             for values in summary_per_template.values()
@@ -245,5 +246,8 @@ def compute_aggregates(
             custom_metrics,
         )
     }
-    summary["macro"] = compute_macro_stats(summary["per_template"])
+    summary["macro"] = compute_macro_stats(
+        summary["per_template"],
+        custom_metrics
+    )
     return summary
