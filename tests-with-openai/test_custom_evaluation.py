@@ -185,8 +185,7 @@ def test_run_custom_evaluation_llm_output_error(monkeypatch):
     monkeypatch.setattr(
         CustomEvaluator,
         "call_llm",
-        lambda *_: \
-            "0.1\tCustom answer reason"
+        lambda *_: "0.1\tCustom answer reason"
     )
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     custom_eval_config_file_path = DATA_DIR / "custom-eval-config.yaml"
