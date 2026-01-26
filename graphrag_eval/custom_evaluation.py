@@ -27,7 +27,7 @@ class CustomEvaluator:
         inputs: list[str],
         outputs: dict[str, str],
         instructions: str,
-        steps_name: str,
+        steps_name: str | None = None,
         steps_keys: list[str] | None = None,
         temperature : float = TEMPERATURE
     ):
@@ -144,28 +144,23 @@ class ConfigError(Exception):
     pass
 
 
-def _check_config(msg_prefix: str, config: dict) -> None:
+def _check_config(err_prefix: str, config: dict) -> None:
     if not isinstance(config, dict):
-        raise ConfigError(f"{msg_prefix} should be a dict, got {type(config)}")
+        raise ConfigError(f"{err_prefix} should be a dict, got {type(config)}")
     for key in MANDATORY_KEYS:
         if key not in config:
-            raise ConfigError(f"{msg_prefix} should have key '{key}'")
-    if "reference_steps" in config:
-        if not isinstance(config["reference_steps"], list):
-            msg_ = f"{msg_prefix} key 'reference_steps' should be a list"
-            raise ConfigError(msg_)
-    if "actual_steps" in config:
-        if not isinstance(config["actual_steps"], list):
-            msg_ = f"{msg_prefix} key 'actual_steps' should be a list"
-            raise ConfigError(msg_)
-    if "reference_steps" in config or "actual_steps" in config:
-        if "steps_name" not in config:
-            raise ConfigError(f"{msg_prefix} should have key 'steps_name'")
-        if "steps_keys" not in config:
-            raise ConfigError(f"{msg_prefix} should have key 'steps_keys'")
-        if config["steps_keys"] not in ["args", "output"]:
+            raise ConfigError(f"{err_prefix} should have key '{key}'")
+    for key in ["reference_steps", "actual_steps"]:
+        if key in config:
+            if not isinstance(config[key], list):
+                raise ConfigError(f"{err_prefix} key '{key}' should be a list")
+    if set(["reference_steps", "actual_steps"]) & set(config["inputs"]):
+        for key in "steps_name", "steps_keys":
+            if key not in config:
+                raise ConfigError(f"{err_prefix} should have key '{key}'")
+        if set(config["steps_keys"]) - {"args", "output"}:
             raise ConfigError(
-                f"{msg_prefix} key 'steps_keys' values can be any of "
+                f"{err_prefix} key 'steps_keys' values can only include "
                 "'args', 'output'"
             )
     

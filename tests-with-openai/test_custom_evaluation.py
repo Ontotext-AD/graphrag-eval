@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import yaml
+from copy import deepcopy
 from langevals_ragas.lib.common import RagasResult, Money
 from pytest import raises
 
@@ -140,20 +141,30 @@ def test_run_custom_evaluation_config_error(monkeypatch):
         correct_config = yaml.safe_load(f)
     
     error_configs = [{}, [[]]]    
-    keys = [
-        "name", "inputs", "instructions", "outputs", "steps_name", "steps_keys"
-    ]
-    for key in keys:
-        error_config = correct_config.copy()
+    for key in ["name", "inputs", "instructions", "outputs"]:
+        error_config = deepcopy(correct_config)
         del error_config[0][key]
         error_configs.append(error_config)
     
-    error_config = correct_config.copy()
+    error_config = deepcopy(correct_config)
     error_config[0]["reference_steps"] = {}
     error_configs.append(error_config)
     
-    error_config = correct_config.copy()
+    error_config = deepcopy(correct_config)
     error_config[0]["actual_steps"] = {}
+    error_configs.append(error_config)
+
+    for k1 in "steps_name", "steps_keys":
+        for k2 in "reference_steps", "actual_steps":
+            error_config = deepcopy(correct_config)
+            c = error_config[0]
+            del c[k1]
+            del c["inputs"][c["inputs"].index(k2)]
+            error_configs.append(error_config)
+    
+    error_config = deepcopy(correct_config)
+    c = error_config[0]
+    c["steps_keys"].append("invalid")
     error_configs.append(error_config)
 
     for config in error_configs:
