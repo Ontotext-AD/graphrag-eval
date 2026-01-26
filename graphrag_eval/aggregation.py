@@ -66,8 +66,10 @@ def update_step_metrics(
 def update_stats(
     sample: dict[str, float | int],
     template_stats: dict[str, list[float | int]],
-    custom_metrics: list[str] = [],
+    custom_metrics: list[str] | None = None,
 ):
+    if custom_metrics is None:
+        custom_metrics = []
     for metric in METRICS + custom_metrics:
         value = sample.get(metric)
         if isinstance(value, (float, int)):
@@ -103,8 +105,10 @@ def compute_per_template_stats(
     stats_per_template: dict[str, dict[str, Sequence[int]]],
     steps_summary_per_template: dict[str, dict[str, dict[str, int]]],
     step_metrics_per_template: dict[str, dict[str, Sequence[int]]],
-    custom_metrics: list[str] = [],
+    custom_metrics: list[str] | None = None,
 ) -> dict[str, dict[str, Any]]:
+    if custom_metrics is None:
+        custom_metrics = []
     summary = {}
 
     # Add per-template stats
@@ -139,8 +143,11 @@ def compute_micro_stats(
     stats_per_template: dict[str, dict[str, Sequence[int]]],
     steps_summary_per_template: dict[str, dict[str, dict[str, int]]],
     step_metrics_per_template: dict[str, dict[str, Sequence[int]]],
-    custom_metrics: list[str] = []
+    custom_metrics: list[str] | None = None
 ) -> dict:
+    if custom_metrics is None:
+        custom_metrics = []
+    
     values = number_of_samples_per_template_by_status.values()
     micro_summary = defaultdict(dict, {
         "number_of_error_samples": sum(v["error"] for v in values),
@@ -178,8 +185,11 @@ def compute_micro_stats(
 
 def compute_macro_stats(
     summary_per_template: dict[str, dict[str, dict[str, Any]]],
-    custom_metrics: list[str] = []
+    custom_metrics: list[str] | None = None
 ) -> dict:
+    if custom_metrics is None:
+        custom_metrics = []
+    
     macro_summary = defaultdict(dict)
     for metric in METRICS + custom_metrics:
         means = [
