@@ -100,6 +100,8 @@ def test_run_custom_evaluation_ok(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
+    actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
+    custom_eval_config_file_path = DATA_DIR / "custom_eval_config.yaml"
     _mock_common_calls(monkeypatch)
     captured_prompts = []
     i = 0
@@ -117,8 +119,6 @@ def test_run_custom_evaluation_ok(monkeypatch):
             return "0.75\t0.6\tThe reference answer has 4 claims; there are 5 "\
                 "SPARQL results; 3 claims match"
     monkeypatch.setattr(CustomEvaluator, "call_llm", mock_call_llm)
-    actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
-    custom_eval_config_file_path = DATA_DIR / "custom_eval_config.yaml"
     evaluation_results = run_evaluation(
         reference_data, 
         actual_responses, 
@@ -177,6 +177,11 @@ def test_run_custom_evaluation_config_error(monkeypatch):
     c["steps_keys"].append("invalid")
     error_configs.append(error_config)
 
+    monkeypatch.setattr(
+        custom_evaluation,
+        "OpenAI",
+        lambda: None
+    )
     for config in error_configs:
         monkeypatch.setattr(yaml, "safe_load", lambda _: config)
         with raises(custom_evaluation.ConfigError):
@@ -191,10 +196,10 @@ def test_run_custom_evaluation_llm_output_error(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
-    _mock_common_calls(monkeypatch)
-    monkeypatch.setattr(CustomEvaluator, "call_llm", lambda *_: "hello")
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     custom_eval_config_file_path = DATA_DIR / "custom_eval_config.yaml"
+    _mock_common_calls(monkeypatch)
+    monkeypatch.setattr(CustomEvaluator, "call_llm", lambda *_: "hello")
     evaluation_results = run_evaluation(
         reference_data, 
         actual_responses, 
@@ -218,12 +223,12 @@ def test_run_custom_evaluation_missing_reference_steps(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
-    _mock_common_calls(monkeypatch)
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     del reference_data[0]["questions"][0]["reference_steps"]
     del actual_responses["c10bbc8dce98a4b8832d125134a16153"]["actual_steps"]
     del actual_responses["c10bbc8dce98a4b8832d125134a16153"]["actual_answer"]
     custom_eval_config_file_path = DATA_DIR / "custom_eval_config.yaml"
+    _mock_common_calls(monkeypatch)
     evaluation_results = run_evaluation(
         reference_data, 
         actual_responses, 
