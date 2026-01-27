@@ -120,8 +120,8 @@ def test_run_custom_evaluation_ok(monkeypatch):
                 "SPARQL results; 3 claims match"
     monkeypatch.setattr(CustomEvaluator, "call_llm", mock_call_llm)
     evaluation_results = run_evaluation(
-        reference_data, 
-        actual_responses, 
+        reference_data,
+        actual_responses,
         custom_eval_config_file_path
     )
     for i in range(3):
@@ -184,8 +184,8 @@ def test_run_custom_evaluation_config_error(monkeypatch):
         monkeypatch.setattr(yaml, "safe_load", lambda _: config)
         with raises(ValueError):
             run_evaluation(
-                reference_data, 
-                actual_responses, 
+                reference_data,
+                actual_responses,
                 custom_eval_config_file_path
             )
 
@@ -199,8 +199,8 @@ def test_run_custom_evaluation_llm_output_error(monkeypatch):
     _mock_common_calls(monkeypatch)
     monkeypatch.setattr(CustomEvaluator, "call_llm", lambda *_: "hello")
     evaluation_results = run_evaluation(
-        reference_data, 
-        actual_responses, 
+        reference_data,
+        actual_responses,
         custom_eval_config_file_path
     )
     expected_evaluation_results = yaml.safe_load(
@@ -228,8 +228,8 @@ def test_run_custom_evaluation_missing_input_fields(monkeypatch):
     custom_eval_config_file_path = DATA_DIR / "custom_eval_config.yaml"
     _mock_common_calls(monkeypatch)
     evaluation_results = run_evaluation(
-        reference_data, 
-        actual_responses, 
+        reference_data,
+        actual_responses,
         custom_eval_config_file_path
     )
     expected_evaluation_results = yaml.safe_load(
@@ -270,7 +270,7 @@ def test_run_custom_evaluation_invalid_keys(monkeypatch):
         monkeypatch.setattr(yaml, "safe_load", lambda _: config)
         with raises(ValueError):
             run_evaluation(
-                reference_data, 
-                actual_responses, 
+                reference_data,
+                actual_responses,
                 custom_eval_config_file_path
             )
