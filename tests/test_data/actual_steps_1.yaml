@@ -32,6 +32,7 @@
     ,\n          \"type\": \"literal\",\n          \"value\": \"0.01523\"\n      \
     \  }\n      }\n    ]\n  }\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:47:14Z'
 - args:
     query: ASK { <urn:uuid:31f0b5c6-80e7-f14b-b231-a7fa2f129468> a cim:BusbarSection
       . }
@@ -39,6 +40,7 @@
   name: sparql_query
   output: "{\n  \"head\": {},\n  \"boolean\": false\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:47:49Z'
 - args:
     query: ASK { <urn:uuid:fd79db98-7494-8348-8442-0400e115ef44> a cim:BusbarSection
       . }
@@ -46,6 +48,7 @@
   name: sparql_query
   output: "{\n  \"head\": {},\n  \"boolean\": false\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:48:24Z'
 - args:
     query: ASK { <urn:uuid:f1769b84-9aeb-11e5-91da-b8763fd99c5f> a cim:BusbarSection
       . }
@@ -53,6 +56,7 @@
   name: sparql_query
   output: "{\n  \"head\": {},\n  \"boolean\": false\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:48:59Z'
 - args:
     query: ASK { <urn:uuid:f1769b78-9aeb-11e5-91da-b8763fd99c5f> a cim:BusbarSection
       . }
@@ -60,6 +64,7 @@
   name: sparql_query
   output: "{\n  \"head\": {},\n  \"boolean\": false\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:49:34Z'
 - args:
     query: ASK { <urn:uuid:3fb607c1-4813-c849-a401-b4a02da4c0c4> a cim:BusbarSection
       . }
@@ -67,3 +72,4 @@
   name: sparql_query
   output: "{\n  \"head\": {},\n  \"boolean\": false\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:50:09Z'

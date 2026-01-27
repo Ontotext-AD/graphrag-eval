@@ -62,7 +62,7 @@ To evaluate answers and/or steps:
 1. To evaluate steps:
     1. Include `reference_steps` in the reference data and `actual_steps` in target data to evaluate
 1. Call the evaluation function with the reference data and target data: section [Usage Code](#Usage-Code)
-1. Call the aggregation function with the evaluation results
+1. Call the aggregation function with the evaluation results: section [Usage Code](#Usage-Code)
 
 Answer evaluation (correctness and relevance) uses the LLM `openai/gpt-4o-mini`.
 
@@ -81,7 +81,7 @@ The assumption is that the final answer to the question is derived from the outp
 
 Each step includes:
 
-- `name`: The type of step being performed (e.g., `sparql_query`)
+- `name`: The name of the step (e.g., `sparql_query`)
 - `args`: Arguments of the step (e.g., arguments to a tool used in the step, such as a SPARQL query)
 - `output`: The expected output from the step.
 - `output_media_type`: (optional, missing or one of `application/sparql-results+json`, `application/json`) Indicates how the output of a step must be processed
@@ -270,14 +270,15 @@ Given a question, if the question-answering system successfully responds, to eva
     "elapsed_sec": 46.48961806297302,
     "actual_steps": [
         {
-          "name": "retrieval",
-          "args": {
-            "query": "transformers Substation OSLO",
-            "k": 2
-          },
-          "id": "call_3",
-          "status": "success",
-          "output": "[\n  {\n    \"id\": \"http://example.com/resource/doc/1\",\n    \"text\": \"Transformer OSLO T1 is in Substation Oslo.\"\n  },\n  {\n    \"id\": \"http://example.com/resource/doc/2\",\n    \"text\": \"Transformer OSLO T2 is in Substation Oslo.\"\n  }\n]"
+            "name": "retrieval",
+            "args": {
+                "query": "transformers Substation OSLO",
+                "k": 2
+            },
+            "id": "call_3",
+            "status": "success",
+            "output": "[\n  {\n    \"id\": \"http://example.com/resource/doc/1\",\n    \"text\": \"Transformer OSLO T1 is in Substation Oslo.\"\n  },\n  {\n    \"id\": \"http://example.com/resource/doc/2\",\n    \"text\": \"Transformer OSLO T2 is in Substation Oslo.\"\n  }\n]",
+            "execution_timestamp": "2025-12-17T09:15:53Z"
         },
         {
             "name": "autocomplete_search",
@@ -287,7 +288,8 @@ Given a question, if the question-answering system successfully responds, to eva
             },
             "id": "call_7amIsfEGelOnVZ1DWtgtc0hc",
             "status": "success",
-            "output": "{\n  \"head\": {\n    \"vars\": [\n      \"iri\",\n      \"name\",\n      \"rank\"\n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n        \"iri\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769664-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"name\": {\n          \"type\": \"literal\",\n          \"value\": \"STAVANGER\"\n        },\n        \"rank\": {\n          \"datatype\": \"http://www.w3.org/2001/XMLSchema#float\",\n          \"type\": \"literal\",\n          \"value\": \"0.00976\"\n        }\n      }\n    ]\n  }\n}"
+            "output": "{\n  \"head\": {\n    \"vars\": [\n      \"iri\",\n      \"name\",\n      \"rank\"\n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n        \"iri\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769664-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"name\": {\n          \"type\": \"literal\",\n          \"value\": \"STAVANGER\"\n        },\n        \"rank\": {\n          \"datatype\": \"http://www.w3.org/2001/XMLSchema#float\",\n          \"type\": \"literal\",\n          \"value\": \"0.00976\"\n        }\n      }\n    ]\n  }\n}",
+            "execution_timestamp": "2025-12-17T09:15:58Z"
         },
         {
             "name": "sparql_query",
@@ -296,7 +298,8 @@ Given a question, if the question-answering system successfully responds, to eva
             },
             "id": "call_DbMkZ8kv3qkf49wNNdREkpRN",
             "status": "error",
-            "error": "Error: ValueError('The following prefixes are undefined: urn')\n Please fix your mistakes."
+            "error": "Error: ValueError('The following prefixes are undefined: urn')\n Please fix your mistakes.",
+            "execution_timestamp": "2025-12-17T09:16:03Z"
         },
         {
             "name": "sparql_query",
@@ -305,7 +308,8 @@ Given a question, if the question-answering system successfully responds, to eva
             },
             "id": "call_Qm1mzX7g5q9SVPrR2QzEMTp3",
             "status": "success",
-            "output": "{\n  \"head\": {\n    \"vars\": [\n      \"substation2\",\n      \"substation2Name\",\n      \"line\",\n      \"lineName\"\n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176965a-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KRISTIANSAND\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:47332c85-17a4-7a41-abd5-2b92e4b800ed\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 300KRISTIAN-STAVANGE\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769614-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"DAGALI\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:c5f535a5-f053-a948-9cee-f6a7b07c7d4f\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420DAGALI-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KVILLDAL\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:c5f535a5-f053-a948-9cee-f6a7b07c7d4f\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420DAGALI-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769688-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"HAGAFOSS\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:c5f535a5-f053-a948-9cee-f6a7b07c7d4f\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420DAGALI-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"OSLO\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:a93b83d7-8a39-ef48-8c29-36de1ac0eaf5\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYSLE-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769648-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"SYSLE\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:a93b83d7-8a39-ef48-8c29-36de1ac0eaf5\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYSLE-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KVILLDAL\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:a93b83d7-8a39-ef48-8c29-36de1ac0eaf5\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYSLE-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769688-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"HAGAFOSS\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:a93b83d7-8a39-ef48-8c29-36de1ac0eaf5\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYSLE-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176962a-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"AURLAND\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:293e49bc-c995-fc46-a69c-380876b317a1\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420AURLAND-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KVILLDAL\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:293e49bc-c995-fc46-a69c-380876b317a1\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420AURLAND-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769688-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"HAGAFOSS\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:293e49bc-c995-fc46-a69c-380876b317a1\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420AURLAND-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769624-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"SIMA\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:293e49bc-c995-fc46-a69c-380876b317a1\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420AURLAND-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769642-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"SYLLING\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:163037f6-cf93-054e-8a6d-3f58de83b6a3\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYLLING-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"OSLO\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:163037f6-cf93-054e-8a6d-3f58de83b6a3\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYLLING-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KVILLDAL\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:163037f6-cf93-054e-8a6d-3f58de83b6a3\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYLLING-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769688-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"HAGAFOSS\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:163037f6-cf93-054e-8a6d-3f58de83b6a3\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYLLING-HAGAFOSS\"\n        }\n      }\n    ]\n  }\n}"
+            "output": "{\n  \"head\": {\n    \"vars\": [\n      \"substation2\",\n      \"substation2Name\",\n      \"line\",\n      \"lineName\"\n    ]\n  },\n  \"results\": {\n    \"bindings\": [\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176965a-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KRISTIANSAND\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:47332c85-17a4-7a41-abd5-2b92e4b800ed\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 300KRISTIAN-STAVANGE\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769614-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"DAGALI\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:c5f535a5-f053-a948-9cee-f6a7b07c7d4f\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420DAGALI-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KVILLDAL\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:c5f535a5-f053-a948-9cee-f6a7b07c7d4f\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420DAGALI-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769688-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"HAGAFOSS\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:c5f535a5-f053-a948-9cee-f6a7b07c7d4f\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420DAGALI-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"OSLO\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:a93b83d7-8a39-ef48-8c29-36de1ac0eaf5\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYSLE-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769648-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"SYSLE\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:a93b83d7-8a39-ef48-8c29-36de1ac0eaf5\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYSLE-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KVILLDAL\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:a93b83d7-8a39-ef48-8c29-36de1ac0eaf5\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYSLE-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769688-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"HAGAFOSS\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:a93b83d7-8a39-ef48-8c29-36de1ac0eaf5\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYSLE-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176962a-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"AURLAND\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:293e49bc-c995-fc46-a69c-380876b317a1\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420AURLAND-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KVILLDAL\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:293e49bc-c995-fc46-a69c-380876b317a1\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420AURLAND-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769688-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"HAGAFOSS\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:293e49bc-c995-fc46-a69c-380876b317a1\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420AURLAND-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769624-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"SIMA\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:293e49bc-c995-fc46-a69c-380876b317a1\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420AURLAND-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769642-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"SYLLING\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:163037f6-cf93-054e-8a6d-3f58de83b6a3\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYLLING-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"OSLO\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:163037f6-cf93-054e-8a6d-3f58de83b6a3\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYLLING-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"KVILLDAL\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:163037f6-cf93-054e-8a6d-3f58de83b6a3\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYLLING-HAGAFOSS\"\n        }\n      },\n      {\n        \"substation2\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:f1769688-9aeb-11e5-91da-b8763fd99c5f\"\n        },\n        \"substation2Name\": {\n          \"type\": \"literal\",\n          \"value\": \"HAGAFOSS\"\n        },\n        \"line\": {\n          \"type\": \"uri\",\n          \"value\": \"urn:uuid:163037f6-cf93-054e-8a6d-3f58de83b6a3\"\n        },\n        \"lineName\": {\n          \"type\": \"literal\",\n          \"value\": \"LC 420SYLLING-HAGAFOSS\"\n        }\n      }\n    ]\n  }\n}",
+            "execution_timestamp": "2025-12-17T09:16:08Z"
         }
     ],
     "actual_answer": "The substations connected to the substation \"STAVANGER\" via AC or DC lines are:\n\n1. **KRISTIANSAND** via line \"LC 300KRISTIAN-STAVANGE\"\n2. **DAGALI** via line \"LC 420DAGALI-HAGAFOSS\"\n3. **KVILLDAL** via lines:\n   - \"LC 420DAGALI-HAGAFOSS\"\n   - \"LC 420SYSLE-HAGAFOSS\"\n   - \"LC 420AURLAND-HAGAFOSS\"\n   - \"LC 420SYLLING-HAGAFOSS\"\n4. **HAGAFOSS** via lines:\n   - \"LC 420DAGALI-HAGAFOSS\"\n   - \"LC 420SYSLE-HAGAFOSS\"\n   - \"LC 420AURLAND-HAGAFOSS\"\n   - \"LC 420SYLLING-HAGAFOSS\"\n5. **OSLO** via lines:\n   - \"LC 420SYSLE-HAGAFOSS\"\n   - \"LC 420SYLLING-HAGAFOSS\"\n6. **SYSLE** via line \"LC 420SYSLE-HAGAFOSS\"\n7. **AURLAND** via line \"LC 420AURLAND-HAGAFOSS\"\n8. **SIMA** via line \"LC 420AURLAND-HAGAFOSS\"\n9. **SYLLING** via line \"LC 420SYLLING-HAGAFOSS\""
@@ -365,7 +369,7 @@ The output is a list of statistics for each question from the reference Q&A data
             "text": "Transformer OSLO T2 is in Substation Oslo."
           }
         ]
-  - name: sparql_query
+    - name: sparql_query
       args:
         query: |2
 
@@ -423,6 +427,7 @@ The output is a list of statistics for each question from the reference Q&A data
           "text": "Transformer OSLO T2 is in Substation Oslo."
         }
       ]
+    execution_timestamp: '2025-12-17T09:15:53Z'
     retrieval_answer_recall: 1.0
     retrieval_answer_recall_reason: The context contains all the transformers listed in the reference answer
     retrieval_answer_recall_cost: 0.0007
@@ -465,6 +470,7 @@ The output is a list of statistics for each question from the reference Q&A data
           ]
         }
       }
+    execution_timestamp: '2025-12-17T09:15:58Z'
   - name: sparql_query
     args:
       query: |-
@@ -508,6 +514,7 @@ The output is a list of statistics for each question from the reference Q&A data
           ]
         }
       }
+    execution_timestamp: '2025-12-17T09:16:03Z'
   steps_score: 1
   input_tokens: 221339
   output_tokens: 212
@@ -520,9 +527,11 @@ The output is a list of statistics for each question from the reference Q&A data
 - `template_id`: the template id
 - `question_id`: the question id
 - `question_text`: the natural language query
-- `reference_steps`: (optional) copy of the expected steps in the Q&A dataset, if specified there
-- `reference_answer`: (optional) copy of the expected answer in the Q&A dataset, if specified there
 - `status`: "success" or "error", indicating whether the evaluation succeeded
+- `reference_steps`: (optional) copy of the expected steps in the Q&A dataset, 
+if specified there. Additional key "matches" is added to those steps, which are 
+matched.
+- `reference_answer`: (optional) copy of the expected answer in the Q&A dataset, if specified there
 - `actual_answer`: (optional) copy of the response text in the evaluation target, if specified there
 - `answer_reference_claims_count`: (optional) number of claims extracted from the reference answer, if a reference answer and actual answer are available
 - `answer_actual_claims_count`: (optional) number of claims extracted from the answer being evaluated, if a reference answer and actual answer are available
@@ -534,16 +543,15 @@ The output is a list of statistics for each question from the reference Q&A data
 - `answer_f1`: (optional) Harmonic mean of `answer_recall` and `answer_precision`
 - `answer_relevance`: (optional) The value representing how relevant is the actual answer to the question, computed using [RAGAS answer relevance](https://docs.ragas.io/en/v0.3.3/concepts/metrics/available_metrics/answer_relevance/)
 - `answer_relevance_error`: (optional) error message if answer relevance evaluation failed
-- `answer_relevance_cost`: The LLM use cost of computing `answer_relevance`, in US dollars
+- `answer_relevance_cost`: (optional) The LLM use cost of computing 
+`answer_relevance`, in US dollars
 - `actual_steps`: (optional) copy of the steps in the evaluation target, if specified there
-- `steps_score`: a real number between 0 and 1, computed by comparing the results of the last executed steps to the output of the reference's last group of steps.
-    - If there is no match in the actual steps, then the score is `0.0`
-    - If the executed step's name is "retrieval" and the last reference group contains a retrieval step, then the score is the [recall at k](#context-recallk) of the retrieved document ids with respect to the reference.
-    - Otherwise, the score is the number of the matched steps on the last group divided by the total number of steps in the last group.
-- `input_tokens`: input tokens usage
-- `output_tokens`: output tokens usage
-- `total_tokens`: total tokens usage
-- `elapsed_sec`: elapsed seconds
+- `steps_score`: (optional) a real number between 0 and 1, see how step score 
+is calculated in the section [Steps score](#Steps-score)
+- `input_tokens`: (optional) input tokens usage
+- `output_tokens`: (optional) output tokens usage
+- `total_tokens`: (optional) total tokens usage
+- `elapsed_sec`: (optional) elapsed seconds
 
 All `actual_steps` with `name` "retrieval" contain:
 - `retrieval_answer_recall`: (optional) recall of the retrieved context with respect to the reference answer, if evaluation succeeds
@@ -1010,7 +1018,52 @@ macro:
     mean: 25.911653497483996
 ```
 
-### SPARQL queries comparison
+### Steps score
+
+The steps score is a real number in the interval [0, 1], 
+which indicates how closely the actual steps match to the reference ones.
+A score of 1 indicates a perfect match.
+
+Going in reverse order of the reference groups and in reverse order of the 
+actual steps, for each reference group we try to match each step in the group 
+to an actual step:
+- If all steps from the current reference group are matched, we proceed to the 
+previous group, but we only search among the actual steps before the earliest 
+actual step already matched for the current group. Thus, we ignore the 
+execution order of steps within a reference group, but groups are matched 
+in order: actual steps that match earlier groups must be executed before all 
+steps matching later groups.
+- If some steps in the current reference group are not matched, then the 
+matching stops, and the score is computed from the matches found so far.
+
+An actual step can match at most one reference step, and only if the actual 
+step is successful (i.e., it didn’t result in an error). There are a few ways 
+a reference step can match an actual one. In all cases except for 
+the "retrieval" steps, the matching score is either 0 or 1. A score above 0 
+indicates a match.
+
+- if both are named "sparql_query" and the "output_media_type" of the 
+reference step is "application/sparql-results+json", then we try to match them 
+using the [SPARQL queries comparison algorithm](#sparql-queries-comparison).
+- if both are named "retrieval" and the reference step has "output", then we 
+compute [recall@k](#context-recallk).
+- if both are named "retrieve_time_series", then we check if the arguments of 
+the steps are matching.
+- if both are named "retrieve_data_points", then we check if the arguments of 
+the steps are matching.
+- if the reference step is named "iri_discovery" and the actual step name is 
+"autocomplete_search", тhen check if the IRI specified as "output" of the 
+"iri_discovery" step is present in the "output" of the "autocomplete_search".
+- if the reference and actual step names are the same and the 
+"output_media_type" of the reference step is "application/json", then the steps 
+match, if the json outputs are the same. 
+- we fallback to match the outputs of the two steps. 
+
+The final steps score is the macro mean of scores over the groups. That is, it 
+is the sum of the scores of all reference groups divided by their number. Each 
+group score is the sum of scores of its steps divided by their number.
+
+#### SPARQL queries comparison
 
 The algorithm iterates over all subsets of columns in the actual result of the same size as in the reference result.
 For each subset, it compares the set of columns (skipping optional columns).

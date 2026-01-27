@@ -15,6 +15,7 @@ requires-python = ">=3.12,<3.13"
 repository = "https://github.com/Ontotext-AD/graphrag-eval"
 
 [tool.poetry.dependencies]
+python-dateutil = "2.9.0.post0"
 langevals = { version = "0.1.8", optional = true, extras = ["ragas"] }
 ragas = { version = "0.2.9", optional = true }
 langchain-openai = { version = "0.3.7", optional = true }

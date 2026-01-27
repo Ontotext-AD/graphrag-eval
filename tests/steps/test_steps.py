@@ -1,13 +1,9 @@
-import pytest
-
 from graphrag_eval.steps.evaluation import (
-    compare_steps_outputs,
-    evaluate_steps,
-    match_group_by_output,
-    collect_possible_matches_by_name_and_status,
-    get_steps_matches
+    compare_steps,
+    calculate_steps_score,
+    match_group,
+    match_groups,
 )
-
 
 sparql_expected_step = {
     "name": "sparql_query",
@@ -137,29 +133,29 @@ retrieval_error_step = {
 
 
 def test_compare_outputs_sparql_results():
-    assert compare_steps_outputs(sparql_expected_step, sparql_actual_step) == 1.0
+    assert compare_steps(sparql_expected_step, sparql_actual_step) == 1.0
 
 
 def test_compare_outputs_json():
-    assert compare_steps_outputs(influx_expected_step, influx_actual_step) == 1.0
+    assert compare_steps(influx_expected_step, influx_actual_step) == 1.0
 
 
 def test_compare_outputs_numbers():
-    assert compare_steps_outputs(calculation_expected_step, calculation_expected_step) == 1.0
-    assert compare_steps_outputs(calculation_expected_step, calculation_actual_step) == 0.0
+    assert compare_steps(calculation_expected_step, calculation_expected_step) == 1.0
+    assert compare_steps(calculation_expected_step, calculation_actual_step) == 0.0
 
 
 def test_compare_outputs_strings():
-    assert compare_steps_outputs(concatenation_expected_step, concatenation_expected_step) == 1.0
-    assert compare_steps_outputs(concatenation_expected_step, concatenation_actual_step) == 0.0
+    assert compare_steps(concatenation_expected_step, concatenation_expected_step) == 1.0
+    assert compare_steps(concatenation_expected_step, concatenation_actual_step) == 0.0
 
 
 def test_retrieval_evaluation():
-    assert compare_steps_outputs(retrieval_expected_step, retrieval_expected_step) == 1.0
-    assert compare_steps_outputs(retrieval_expected_step, retrieval_actual_step) == 0.6
+    assert compare_steps(retrieval_expected_step, retrieval_expected_step) == 1.0
+    assert compare_steps(retrieval_expected_step, retrieval_actual_step) == 0.6
 
 
-def test_compare_steps_outputs_retrieval_step_missing_output_raises_error():
+def test_compare_steps_retrieval_step_missing_output():
     retrieval_expected_step_no_output = {
         "name": "retrieval",
         "args": {
@@ -167,28 +163,20 @@ def test_compare_steps_outputs_retrieval_step_missing_output_raises_error():
             "k": 5
         },
     }
-    with pytest.raises(AssertionError):
-        compare_steps_outputs(
-            retrieval_expected_step_no_output,
-            retrieval_actual_step
-        )
+    assert compare_steps(retrieval_expected_step_no_output, retrieval_actual_step) == 0.0
 
 
-def test_compare_steps_outputs_calculation_step_missing_output_raises_error():
+def test_compare_steps_calculation_step_missing_output():
     calculation_expected_step_no_output = {
         "name": "calculation",
         "args": {
             "x": 5, "y": 10
         },
     }
-    with pytest.raises(AssertionError):
-        compare_steps_outputs(
-            calculation_expected_step_no_output,
-            calculation_actual_step
-        )
+    assert compare_steps(calculation_expected_step_no_output, calculation_actual_step) == 0.0
 
 
-def test_match_group_by_output():
+def test_match_group():
     expected_steps = [
         [
             {"name": "step_a", "output": "result_a_1"},
@@ -199,10 +187,10 @@ def test_match_group_by_output():
         ]
     ]
     actual_steps = [
-        {"name": "step_a", "output": "result_a_1"},
-        {"name": "step_b", "output": "result_b"},
+        {"name": "step_a", "output": "result_a_1", "status": "success"},
+        {"name": "step_b", "output": "result_b", "status": "success"},
     ]
-    matches = match_group_by_output(expected_steps, -1, actual_steps, {"step_b": [1]})
+    matches = match_group(expected_steps, -1, actual_steps, len(actual_steps))
     assert matches == [(-1, 0, 1, 1.0)]
 
     expected_steps = [
@@ -216,11 +204,11 @@ def test_match_group_by_output():
         ]
     ]
     actual_steps = [
-        {"name": "step_a", "output": "result_a"},
-        {"name": "step_b", "output": "result_b"},
+        {"name": "step_a", "output": "result_a", "status": "success"},
+        {"name": "step_b", "output": "result_b", "status": "success"},
     ]
-    matches = match_group_by_output(expected_steps, -1, actual_steps, {"step_b": [1]})
-    assert matches == [(-1, 0, 1, 1.0)]
+    matches = match_group(expected_steps, -1, actual_steps, len(actual_steps))
+    assert matches == [(-1, 1, 1, 1.0)]
 
     expected_steps = [
         [
@@ -233,46 +221,15 @@ def test_match_group_by_output():
         ]
     ]
     actual_steps = [
-        {"name": "step_b", "output": "result_b_2"},
-        {"name": "step_a", "output": "result_a"},
-        {"name": "step_b", "output": "result_b_1"},
-    ]
-    matches = match_group_by_output(expected_steps, -1, actual_steps, {"step_b": [0, 2]})
-    assert matches == [(-1, 0, 2, 1.0), (-1, 1, 0, 1.0)]
-
-
-def test_collect_possible_matches_by_name():
-    expected_steps = [
-        {"name": "step_b", "output": "result_b_1", "status": "success"},
-        {"name": "step_b", "output": "result_b_2", "status": "success"},
-    ]
-    actual_steps = [
         {"name": "step_b", "output": "result_b_2", "status": "success"},
         {"name": "step_a", "output": "result_a", "status": "success"},
         {"name": "step_b", "output": "result_b_1", "status": "success"},
     ]
-    assert collect_possible_matches_by_name_and_status(expected_steps, actual_steps, 2) == {"step_b": [0]}
-    assert collect_possible_matches_by_name_and_status(expected_steps, actual_steps, len(actual_steps)) == {
-        "step_b": [0, 2]}
-
-    expected_steps = [
-        {"name": "step_b", "output": "result_b_1", "status": "success"},
-        {"name": "step_b", "output": "result_b_2", "status": "success"},
-    ]
-    actual_steps = [
-        {"name": "step_b", "output": "result_b_2", "status": "success"},
-        {"name": "step_b", "error": "error", "status": "error"},
-        {"name": "step_a", "output": "result_a", "status": "success"},
-        {"name": "step_b", "output": "result_b_1", "status": "success"},
-    ]
-    assert collect_possible_matches_by_name_and_status(expected_steps, actual_steps, 0) == {}
-    assert collect_possible_matches_by_name_and_status(expected_steps, actual_steps, 1) == {"step_b": [0]}
-    assert collect_possible_matches_by_name_and_status(expected_steps, actual_steps, 2) == {"step_b": [0]}
-    assert collect_possible_matches_by_name_and_status(expected_steps, actual_steps, 3) == {"step_b": [0]}
-    assert collect_possible_matches_by_name_and_status(expected_steps, actual_steps, 4) == {"step_b": [0, 3]}
+    matches = match_group(expected_steps, -1, actual_steps, len(actual_steps))
+    assert matches == [(-1, 1, 0, 1.0), (-1, 0, 2, 1.0)]
 
 
-def test_get_steps_matches():
+def test_match_groups():
     expected_steps = [
         [
             {"name": "step_a", "output": "result_a_1", "status": "success"},
@@ -289,34 +246,44 @@ def test_get_steps_matches():
         {"name": "step_a", "output": "result_a", "status": "success"},
         {"name": "step_b", "output": "result_b_1", "status": "success"},
     ]
-    matches = get_steps_matches(expected_steps, actual_steps)
-    assert matches == [(-1, 0, 3, 1.0), (-1, 1, 0, 1.0)]
+    matches = match_groups(expected_steps, actual_steps)
+    assert matches == [(1, 1, 0, 1.0), (1, 0, 3, 1.0)]
 
 
-def test_evaluate_steps_groups():
+def test_calculate_steps_score_two_reference_groups():
     expected_groups = [
         [sparql_expected_step],
         [retrieval_expected_step],
     ]
     actual_steps = [retrieval_actual_step, sparql_actual_step]
-    assert evaluate_steps(expected_groups, actual_steps) == 0.6
-    assert evaluate_steps(expected_groups, [retrieval_actual_step]) == 0.6
-    assert evaluate_steps(expected_groups, [sparql_actual_step]) == 0.0
-    assert evaluate_steps(expected_groups, list(reversed(actual_steps))) == 0.6
-    assert evaluate_steps(expected_groups, [calculation_actual_step]) == 0.0
-    assert evaluate_steps(expected_groups, [retrieval_error_step]) == 0.0
-    assert evaluate_steps(expected_groups, []) == 0.0
+    assert calculate_steps_score(expected_groups, actual_steps, match_groups(expected_groups, actual_steps)) == 0.3
+    assert calculate_steps_score(expected_groups, [retrieval_actual_step],
+                                 match_groups(expected_groups, [retrieval_actual_step])) == 0.3
+    assert calculate_steps_score(expected_groups, [sparql_actual_step],
+                                 match_groups(expected_groups, [sparql_actual_step])) == 0.0
+    assert calculate_steps_score(expected_groups, list(reversed(actual_steps)),
+                                 match_groups(expected_groups, list(reversed(actual_steps)))) == 0.8
+    assert calculate_steps_score(expected_groups, [calculation_actual_step],
+                                 match_groups(expected_groups, [calculation_actual_step])) == 0.0
+    assert calculate_steps_score(expected_groups, [retrieval_error_step],
+                                 match_groups(expected_groups, [retrieval_error_step])) == 0.0
+    assert calculate_steps_score(expected_groups, [], match_groups(expected_groups, [])) == 0.0
 
 
-def test_evaluate_steps_last_group():
+def test_calculate_steps_score_one_reference_group():
     expected_groups = [
         [sparql_expected_step, retrieval_expected_step]
     ]
     actual_steps = [retrieval_actual_step, sparql_actual_step]
-    assert evaluate_steps(expected_groups, actual_steps) == 0.8
-    assert evaluate_steps(expected_groups, [retrieval_actual_step]) == 0.3
-    assert evaluate_steps(expected_groups, [sparql_actual_step]) == 0.5
-    assert evaluate_steps(expected_groups, list(reversed(actual_steps))) == 0.8
-    assert evaluate_steps(expected_groups, [calculation_actual_step]) == 0.0
-    assert evaluate_steps(expected_groups, [retrieval_error_step]) == 0.0
-    assert evaluate_steps(expected_groups, []) == 0.0
+    assert calculate_steps_score(expected_groups, actual_steps, match_groups(expected_groups, actual_steps)) == 0.8
+    assert calculate_steps_score(expected_groups, [retrieval_actual_step],
+                                 match_groups(expected_groups, [retrieval_actual_step])) == 0.3
+    assert calculate_steps_score(expected_groups, [sparql_actual_step],
+                                 match_groups(expected_groups, [sparql_actual_step])) == 0.5
+    assert calculate_steps_score(expected_groups, list(reversed(actual_steps)),
+                                 match_groups(expected_groups, list(reversed(actual_steps)))) == 0.8
+    assert calculate_steps_score(expected_groups, [calculation_actual_step],
+                                 match_groups(expected_groups, [calculation_actual_step])) == 0.0
+    assert calculate_steps_score(expected_groups, [retrieval_error_step],
+                                 match_groups(expected_groups, [retrieval_error_step])) == 0.0
+    assert calculate_steps_score(expected_groups, [], match_groups(expected_groups, [])) == 0.0

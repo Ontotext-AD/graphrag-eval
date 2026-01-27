@@ -31,33 +31,39 @@
     : \"http://www.w3.org/2001/XMLSchema#float\",\n          \"type\": \"literal\"\
     ,\n          \"value\": \"0.00945\"\n        }\n      }\n    ]\n  }\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:48:15Z'
 - args:
     query: ASK { <urn:uuid:f1769bf6-9aeb-11e5-91da-b8763fd99c5f> a cim:Line }
   id: call_Bo2271X6qZcJtTxZOGMj3yFB
   name: sparql_query
   output: "{\n  \"head\": {},\n  \"boolean\": false\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:48:50Z'
 - args:
     query: ASK { <urn:uuid:f1769bb4-9aeb-11e5-91da-b8763fd99c5f> a cim:Line }
   id: call_CryOV3M6PMyBBgw5cLNNG40v
   name: sparql_query
   output: "{\n  \"head\": {},\n  \"boolean\": false\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:49:25Z'
 - args:
     query: ASK { <urn:uuid:c5f535a5-f053-a948-9cee-f6a7b07c7d4f> a cim:Line }
   id: call_YthRMxETg1mc41WceN1EqpNN
   name: sparql_query
   output: "{\n  \"head\": {},\n  \"boolean\": true\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:50:00Z'
 - args:
     query: ASK { <urn:uuid:28e8bca7-a94f-cc45-9b85-7c872de68a17> a cim:Line }
   id: call_ZM5Ey9SkDYtHOm64IgtjGe6n
   name: sparql_query
   output: "{\n  \"head\": {},\n  \"boolean\": true\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:50:35Z'
 - args:
     query: ASK { <urn:uuid:f1769bea-9aeb-11e5-91da-b8763fd99c5f> a cim:Line }
   id: call_vDIFq3zuI0FEmFGsob97A5mB
   name: sparql_query
   output: "{\n  \"head\": {},\n  \"boolean\": false\n}"
   status: success
+  execution_timestamp: '2025-12-17T10:51:10Z'
