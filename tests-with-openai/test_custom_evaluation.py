@@ -158,8 +158,6 @@ def test_run_custom_evaluation_config_error(monkeypatch):
     
     error_config = deepcopy(correct_config)
     error_config[1]["extra"] = "invalid"
-    from pprint import pprint
-    pprint(error_config[1])
     error_configs.append(error_config)
     
     for k1 in "steps_name", "steps_keys":
