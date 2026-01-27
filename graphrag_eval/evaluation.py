@@ -1,13 +1,20 @@
+from pathlib import Path
+
 from .steps.evaluation import evaluate_steps
 
 
 def run_evaluation(
         qa_dataset: list[dict],
         responses_dict: dict,
+        custom_eval_config_file_path: str | Path | None = None,
 ) -> list[dict]:
     # Output metrics are not nested, for simpler aggregation
     answer_correctness_evaluator = None
     evaluation_results = []
+    custom_evaluators = []
+    if custom_eval_config_file_path:
+        from .custom_evaluation import parse_config
+        custom_evaluators = parse_config(custom_eval_config_file_path)
     for template in qa_dataset:
         template_id = template["template_id"]
         for question in template["questions"]:
@@ -49,10 +56,12 @@ def run_evaluation(
                             actual_result,
                         )
                     )
-
             eval_result.update(
                 evaluate_steps(question, actual_result)
             )
+            for evaluator in custom_evaluators:
+                custom_metrics = evaluator.evaluate(question, actual_result)
+                eval_result.update(**custom_metrics)
             for key in "input_tokens", "output_tokens", "total_tokens", "elapsed_sec":
                 if key in actual_result:
                     eval_result[key] = actual_result[key]
