@@ -217,7 +217,7 @@ def test_run_custom_evaluation_llm_output_error(monkeypatch):
     assert expected_aggregates == aggregates
     
 
-def test_run_custom_evaluation_missing_reference_steps(monkeypatch):
+def test_run_custom_evaluation_missing_input_fields(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
