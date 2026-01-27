@@ -157,13 +157,11 @@ def test_run_custom_evaluation_config_error(monkeypatch):
         error_configs.append(error_config)
     
     error_config = deepcopy(correct_config)
-    error_config[1]["reference_steps"] = {}
+    error_config[1]["extra"] = "invalid"
+    from pprint import pprint
+    pprint(error_config[1])
     error_configs.append(error_config)
     
-    error_config = deepcopy(correct_config)
-    error_config[1]["actual_steps"] = {}
-    error_configs.append(error_config)
-
     for k1 in "steps_name", "steps_keys":
         for k2 in "reference_steps", "actual_steps":
             error_config = deepcopy(correct_config)
@@ -184,7 +182,7 @@ def test_run_custom_evaluation_config_error(monkeypatch):
     )
     for config in error_configs:
         monkeypatch.setattr(yaml, "safe_load", lambda _: config)
-        with raises(custom_evaluation.ConfigError):
+        with raises(ValueError):
             run_evaluation(
                 reference_data, 
                 actual_responses, 

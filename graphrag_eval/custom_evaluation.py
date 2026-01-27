@@ -1,12 +1,48 @@
 import json
 import yaml
 from pathlib import Path
+from typing import Literal
 
 from openai import OpenAI
+from pydantic import BaseModel, ConfigDict, Field, RootModel, model_validator
 
 
 LLM_MODEL = "gpt-4o-mini"
 TEMPERATURE = 0.0
+
+
+Inputs = Literal[
+    "question",
+    "reference_answer",
+    "reference_steps",
+    "actual_answer",
+    "actual_steps"
+]
+
+StepsKey = Literal["args", "output"]
+
+
+class Config(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    name: str
+    inputs: list[Inputs] = Field(..., min_length=1)
+    instructions: str
+    outputs: dict[str, str]
+    steps_name: str | None = None
+    steps_keys: set[StepsKey] | None = Field(default=None, min_length=1)
+
+    @model_validator(mode='after')
+    def validate_step_dependencies(self) -> 'Config':
+        if set(self.inputs) & {"reference_steps", "actual_steps"}:
+            suffix = "is required when steps are in inputs"
+            for var_name in ["steps_name", "steps_keys"]:
+                if getattr(self, var_name) is None:
+                    raise ValueError(f"{var_name} {suffix}")
+        return self
+
+
+class ConfigsList(RootModel):
+    root: list[Config]
 
 
 def create_input_template(input_key: str) -> str:
@@ -17,25 +53,22 @@ def create_input_template(input_key: str) -> str:
 class CustomEvaluator:
     def __init__(
         self, 
-        name: str,
-        inputs: list[str],
-        outputs: dict[str, str],
-        instructions: str,
-        steps_name: str | None = None,
-        steps_keys: list[str] | None = None,
+        config: Config,
         temperature : float = TEMPERATURE
     ):
-        self.metric_name = name
-        self.input_variables = inputs
-        self.steps_name = steps_name
-        self.steps_keys = steps_keys
-        outputs_tuples = list(outputs.items())
+        self.name = config.name
+        self.input_variables = config.inputs
+        self.steps_name = config.steps_name
+        self.steps_keys = config.steps_keys
+        outputs_tuples = list(config.outputs.items())
         self.output_variables = list(zip(*outputs_tuples))[0]
-        inputs_template = "\n\n".join(create_input_template(k) for k in inputs)
+        inputs_template = "\n\n".join(
+            create_input_template(k) for k in config.inputs
+        )
         output_instructions = "Output the following values separated by tabs:"\
             + "".join(f"\n- {k}: {desc}" for k, desc in outputs_tuples)
         self.prompt_template = "\n\n".join([
-            instructions.strip(),
+            config.instructions.strip(),
             output_instructions,
             inputs_template,
         ])
@@ -75,7 +108,7 @@ class CustomEvaluator:
     
     def error(self, msg: str) -> dict:
         result = {k: None for k in self.output_variables}
-        result[self.metric_name + '_error'] = msg
+        result[self.name + '_error'] = msg
         return result
 
     def parse_outputs(self, response: str) -> dict[str, str | None]:
@@ -131,47 +164,10 @@ class CustomEvaluator:
         return self.parse_outputs(response)
 
 
-MANDATORY_KEYS = ["name", "inputs", "instructions", "outputs"]
-
-
-class ConfigError(Exception):
-    pass
-
-
-def _check_config(err_prefix: str, config: dict) -> None:
-    if not isinstance(config, dict):
-        raise ConfigError(f"{err_prefix} should be a dict, got {type(config)}")
-    for key in MANDATORY_KEYS:
-        if key not in config:
-            raise ConfigError(f"{err_prefix} should have key '{key}'")
-    for key in ["reference_steps", "actual_steps"]:
-        if key in config:
-            if not isinstance(config[key], list):
-                raise ConfigError(f"{err_prefix} key '{key}' should be a list")
-    if set(["reference_steps", "actual_steps"]) & set(config["inputs"]):
-        for key in "steps_name", "steps_keys":
-            if key not in config:
-                raise ConfigError(f"{err_prefix} should have key '{key}'")
-        if set(config["steps_keys"]) - {"args", "output"}:
-            raise ConfigError(
-                f"{err_prefix} key 'steps_keys' values can only include "
-                "'args', 'output'"
-            )
-    
-
 def parse_config(config_file_path: str | Path | None) -> list[CustomEvaluator]:
         if config_file_path is None:
             return []
-        try:
-            with open(config_file_path, encoding="utf-8") as f:
-                config = yaml.safe_load(f)
-        except FileNotFoundError:
-            raise ConfigError(f"Config file not found at {config_file_path}")
-        msg = "Custom configuration"
-        if not isinstance(config, list):
-            raise ConfigError(f"{msg} should be a list, got {type(config)}")
-        evaluators = []
-        for i, c in enumerate(config):
-            _check_config(f"{msg} {i}", c)
-            evaluators.append(CustomEvaluator(**c))
-        return evaluators
+        with open(config_file_path, encoding="utf-8") as f:
+            configs = yaml.safe_load(f)
+        configs_list = ConfigsList(configs)
+        return [CustomEvaluator(c) for c in configs_list.root]
