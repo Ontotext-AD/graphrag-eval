@@ -1,4 +1,5 @@
 import json
+from multiprocessing import Condition
 import yaml
 from pathlib import Path
 from typing import Literal
@@ -9,6 +10,34 @@ from pydantic import BaseModel, ConfigDict, Field, RootModel, model_validator
 
 LLM_MODEL = "gpt-4o-mini"
 TEMPERATURE = 0.0
+RESERVED_KEYS = {
+    "template_id",
+    "question_id",
+    "actual_answer",
+    "actual_steps",
+    "question_text",
+    "reference_answer",
+    "reference_steps",
+    "status",
+    "error",
+    "answer_actual_claims_count",
+    "answer_matching_claims_count",
+    "answer_reference_claims_count",
+    "answer_precision",
+    "answer_recall",
+    "answer_f1",
+    "answer_correctness_reason",
+    "answer_correctness_error"
+    "answer_relevance",
+    "answer_relevance_cost",
+    "answer_relevance_reason",
+    "answer_relevance_error",
+    "steps_score",
+    "input_tokens",
+    "output_tokens",
+    "total_tokens",
+    "elapsed_sec",
+}
 
 
 Inputs = Literal[
@@ -40,6 +69,14 @@ class Config(BaseModel):
                     raise ValueError(f"{var_name} {suffix}")
         return self
 
+    @model_validator(mode='after')
+    def validate_name_and_outputs(self) -> 'Config':
+        if self.name + "_error" in RESERVED_KEYS:
+            raise ValueError(f"Name {self.name} is reserved")
+        conflicting_keys = set(self.outputs.keys()) & RESERVED_KEYS
+        if conflicting_keys:
+            raise ValueError(f"Output keys {conflicting_keys} are reserved")
+        return self
 
 class ConfigsList(RootModel):
     root: list[Config]

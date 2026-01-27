@@ -150,7 +150,7 @@ def test_run_custom_evaluation_config_error(monkeypatch):
     with open(custom_eval_config_file_path, encoding="utf-8") as f:
         correct_config = yaml.safe_load(f)
     
-    error_configs = [{}, [[]]]    
+    error_configs = [{}, [[]]]
     for key in ["name", "inputs", "instructions", "outputs"]:
         error_config = deepcopy(correct_config)
         del error_config[0][key]
@@ -244,3 +244,33 @@ def test_run_custom_evaluation_missing_input_fields(monkeypatch):
         (DATA_DIR / "evaluation_summary_6.yaml").read_text(encoding="utf-8")
     )
     assert expected_aggregates == aggregates
+
+
+def test_run_custom_evaluation_invalid_keys(monkeypatch):
+    reference_data = yaml.safe_load(
+        (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
+    )
+    actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
+    custom_eval_config_file_path = DATA_DIR / "custom_eval_config.yaml"
+    with open(custom_eval_config_file_path, encoding="utf-8") as f:
+        correct_config = yaml.safe_load(f)
+    
+    error_configs = []
+    for key in custom_evaluation.RESERVED_KEYS:
+        error_config = deepcopy(correct_config)
+        error_config[0]["outputs"][key] = "invalid"
+        error_configs.append(error_config)
+    
+    monkeypatch.setattr(
+        custom_evaluation,
+        "OpenAI",
+        lambda: None
+    )
+    for config in error_configs:
+        monkeypatch.setattr(yaml, "safe_load", lambda _: config)
+        with raises(ValueError):
+            run_evaluation(
+                reference_data, 
+                actual_responses, 
+                custom_eval_config_file_path
+            )
