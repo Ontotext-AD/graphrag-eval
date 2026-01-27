@@ -150,32 +150,37 @@ def test_run_custom_evaluation_config_error(monkeypatch):
     with open(custom_eval_config_file_path, encoding="utf-8") as f:
         correct_config = yaml.safe_load(f)
     
-    error_configs = [{}, [[]]]
+    error_configs = [[[]]]
+
+    error_config = deepcopy(correct_config)
+    del error_config["llm"]
+    error_configs.append(error_config)
+
     for key in ["name", "inputs", "instructions", "outputs"]:
         error_config = deepcopy(correct_config)
-        del error_config[0][key]
+        del error_config["custom_evaluations"][0][key]
         error_configs.append(error_config)
     
     error_config = deepcopy(correct_config)
-    error_config[1]["extra"] = "invalid"
+    error_config["custom_evaluations"][1]["extra"] = "invalid"
     error_configs.append(error_config)
     
     for k1 in "steps_name", "steps_keys":
         for k2 in "reference_steps", "actual_steps":
             error_config = deepcopy(correct_config)
-            c = error_config[1]
+            c = error_config["custom_evaluations"][1]
             del c[k1]
             del c["inputs"][c["inputs"].index(k2)]
             error_configs.append(error_config)
     
     error_config = deepcopy(correct_config)
-    c = error_config[1]
+    c = error_config["custom_evaluations"][1]
     c["steps_keys"].append("invalid")
     error_configs.append(error_config)
 
     for key in custom_evaluation.RESERVED_KEYS:
         error_config = deepcopy(correct_config)
-        error_config[0]["outputs"][key] = "invalid"
+        error_config["custom_evaluations"][0]["outputs"][key] = "invalid"
         error_configs.append(error_config)
 
     monkeypatch.setattr(

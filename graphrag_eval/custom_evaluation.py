@@ -4,11 +4,9 @@ from pathlib import Path
 from typing import Literal
 
 from openai import OpenAI
-from pydantic import BaseModel, ConfigDict, Field, RootModel, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
-LLM_MODEL = "gpt-4o-mini"
-TEMPERATURE = 0.0
 RESERVED_KEYS = {
     "template_id",
     "question_id",
@@ -25,6 +23,7 @@ RESERVED_KEYS = {
     "answer_precision",
     "answer_recall",
     "answer_f1",
+    "answer_eval_error",
     "answer_correctness_reason",
     "answer_correctness_error"
     "answer_relevance",
@@ -50,7 +49,7 @@ Inputs = Literal[
 StepsKey = Literal["args", "output"]
 
 
-class Config(BaseModel):
+class CustomEvalConfig(BaseModel):
     model_config = ConfigDict(extra='forbid')
     name: str
     inputs: list[Inputs] = Field(..., min_length=1)
@@ -60,7 +59,7 @@ class Config(BaseModel):
     steps_keys: set[StepsKey] | None = Field(default=None, min_length=1)
 
     @model_validator(mode='after')
-    def validate_step_dependencies(self) -> 'Config':
+    def validate_step_dependencies(self) -> 'CustomEvalConfig':
         if set(self.inputs) & {"reference_steps", "actual_steps"}:
             suffix = "is required when steps are in inputs"
             for var_name in ["steps_name", "steps_keys"]:
@@ -69,7 +68,7 @@ class Config(BaseModel):
         return self
 
     @model_validator(mode='after')
-    def validate_name_and_outputs(self) -> 'Config':
+    def validate_name_and_outputs(self) -> 'CustomEvalConfig':
         if self.name + "_error" in RESERVED_KEYS:
             raise ValueError(f"Name {self.name} is reserved")
         conflicting_keys = set(self.outputs.keys()) & RESERVED_KEYS
@@ -77,8 +76,22 @@ class Config(BaseModel):
             raise ValueError(f"Output keys {conflicting_keys} are reserved")
         return self
 
-class ConfigsList(RootModel):
-    root: list[Config]
+
+class LLMConfig(BaseModel):
+    model_name: str
+    temperature: float
+
+
+class Config(BaseModel):
+    llm: LLMConfig | None = None
+    custom_evaluations: list[CustomEvalConfig] | None = None
+
+    @model_validator(mode='after')
+    def validate_custom_evaluations(self) -> 'CustomEvalConfig':
+        if self.custom_evaluations and not self.llm:
+            msg = "LLM configuration is required for custom evaluations"
+            raise ValueError(msg)
+        return self
 
 
 def create_input_template(input_key: str) -> str:
@@ -88,35 +101,35 @@ def create_input_template(input_key: str) -> str:
 
 class CustomEvaluator:
     def __init__(
-        self, 
-        config: Config,
-        temperature : float = TEMPERATURE
+        self,
+        eval_config: CustomEvalConfig,
+        llm_config: BaseModel,
     ):
-        self.name = config.name
-        self.input_variables = config.inputs
-        self.steps_name = config.steps_name
-        self.steps_keys = config.steps_keys
-        outputs_tuples = list(config.outputs.items())
+        self.name = eval_config.name
+        self.input_variables = eval_config.inputs
+        self.steps_name = eval_config.steps_name
+        self.steps_keys = eval_config.steps_keys
+        outputs_tuples = list(eval_config.outputs.items())
         self.output_variables = list(zip(*outputs_tuples))[0]
         inputs_template = "\n\n".join(
-            create_input_template(k) for k in config.inputs
+            create_input_template(k) for k in eval_config.inputs
         )
         output_instructions = "Output the following values separated by tabs:"\
             + "".join(f"\n- {k}: {desc}" for k, desc in outputs_tuples)
         self.prompt_template = "\n\n".join([
-            config.instructions.strip(),
+            eval_config.instructions.strip(),
             output_instructions,
             inputs_template,
         ])
+        self.llm_config = llm_config
         self.openai_client = OpenAI()
-        self.temperature = temperature
 
     def call_llm(self, prompt: str) -> str:
         try:
             response = self.openai_client.chat.completions.create(
-                model=LLM_MODEL,
+                model=self.llm_config.model,
                 messages=[{"role": "user", "content": prompt}],
-                temperature=self.temperature
+                temperature=self.llm_config.temperature
             )
             return response.choices[0].message.content.strip("\n")
         except Exception as e:
@@ -204,6 +217,9 @@ def parse_config(config_file_path: str | Path | None) -> list[CustomEvaluator]:
         if config_file_path is None:
             return []
         with open(config_file_path, encoding="utf-8") as f:
-            configs = yaml.safe_load(f)
-        configs_list = ConfigsList(configs)
-        return [CustomEvaluator(c) for c in configs_list.root]
+            config_dict = yaml.safe_load(f)
+        if not isinstance(config_dict, dict):
+            raise ValueError("Config root must be a dictionary")
+        config = Config(**config_dict)
+        custom_configs = config.custom_evaluations or []
+        return [CustomEvaluator(c, config.llm) for c in custom_configs]
