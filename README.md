@@ -1230,7 +1230,7 @@ configuration. Example:
 1. The actual output to be evaluated is missing keys requested in the custom
 evaluation configuration.  Example: 
 `custom_1_error: Actual output missing 'actual_steps'`
-1. The evaluating LLM output does not conform to the customevaluation 
+1. The evaluating LLM output does not conform to the custom evaluation 
 configuration. Example: 
 `custom_1_error: "Expected 6 tab-separated values, got: 0.1\tCustom answer reason"`
 
