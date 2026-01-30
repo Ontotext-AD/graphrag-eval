@@ -3,6 +3,10 @@ from pathlib import Path
 from .steps.evaluation import evaluate_steps
 
 
+OPENAI_MODEL_NAME = "gpt-4o-mini"
+TEMPERATURE = 0.0
+
+
 def run_evaluation(
         qa_dataset: list[dict],
         responses_dict: dict,
@@ -13,8 +17,15 @@ def run_evaluation(
     evaluation_results = []
     custom_evaluators = []
     if custom_eval_config_file_path:
-        from .custom_evaluation import parse_config
-        custom_evaluators = parse_config(custom_eval_config_file_path)
+        import openai
+        from . custom_evaluation import create_evaluators
+        openai_client = openai.OpenAI()
+        custom_evaluators = create_evaluators(
+            custom_eval_config_file_path,
+            openai_client,
+            OPENAI_MODEL_NAME,
+            TEMPERATURE,
+        )
     for template in qa_dataset:
         template_id = template["template_id"]
         for question in template["questions"]:

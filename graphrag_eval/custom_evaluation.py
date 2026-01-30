@@ -3,12 +3,9 @@ import yaml
 from pathlib import Path
 from typing import Literal
 
-from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field, RootModel, model_validator
 
 
-LLM_MODEL = "gpt-4o-mini"
-TEMPERATURE = 0.0
 RESERVED_KEYS = {
     "template_id",
     "question_id",
@@ -77,7 +74,7 @@ class Config(BaseModel):
             raise ValueError(f"Output keys {conflicting_keys} are reserved")
         return self
 
-class ConfigsList(RootModel):
+class Configs(RootModel):
     root: list[Config]
 
 
@@ -110,7 +107,9 @@ class CustomEvaluator:
     def __init__(
         self, 
         config: Config,
-        temperature : float = TEMPERATURE
+        openai_model_name: str,
+        temperature : float,
+        openai_client = OpenAI(),
     ):
         self.name = config.name
         self.input_variables = config.inputs
@@ -121,13 +120,14 @@ class CustomEvaluator:
             config,
             self.output_variables
         )
-        self.openai_client = OpenAI()
+        self.openai_client = openai_client
+        self.openai_model_name = openai_model_name
         self.temperature = temperature
 
     def call_llm(self, prompt: str) -> str:
         try:
             response = self.openai_client.responses.create(
-                model=LLM_MODEL,
+                model=self.openai_model_name,
                 input=prompt,
                 temperature=self.temperature
             )
@@ -213,10 +213,18 @@ class CustomEvaluator:
         return self.parse_outputs(response)
 
 
-def parse_config(config_file_path: str | Path | None) -> list[CustomEvaluator]:
+def create_evaluators(
+    config_file_path: str | Path | None, 
+    openai_client, 
+    openai_model_name, 
+    temperature
+) -> list[CustomEvaluator]:
         if config_file_path is None:
             return []
         with open(config_file_path, encoding="utf-8") as f:
             configs = yaml.safe_load(f)
-        configs_list = ConfigsList(configs)
-        return [CustomEvaluator(c) for c in configs_list.root]
+        configs_list = Configs(configs)
+        return [
+            CustomEvaluator(c, openai_model_name, temperature, openai_client)
+            for c in configs_list.root
+        ]

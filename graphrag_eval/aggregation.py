@@ -221,9 +221,12 @@ def compute_aggregates(
     step_metrics_per_template = defaultdict(lambda: defaultdict(list))
     custom_metrics = []
     if custom_eval_config_file_path:
-        from .custom_evaluation import parse_config
-        evaluators = parse_config(custom_eval_config_file_path)
-        custom_metrics = [m for e in evaluators for m in e.output_variables]
+        import yaml
+        from .custom_evaluation import Configs
+        with open(custom_eval_config_file_path, encoding="utf-8") as f:
+            configs_list = yaml.safe_load(f)
+        configs = Configs(configs_list)
+        custom_metrics = [o for c in configs.root for o in c.outputs]
 
     # Compute per-template stats
     templates_ids = set()
