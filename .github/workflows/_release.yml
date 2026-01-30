@@ -24,19 +24,19 @@ jobs:
           conda activate graphrag-eval
           poetry install --no-interaction --with test
 
-      - name: Run tests that do not depend on Ragas
+      - name: Run tests that do not use LLMs
         shell: bash -l {0}
         run: |
           conda activate graphrag-eval
           poetry run pytest --cov=graphrag_eval --cov-report=term-missing tests/
 
-      - name: Install dependencies, including ragas dependencies, using Poetry
+      - name: Install dependencies, including LLM and Ragas dependencies, using Poetry
         shell: bash -l {0}
         run: |
           conda activate graphrag-eval
-          poetry install --no-interaction --with ragas
+          poetry install --no-interaction --with llm
 
-      - name: Run tests that depend on Ragas
+      - name: Run tests that use LLMs
         shell: bash -l {0}
         run: |
           conda activate graphrag-eval
