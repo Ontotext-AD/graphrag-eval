@@ -21,26 +21,15 @@ or add the following dependency in your `pyproject.toml` file:
 graphrag-eval = "*"
 ```
 
-To evaluate answer relevance and answer correctness:
+To evaluate answer relevance and answer correctness or use a [custom evaluation](#Custom-Evaluation-(Experimental)):
 
 ```bash
-pip install 'graphrag-eval[ragas]'
+pip install 'graphrag-eval[llm]'
 ```
 
 or add the following dependency in your `pyproject.toml` file:
 ```toml
-graphrag-eval = {version = "*", extras = ["ragas"]}
-```
-
-To use a [custom evaluation](#Custom-Evaluation-(Experimental)):
-
-```bash
-pip install graphrag-eval[custom-metrics]
-```
-
-or add the following dependency in your `pyproject.toml` file:
-```toml
-graphrag-eval = {version = "*", extras = ["custom-metrics"]}
+graphrag-eval = {version = "*", extras = ["llm"]}
 ```
 
 ## Maintainers
@@ -53,7 +42,7 @@ For issues or feature requests, please open [a GitHub issue](https://github.com/
 To evaluate only correctness of final answers (system responses), you can clone this repository and run the code on the command line:
 
 1. Prepare an input TSV file with columns `Question`, `Reference answer` and `Actual answer`
-1. Execute `poetry install --with ragas`
+1. Execute `poetry install --with llm`
 1. Execute `OPENAI_API_KEY=<your_api_key> poetry run answer-correctness -i <input_file.tsv> -o <output_file.tsv>`
 
 We plan to improve CLI support in future releases.
