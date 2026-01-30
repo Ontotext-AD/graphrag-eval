@@ -194,8 +194,8 @@ class CustomEvaluator:
                 return self.error("Reference missing key 'reference_steps'")
             try:
                 formatted_steps_lists = [
-                    self.format_steps(ss) 
-                    for ss in reference["reference_steps"]
+                    self.format_steps(group) 
+                    for group in reference["reference_steps"]
                 ]
             except json.JSONDecodeError:
                 return self.error("Malformed reference step JSON")
