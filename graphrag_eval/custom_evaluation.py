@@ -126,12 +126,12 @@ class CustomEvaluator:
 
     def call_llm(self, prompt: str) -> str:
         try:
-            response = self.openai_client.chat.completions.create(
+            response = self.openai_client.responses.create(
                 model=LLM_MODEL,
-                messages=[{"role": "user", "content": prompt}],
+                input=prompt,
                 temperature=self.temperature
             )
-            return response.choices[0].message.content.strip("\n")
+            return response.output_text.strip("\n")
         except Exception as e:
             return str(e).replace("\n", "    ")
 
