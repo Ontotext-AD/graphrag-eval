@@ -109,7 +109,7 @@ class CustomEvaluator:
         config: Config,
         openai_model_name: str,
         temperature : float,
-        openai_client = OpenAI(),
+        openai_client,
     ):
         self.name = config.name
         self.input_variables = config.inputs
