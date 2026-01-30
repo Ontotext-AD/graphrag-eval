@@ -86,6 +86,26 @@ def create_input_template(input_key: str) -> str:
     return f"# {header}\n{{{input_key}}}"
 
 
+def create_prompt_template(config: Config, output_variables: list[str]) -> str:
+    """
+    Return a template for the LLM prompt, with placeholders for the inputs, 
+    instructions, outputs etc. We use this template at evaluation time to
+    format the actual values for the given question into a prompt.
+    
+    output_variables specifies the order of the outputs.
+    """
+    output_instructions = "Output the following values separated by tabs:"\
+        + "".join(f"\n- {k}: {config.outputs[k]}" for k in output_variables)
+    inputs_template = "\n\n".join(
+        create_input_template(k) for k in config.inputs
+    )
+    return "\n\n".join([
+        config.instructions.strip(),
+        output_instructions,
+        inputs_template,
+    ])
+
+
 class CustomEvaluator:
     def __init__(
         self, 
@@ -96,18 +116,11 @@ class CustomEvaluator:
         self.input_variables = config.inputs
         self.steps_name = config.steps_name
         self.steps_keys = config.steps_keys
-        outputs_tuples = list(config.outputs.items())
-        self.output_variables = list(zip(*outputs_tuples))[0]
-        inputs_template = "\n\n".join(
-            create_input_template(k) for k in config.inputs
+        self.output_variables = list(config.outputs.keys())
+        self.prompt_template = create_prompt_template(
+            config,
+            self.output_variables
         )
-        output_instructions = "Output the following values separated by tabs:"\
-            + "".join(f"\n- {k}: {desc}" for k, desc in outputs_tuples)
-        self.prompt_template = "\n\n".join([
-            config.instructions.strip(),
-            output_instructions,
-            inputs_template,
-        ])
         self.openai_client = OpenAI()
         self.temperature = temperature
 
