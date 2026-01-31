@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import openai
 import yaml
 from copy import deepcopy
 from langevals_ragas.lib.common import RagasResult, Money
@@ -90,7 +91,7 @@ def _mock_common_calls(monkeypatch):
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
     monkeypatch.setattr(
-        custom_evaluation,
+        openai,
         "OpenAI",
         lambda: None
     )
@@ -179,7 +180,7 @@ def test_run_custom_evaluation_config_error(monkeypatch):
         error_configs.append(error_config)
 
     monkeypatch.setattr(
-        custom_evaluation,
+        openai,
         "OpenAI",
         lambda: None
     )
