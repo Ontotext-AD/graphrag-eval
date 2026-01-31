@@ -9,6 +9,7 @@ from graphrag_eval import (
     answer_correctness,
     compute_aggregates,
     custom_evaluation,
+    evaluation,
     run_evaluation,
 )
 from graphrag_eval.steps.retrieval_answer import (
@@ -90,7 +91,7 @@ def _mock_common_calls(monkeypatch):
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
     monkeypatch.setattr(
-        custom_evaluation,
+        evaluation,
         "OpenAI",
         lambda: None
     )
