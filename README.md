@@ -21,7 +21,7 @@ or add the following dependency in your `pyproject.toml` file:
 graphrag-eval = "*"
 ```
 
-To evaluate answer relevance and answer correctness or use a [custom evaluation](#Custom-Evaluation-(Experimental)):
+To evaluate answer relevance and answer correctness or use a [custom evaluation](#Custom-Evaluation-(custom-metrics)):
 
 ```bash
 pip install 'graphrag-eval[llm]'
@@ -64,7 +64,7 @@ To evaluate answers and/or steps:
 1. Call the evaluation function with the reference data and target data: section [Usage Code](#Usage-Code)
 1. Call the aggregation function with the evaluation results: section [Usage Code](#Usage-Code)
 
-Answer evaluation (correctness and relevance) and [custom evaluation](#Custom-Evaluation-(Experimental)) use the LLM `openai/gpt-4o-mini`.
+Answer evaluation (correctness and relevance) and [custom evaluation](#custom-evaluation-(custom-metrics)) use the LLM `openai/gpt-4o-mini`.
 
 ### Reference Q&A Data
 
@@ -1128,7 +1128,7 @@ average_precision(
 ) # ~=> 0.8056
 ```
 
-### Custom Evaluation (Experimental)
+### Custom Evaluation (Custom Metrics)
 
 You (the user) can define your own metrics of system outputs to be evaluated
 using an LLM. To do this, specify its name, inputs, outputs and instructions in
