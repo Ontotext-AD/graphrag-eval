@@ -1,0 +1,52 @@
+llm:
+  name: openai/gpt-4o-mini
+  temperature: 0.0
+  max_tokens: 65536
+custom_evaluations:
+  -
+    name: my_answer_relevance
+    inputs:
+      - question
+      - actual_answer
+    instructions: |
+      Evaluate how relevant is the answer to the question.
+    outputs:
+      my_answer_relevance: fraction between 0 and 1
+      my_answer_relevance_reason: reason for your evaluation
+  -
+    name: retrieval
+    inputs:
+      - reference_steps
+      - actual_steps
+    steps_name: retrieval
+    steps_keys:
+      - output
+    instructions: |
+      Divide both reference chunks and actual chunks into claims and try to
+      match claims between them. Count the:
+      - reference claims
+      - actual claims
+      - matching claims
+    outputs:
+      retrieval_recall: Number of matching claims as a fraction of reference claims (fraction 0-1)
+      retrieval_precision: Number of matching claims as a fraction of actual claims (fraction 0-1)
+      retrieval_reason: reason for your evaluation
+  -
+    name: sparql
+    inputs:
+      - question
+      - reference_answer
+      - actual_steps
+    steps_keys:
+      - output
+    steps_name: sparql_query
+    instructions: |
+      Divide the reference answer into claims and try to match each claim to the
+      SPARQL query results. Count the:
+      - reference claims
+      - SPARQL results
+      - matching claims
+    outputs:
+      sparql_recall: Number of matching claims as a fraction of reference claims (fraction 0-1)
+      sparql_precision: Number of matching claims as a fraction of SPARQL results (fraction 0-1)
+      sparql_reason: reason for your evaluation

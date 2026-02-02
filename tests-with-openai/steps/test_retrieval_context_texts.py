@@ -8,6 +8,15 @@ from graphrag_eval.steps.retrieval_context_texts import (
     RagasContextRecallEvaluator,
     get_retrieval_evaluation_dict,
 )
+from graphrag_eval import llm
+
+
+llm_config = llm.Config(
+    name="openai/gpt-4o-mini",
+    temperature=0.0,
+    max_tokens=1024,
+)
+
 
 
 context_1_dict = {
@@ -40,6 +49,7 @@ def test_get_retrieval_evaluation_dict_success(monkeypatch):
     eval_result_dict = get_retrieval_evaluation_dict(
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
+        llm_config=llm_config,
     )
     assert approx(eval_result_dict) == {
         "retrieval_context_recall": 0.9,
@@ -76,6 +86,7 @@ def test_get_retrieval_evaluation_dict_recall_success_precision_error(monkeypatc
     eval_result_dict = get_retrieval_evaluation_dict(
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
+        llm_config=llm_config,
     )
     assert eval_result_dict == {
         "retrieval_context_recall": 0.9,
@@ -107,6 +118,7 @@ def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
     eval_result_dict = get_retrieval_evaluation_dict(
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
+        llm_config=llm_config,
     )
     assert eval_result_dict == {
         "retrieval_context_recall_error": "retrieval context recall error",

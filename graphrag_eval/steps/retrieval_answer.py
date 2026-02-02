@@ -7,6 +7,7 @@ from langevals_ragas.response_context_precision import (
     RagasResponseContextPrecisionEvaluator,
 )
 
+from graphrag_eval import llm
 from graphrag_eval.util import get_f1_dict
 
 
@@ -37,18 +38,17 @@ def _evaluate(
 
 
 def get_retrieval_evaluation_dict(
+    llm_config: llm.Config,
     question_text: str,
     actual_contexts: list[dict[str, str]],
     reference_answer: str | None = None,
     actual_answer: str | None = None,
-    model_name : str = "openai/gpt-4o-mini",
-    max_tokens : int = 65_536
 ) -> dict:
     if not reference_answer and not actual_answer:
         return {}
     settings_dict = {
-        "model": model_name,
-        "max_tokens": max_tokens
+        "model": llm_config.name,
+        "max_tokens": llm_config.max_tokens
     }
     entry = RagasResponseContextPrecisionEntry(
         input=question_text,
