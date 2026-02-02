@@ -3,6 +3,7 @@ from collections import defaultdict
 from collections.abc import Sequence
 from typing import Any
 
+from graphrag_eval import llm
 from .iri_discovery import do_iri_discovery_steps_equal
 from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
@@ -114,31 +115,41 @@ def calculate_steps_score(
     return steps_score / len(reference_steps_groups)
 
 
-async def evaluate_steps(reference: dict, actual: dict) -> dict:
+async def evaluate_steps(
+    reference: dict, 
+    actual: dict, 
+    llm_config: llm.Config | None
+) -> dict:
     eval_result = {}
     actual_steps = actual.get("actual_steps", [])
     eval_result["actual_steps"] = actual_steps
-    for actual_step in actual_steps:
-        if actual_step["name"] == "retrieval" and "output" in actual_step and "reference_answer" in reference:
-            from .retrieval_answer import get_retrieval_evaluation_dict
-            result = await get_retrieval_evaluation_dict(
-                question_text=reference["question_text"],
-                reference_answer=reference["reference_answer"],
-                actual_contexts=json.loads(actual_step["output"])
-            )
-            actual_step.update(result)
+    if llm_config:
+        for actual_step in actual_steps:
+            if actual_step["name"] == "retrieval" and "output" in actual_step and "reference_answer" in reference:
+                from .retrieval_answer import get_retrieval_evaluation_dict
+                result = await get_retrieval_evaluation_dict(
+                    question_text=reference["question_text"],
+                    reference_answer=reference.get("reference_answer"),
+                    actual_contexts=json.loads(actual_step["output"]),
+                    llm_config=llm_config,
+                )
+                actual_step.update(result)
     if "reference_steps" in reference:
         reference_steps = reference["reference_steps"]
         matches = match_groups(reference_steps, actual_steps)
         eval_result["steps_score"] = calculate_steps_score(reference_steps, actual_steps, matches)
-        for ref_group_idx, ref_match_idx, act_idx, _ in matches:
-            reference_step = reference_steps[ref_group_idx][ref_match_idx]
-            actual_step = actual_steps[act_idx]
-            if reference_step["name"] == "retrieval" and "output" in actual_step:
-                from .retrieval_context_texts import get_retrieval_evaluation_dict
-                actual_step.update(await get_retrieval_evaluation_dict(
-                    question_text=reference["question_text"],
-                    reference_contexts=json.loads(reference_step["output"]),
-                    actual_contexts=json.loads(actual_step["output"]),
-                ))
+        if llm_config:
+            for ref_group_idx, ref_match_idx, act_idx, _ in matches:
+                reference_step = reference_steps[ref_group_idx][ref_match_idx]
+                actual_step = actual_steps[act_idx]
+                if reference_step["name"] == "retrieval" and "output" in actual_step:
+                    from .retrieval_context_texts \
+                        import get_retrieval_evaluation_dict
+                    res = await get_retrieval_evaluation_dict(
+                        question_text=reference["question_text"],
+                        reference_contexts=json.loads(reference_step["output"]),
+                        actual_contexts=json.loads(actual_step["output"]),
+                        llm_config=llm_config,
+                    )
+                    actual_step.update(res)
     return eval_result

@@ -4,10 +4,33 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from pytest import approx
 
+from graphrag_eval import llm
+
 
 @pytest.fixture(scope="session", autouse=True)
 def set_env():
     os.environ["OPENAI_API_KEY"] = "fake-key"
+
+
+def get_llm_config():
+    return llm.Config(
+        generation=llm.GenerationConfig(
+            provider="openai",
+            name="gpt-4o-mini",
+            temperature=0.0,
+            max_tokens=1024,
+        ),
+        embedding=llm.EmbeddingConfig(
+            provider="openai",
+            name="text-embedding-ada-002",
+        )
+    )
+
+
+context_1 = {
+    "id": "http://example.com/resource/doc/1",
+    "text": "Oxygen turns the sky blue"
+}
 
 
 @pytest.mark.asyncio
@@ -21,14 +44,11 @@ async def test_get_retrieval_evaluation_dict_success(monkeypatch):
     monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
     precision_mock = AsyncMock(return_value=MagicMock(value=0.6))
     monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
-
     eval_result_dict = await get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
-        actual_contexts=[{
-            "id": "http://example.com/resource/doc/1",
-            "text": "Oxygen turns the sky blue"
-        }],
+        actual_contexts=[context_1],
+        llm_config=get_llm_config(),
     )
     assert approx(eval_result_dict) == {
         "retrieval_answer_recall": 0.9,
@@ -52,10 +72,8 @@ async def test_get_retrieval_evaluation_dict_recall_error_precision_success(monk
     eval_result_dict = await get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
-        actual_contexts=[{
-            "id": "http://example.com/resource/doc/1",
-            "text": "Oxygen turns the sky blue"
-        }],
+        actual_contexts=[context_1],
+        llm_config=get_llm_config(),
     )
     assert eval_result_dict == {
         "retrieval_answer_recall_error": "recall error",
@@ -78,10 +96,42 @@ async def test_get_retrieval_evaluation_dict_recall_success_precision_error(monk
     eval_result_dict = await get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
-        actual_contexts=[{
-            "id": "http://example.com/resource/doc/1",
-            "text": "Oxygen turns the sky blue"
-        }],
+        actual_contexts=[context_1],
+        llm_config=get_llm_config(),
+    )
+    assert eval_result_dict == {
+        "retrieval_answer_recall_error": "details",
+        "retrieval_answer_precision_error": "details",
+    }
+
+@pytest.mark.asyncio
+async def test_get_retrieval_evaluation_dict_using_actual_answer_success(monkeypatch):
+    from graphrag_eval.steps.retrieval_answer import (
+        get_retrieval_evaluation_dict
+    )
+    eval_result_dict = await get_retrieval_evaluation_dict(
+        question_text="Why is the sky blue?",
+        reference_answer="Because of the oxygen in the air",
+        actual_contexts=[context_1],
+        llm_config=get_llm_config(),
+    )
+    assert approx(eval_result_dict) == {
+        "retrieval_answer_recall": 0.9,
+        "retrieval_answer_precision": 0.6,
+        "retrieval_answer_f1": 0.72,
+    }
+
+
+@pytest.mark.asyncio
+async def test_get_retrieval_evaluation_dict_using_actual_answer_recall_success_precision_error(monkeypatch):
+    from graphrag_eval.steps.retrieval_answer import (
+        get_retrieval_evaluation_dict
+    )
+    eval_result_dict = await get_retrieval_evaluation_dict(
+        question_text="Why is the sky blue?",
+        reference_answer="Because of the oxygen in the air",
+        actual_contexts=[context_1],
+        llm_config=get_llm_config(),
     )
     assert eval_result_dict == {
         "retrieval_answer_recall": 0.9,
@@ -104,12 +154,24 @@ async def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
     eval_result_dict = await get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
-        actual_contexts=[{
-            "id": "http://example.com/resource/doc/1",
-            "text": "Oxygen turns the sky blue"
-        }],
+        actual_contexts=[context_1],
+        llm_config=get_llm_config(),
     )
     assert eval_result_dict == {
         "retrieval_answer_recall_error": "recall error",
         "retrieval_answer_precision_error": "precision error"
     }
+
+
+@pytest.mark.asyncio
+async def test_get_retrieval_evaluation_dict_using_no_answers():
+    from graphrag_eval.steps.retrieval_answer import (
+        get_retrieval_evaluation_dict,
+    )
+    eval_result_dict = await get_retrieval_evaluation_dict(
+        question_text="Why is the sky blue?",
+        actual_contexts=[context_1],
+        reference_answer="Because of the oxygen in the air",
+        llm_config=get_llm_config(),
+    )
+    assert eval_result_dict == {}

@@ -3,18 +3,17 @@ from ragas.llms import llm_factory
 from ragas.metrics.collections import ContextRecall, ContextPrecision
 
 from graphrag_eval.util import compute_f1
+from graphrag_eval import llm
 
 
 client = AsyncOpenAI()
-llm = llm_factory("gpt-4o-mini", client=client)
-recall_scorer = ContextRecall(llm=llm)
-precision_scorer = ContextPrecision(llm=llm)
 
 
 async def get_retrieval_evaluation_dict(
     question_text: str,
     actual_contexts: list[dict[str, str]],
     reference_contexts: list[dict[str, str]],
+    llm_config: llm.Config
 ) -> dict:
     reference = '\n'.join([c["text"] for c in reference_contexts])
     retrieved_contexts = [c["text"] for c in actual_contexts]
@@ -23,6 +22,9 @@ async def get_retrieval_evaluation_dict(
         reference=reference,
         retrieved_contexts=retrieved_contexts
     )
+    llm = llm_factory(llm_config.generation.name, client=client)
+    recall_scorer = ContextRecall(llm=llm)
+    precision_scorer = ContextPrecision(llm=llm)
     result = {}
     try:
         recall = await recall_scorer.ascore(**params)
