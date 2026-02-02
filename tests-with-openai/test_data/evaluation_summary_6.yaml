@@ -1,0 +1,64 @@
+macro:
+  elapsed_sec:
+    mean: 6.601679801940918
+  input_tokens:
+    mean: 221339
+  output_tokens:
+    mean: 212
+  total_tokens:
+    mean: 221551
+micro:
+  elapsed_sec:
+    max: 6.601679801940918
+    mean: 6.601679801940918
+    median: 6.601679801940918
+    min: 6.601679801940918
+    sum: 6.601679801940918
+  input_tokens:
+    max: 221339
+    mean: 221339
+    median: 221339
+    min: 221339
+    sum: 221339
+  number_of_error_samples: 0
+  number_of_success_samples: 1
+  output_tokens:
+    max: 212
+    mean: 212
+    median: 212
+    min: 212
+    sum: 212
+  total_tokens:
+    max: 221551
+    mean: 221551
+    median: 221551
+    min: 221551
+    sum: 221551
+per_template:
+  list_all_transformers_within_Substation_SUBSTATION:
+    elapsed_sec:
+      max: 6.601679801940918
+      mean: 6.601679801940918
+      median: 6.601679801940918
+      min: 6.601679801940918
+      sum: 6.601679801940918
+    input_tokens:
+      max: 221339
+      mean: 221339
+      median: 221339
+      min: 221339
+      sum: 221339
+    number_of_error_samples: 0
+    number_of_success_samples: 1
+    output_tokens:
+      max: 212
+      mean: 212
+      median: 212
+      min: 212
+      sum: 212
+    total_tokens:
+      max: 221551
+      mean: 221551
+      median: 221551
+      min: 221551
+      sum: 221551

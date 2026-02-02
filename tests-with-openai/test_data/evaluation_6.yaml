@@ -1,0 +1,21 @@
+- actual_steps: []
+  my_answer_relevance: null
+  my_answer_relevance_reason: null
+  my_answer_relevance_error: Actual output missing key 'actual_answer'
+  retrieval_recall: null
+  retrieval_precision: null
+  retrieval_reason: null
+  retrieval_error: Reference missing key 'reference_steps'
+  sparql_recall: null
+  sparql_precision: null
+  sparql_reason: null
+  sparql_error: Actual output missing key 'actual_steps'
+  elapsed_sec: 6.601679801940918
+  input_tokens: 221339
+  output_tokens: 212
+  question_id: c10bbc8dce98a4b8832d125134a16153
+  question_text: List all transformers within Substation OSLO
+  reference_answer: OSLO T1, OSLO T2
+  status: success
+  template_id: list_all_transformers_within_Substation_SUBSTATION
+  total_tokens: 221551
