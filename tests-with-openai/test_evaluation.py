@@ -71,11 +71,6 @@ async def test_run_evaluation_and_compute_aggregates(monkeypatch):
     )
 
     monkeypatch.setattr(
-        answer_correctness,
-        "OpenAI",
-        lambda: None
-    )
-    monkeypatch.setattr(
         AnswerCorrectnessEvaluator,
         "call_llm",
         lambda *_: "2\t2\t2\tanswer correctness reason"
@@ -109,11 +104,6 @@ async def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch
         answer_relevance.AnswerRelevancy,
         'ascore',
         AsyncMock(return_value=mock_result)
-    )
-    monkeypatch.setattr(
-        answer_correctness,
-        "OpenAI",
-        lambda: None
     )
     monkeypatch.setattr(
         AnswerCorrectnessEvaluator,
