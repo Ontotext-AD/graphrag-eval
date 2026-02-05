@@ -27,6 +27,7 @@ async def test_get_relevance_dict_eval_success(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_get_relevance_dict_eval_error(monkeypatch):
+    from graphrag_eval.answer_relevance import AnswerRelevancy, get_relevance_dict
     async_mock = AsyncMock(side_effect=Exception("some error"))
     monkeypatch.setattr(AnswerRelevancy, 'ascore', async_mock)
     eval_result_dict = await get_relevance_dict(
