@@ -1,20 +1,16 @@
-from pathlib import Path
-
 import os
+from copy import deepcopy
+from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import yaml
-from copy import deepcopy
-from unittest.mock import AsyncMock, MagicMock
 
 from graphrag_eval import (
     compute_aggregates,
     custom_evaluation,
     run_evaluation,
 )
-from graphrag_eval.steps.retrieval_answer import ContextRecall, ContextPrecision
-from graphrag_eval.answer_relevance import AnswerRelevancy
-from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
 from graphrag_eval.custom_evaluation import CustomEvaluator
 from tests.util import read_responses
 
@@ -28,6 +24,10 @@ def set_env():
 
 
 def _mock_common_calls(monkeypatch):
+    from graphrag_eval.steps.retrieval_answer import ContextRecall, ContextPrecision
+    from graphrag_eval.answer_relevance import AnswerRelevancy
+    from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+
     mock = AsyncMock(return_value=MagicMock(value=0.9))
     monkeypatch.setattr(AnswerRelevancy, 'ascore', mock)
     monkeypatch.setattr(ContextRecall, 'ascore', mock)
