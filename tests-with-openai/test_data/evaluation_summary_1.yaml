@@ -51,6 +51,18 @@ per_template:
         median: 0.9
         min: 0.9
         sum: 0.9
+      retrieval_context_precision:
+        max: 0.9
+        mean: 0.9
+        median: 0.9
+        min: 0.9
+        sum: 0.9
+      retrieval_context_f1:
+        max: 0.9
+        mean: 0.9
+        median: 0.9
+        min: 0.9
+        sum: 0.9
       total:
         autocomplete_search: 1
         retrieval: 1
@@ -149,6 +161,18 @@ micro:
     median: 0.9
     min: 0.9
     sum: 0.9
+  retrieval_context_precision:
+    max: 0.9
+    mean: 0.9
+    median: 0.9
+    min: 0.9
+    sum: 0.9
+  retrieval_context_f1:
+    max: 0.9
+    mean: 0.9
+    median: 0.9
+    min: 0.9
+    sum: 0.9
   steps_score:
     sum: 1.0
     mean: 1.0
@@ -195,6 +219,10 @@ macro:
   retrieval_answer_f1:
     mean: 0.9
   retrieval_context_recall:
+    mean: 0.9
+  retrieval_context_precision:
+    mean: 0.9
+  retrieval_context_f1:
     mean: 0.9
   steps_score:
     mean: 1.0

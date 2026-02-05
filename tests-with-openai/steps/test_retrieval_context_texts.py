@@ -9,6 +9,13 @@ def set_env():
     os.environ["OPENAI_API_KEY"] = "fake-key"
 
 
+
+context_1_dict = {
+    "id": "1",
+    "text": "Oxygen turns the sky blue"
+}
+
+
 @pytest.mark.asyncio
 async def test_get_retrieval_evaluation_dict_success(monkeypatch):
     from graphrag_eval.steps import retrieval_context_texts
@@ -16,40 +23,106 @@ async def test_get_retrieval_evaluation_dict_success(monkeypatch):
     mock_result_recall = MagicMock()
     mock_result_recall.value = 0.9
     monkeypatch.setattr(
-        retrieval_context_texts.ContextEntityRecall,
+        retrieval_context_texts.ContextRecall,
+        'ascore',
+        AsyncMock(return_value=mock_result_recall)
+    )
+    monkeypatch.setattr(
+        retrieval_context_texts.ContextPrecision,
         'ascore',
         AsyncMock(return_value=mock_result_recall)
     )
 
     eval_result_dict = await retrieval_context_texts.get_retrieval_evaluation_dict(
-        reference_answer="Oxygen turns the sky blue",
-        actual_contexts=[{
-            "id": "1",
-            "text": "Oxygen turns the sky blue"
-        }],
+        question_text="Why is the sky blue?",
+        reference_contexts=[context_1_dict],
+        actual_contexts=[context_1_dict],
     )
     assert eval_result_dict == {
         "retrieval_context_recall": 0.9,
+        "retrieval_context_precision": 0.9,
+        "retrieval_context_f1": 0.9,
     }
 
 
 @pytest.mark.asyncio
-async def test_get_retrieval_evaluation_dict_error(monkeypatch):
+async def test_get_retrieval_evaluation_dict_recall_error(monkeypatch):
     from graphrag_eval.steps import retrieval_context_texts
 
+    mock_result_recall = MagicMock()
+    mock_result_recall.value = 0.9
     monkeypatch.setattr(
-        retrieval_context_texts.ContextEntityRecall,
+        retrieval_context_texts.ContextRecall,
+        'ascore',
+        AsyncMock(side_effect=Exception("some error"))
+    )
+    monkeypatch.setattr(
+        retrieval_context_texts.ContextPrecision,
+        'ascore',
+        AsyncMock(return_value=mock_result_recall)
+    )
+
+    eval_result_dict = await retrieval_context_texts.get_retrieval_evaluation_dict(
+        question_text="Why is the sky blue?",
+        reference_contexts=[context_1_dict],
+        actual_contexts=[context_1_dict],
+    )
+    assert eval_result_dict == {
+        "retrieval_context_recall_error": "some error",
+        "retrieval_context_precision": 0.9,
+    }
+
+@pytest.mark.asyncio
+async def test_get_retrieval_evaluation_dict_precision_error(monkeypatch):
+    from graphrag_eval.steps import retrieval_context_texts
+
+    mock_result_recall = MagicMock()
+    mock_result_recall.value = 0.9
+    monkeypatch.setattr(
+        retrieval_context_texts.ContextRecall,
+        'ascore',
+        AsyncMock(return_value=mock_result_recall)
+    )
+    monkeypatch.setattr(
+        retrieval_context_texts.ContextPrecision,
         'ascore',
         AsyncMock(side_effect=Exception("some error"))
     )
 
     eval_result_dict = await retrieval_context_texts.get_retrieval_evaluation_dict(
-        reference_answer="Oxygen turns the sky blue",
-        actual_contexts=[{
-            "id": "1",
-            "text": "Oxygen turns the sky blue"
-        }],
+        question_text="Why is the sky blue?",
+        reference_contexts=[context_1_dict],
+        actual_contexts=[context_1_dict],
     )
     assert eval_result_dict == {
-        "retrieval_context_recall_error": "some error"
+        "retrieval_context_recall": 0.9,
+        "retrieval_context_precision_error": "some error",
+    }
+
+
+@pytest.mark.asyncio
+async def test_get_retrieval_evaluation_dict_both_error(monkeypatch):
+    from graphrag_eval.steps import retrieval_context_texts
+
+    mock_result_recall = MagicMock()
+    mock_result_recall.value = 0.9
+    monkeypatch.setattr(
+        retrieval_context_texts.ContextRecall,
+        'ascore',
+        AsyncMock(side_effect=Exception("some error"))
+    )
+    monkeypatch.setattr(
+        retrieval_context_texts.ContextPrecision,
+        'ascore',
+        AsyncMock(side_effect=Exception("other error"))
+    )
+
+    eval_result_dict = await retrieval_context_texts.get_retrieval_evaluation_dict(
+        question_text="Why is the sky blue?",
+        reference_contexts=[context_1_dict],
+        actual_contexts=[context_1_dict],
+    )
+    assert eval_result_dict == {
+        "retrieval_context_recall_error": "some error",
+        "retrieval_context_precision_error": "other error",
     }

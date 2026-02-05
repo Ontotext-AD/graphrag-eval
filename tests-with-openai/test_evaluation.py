@@ -60,7 +60,12 @@ async def test_run_evaluation_and_compute_aggregates(monkeypatch):
     mock_result_recall = MagicMock()
     mock_result_recall.value = 0.9
     monkeypatch.setattr(
-        retrieval_context_texts.ContextEntityRecall,
+        retrieval_context_texts.ContextRecall,
+        'ascore',
+        AsyncMock(return_value=mock_result_recall)
+    )
+    monkeypatch.setattr(
+        retrieval_context_texts.ContextPrecision,
         'ascore',
         AsyncMock(return_value=mock_result_recall)
     )

@@ -1,9 +1,10 @@
 from pathlib import Path
 
-import openai
+import os
+
+import pytest
 import yaml
 from copy import deepcopy
-import pytest
 from unittest.mock import AsyncMock, MagicMock
 
 from graphrag_eval import (
@@ -12,7 +13,6 @@ from graphrag_eval import (
     run_evaluation,
 )
 from graphrag_eval.steps.retrieval_answer import ContextRecall, ContextPrecision
-from graphrag_eval.steps.retrieval_context_texts import ContextEntityRecall
 from graphrag_eval.answer_relevance import AnswerRelevancy
 from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
 from graphrag_eval.custom_evaluation import CustomEvaluator
@@ -22,21 +22,20 @@ from tests.util import read_responses
 DATA_DIR = Path(__file__).parent / "test_data"
 
 
+@pytest.fixture(scope="session", autouse=True)
+def set_env():
+    os.environ["OPENAI_API_KEY"] = "fake-key"
+
+
 def _mock_common_calls(monkeypatch):
     mock = AsyncMock(return_value=MagicMock(value=0.9))
     monkeypatch.setattr(AnswerRelevancy, 'ascore', mock)
     monkeypatch.setattr(ContextRecall, 'ascore', mock)
     monkeypatch.setattr(ContextPrecision, 'ascore', mock)
-    monkeypatch.setattr(ContextEntityRecall, 'ascore', mock)
     monkeypatch.setattr(
         AnswerCorrectnessEvaluator,
         "call_llm",
         lambda *_: "2\t2\t2\tanswer correctness reason"
-    )
-    monkeypatch.setattr(
-        openai,
-        "OpenAI",
-        lambda: None
     )
 
 
@@ -124,11 +123,6 @@ async def test_run_custom_evaluation_config_error(monkeypatch):
         error_config[0]["outputs"][key] = "invalid"
         error_configs.append(error_config)
 
-    monkeypatch.setattr(
-        openai,
-        "OpenAI",
-        lambda: None
-    )
     for config in error_configs:
         monkeypatch.setattr(yaml, "safe_load", lambda _: config)
         with pytest.raises(ValueError):

@@ -61,6 +61,8 @@
     retrieval_answer_precision: 0.9
     retrieval_answer_f1: 0.9
     retrieval_context_recall: 0.9
+    retrieval_context_precision: 0.9
+    retrieval_context_f1: 0.9
   - name: autocomplete_search
     args:
       query: OSLO

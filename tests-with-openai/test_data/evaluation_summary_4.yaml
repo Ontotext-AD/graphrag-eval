@@ -21,6 +21,10 @@ macro:
     mean: 0.9
   retrieval_context_recall:
     mean: 0.9
+  retrieval_context_precision:
+    mean: 0.9
+  retrieval_context_f1:
+    mean: 0.9
   my_answer_relevance:
     mean: 0.9
   retrieval_recall:
@@ -129,6 +133,18 @@ micro:
     min: 0.9
     sum: 0.9
   retrieval_context_recall:
+    max: 0.9
+    mean: 0.9
+    median: 0.9
+    min: 0.9
+    sum: 0.9
+  retrieval_context_precision:
+    max: 0.9
+    mean: 0.9
+    median: 0.9
+    min: 0.9
+    sum: 0.9
+  retrieval_context_f1:
     max: 0.9
     mean: 0.9
     median: 0.9
@@ -255,6 +271,18 @@ per_template:
         min: 0.9
         sum: 0.9
       retrieval_context_recall:
+        max: 0.9
+        mean: 0.9
+        median: 0.9
+        min: 0.9
+        sum: 0.9
+      retrieval_context_precision:
+        max: 0.9
+        mean: 0.9
+        median: 0.9
+        min: 0.9
+        sum: 0.9
+      retrieval_context_f1:
         max: 0.9
         mean: 0.9
         median: 0.9

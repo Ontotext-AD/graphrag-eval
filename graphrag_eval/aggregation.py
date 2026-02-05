@@ -23,6 +23,8 @@ STEPS_METRICS = {
         "retrieval_answer_recall",
         "retrieval_answer_f1",
         "retrieval_context_recall",
+        "retrieval_context_precision",
+        "retrieval_context_f1"
     ]
 }
 RETAINED_METRICS = [
