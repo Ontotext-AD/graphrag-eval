@@ -12,24 +12,17 @@ def set_env():
 
 @pytest.mark.asyncio
 async def test_get_retrieval_evaluation_dict_success(monkeypatch):
-    from graphrag_eval.steps import retrieval_answer
-
-    mock_result_recall = MagicMock()
-    mock_result_recall.value = 0.9
-    monkeypatch.setattr(
-        retrieval_answer.ContextRecall,
-        'ascore',
-        AsyncMock(return_value=mock_result_recall)
+    from graphrag_eval.steps.retrieval_answer import (
+        ContextRecall,
+        ContextPrecision,
+        get_retrieval_evaluation_dict,
     )
+    recall_mock = AsyncMock(return_value=MagicMock(value=0.9))
+    monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
+    precision_mock = AsyncMock(return_value=MagicMock(value=0.6))
+    monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
 
-    mock_result_precision = MagicMock()
-    mock_result_precision.value = 0.6
-    monkeypatch.setattr(
-        retrieval_answer.ContextPrecision,
-        'ascore',
-        AsyncMock(return_value=mock_result_precision)
-    )
-    eval_result_dict = await retrieval_answer.get_retrieval_evaluation_dict(
+    eval_result_dict = await get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
         actual_contexts=[{
@@ -46,22 +39,17 @@ async def test_get_retrieval_evaluation_dict_success(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_get_retrieval_evaluation_dict_recall_error_precision_success(monkeypatch):
-    from graphrag_eval.steps import retrieval_answer
-
-    monkeypatch.setattr(
-        retrieval_answer.ContextRecall,
-        'ascore',
-        AsyncMock(side_effect=Exception("some error"))
+    from graphrag_eval.steps.retrieval_answer import (
+        ContextRecall,
+        ContextPrecision,
+        get_retrieval_evaluation_dict,
     )
-
-    mock_result_precision = MagicMock()
-    mock_result_precision.value = 0.6
-    monkeypatch.setattr(
-        retrieval_answer.ContextPrecision,
-        'ascore',
-        AsyncMock(return_value=mock_result_precision)
-    )
-    eval_result_dict = await retrieval_answer.get_retrieval_evaluation_dict(
+    recall_mock = AsyncMock(side_effect=Exception("some error"))
+    monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
+    precision_mock = AsyncMock(return_value=MagicMock(value=0.6))
+    monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
+    
+    eval_result_dict = await get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
         actual_contexts=[{
@@ -77,22 +65,17 @@ async def test_get_retrieval_evaluation_dict_recall_error_precision_success(monk
 
 @pytest.mark.asyncio
 async def test_get_retrieval_evaluation_dict_recall_success_precision_error(monkeypatch):
-    from graphrag_eval.steps import retrieval_answer
-
-    mock_result_recall = MagicMock()
-    mock_result_recall.value = 0.9
-    monkeypatch.setattr(
-        retrieval_answer.ContextRecall,
-        'ascore',
-        AsyncMock(return_value=mock_result_recall)
+    from graphrag_eval.steps.retrieval_answer import (
+        ContextRecall,
+        ContextPrecision,
+        get_retrieval_evaluation_dict
     )
+    context_recall = AsyncMock(return_value= MagicMock(value=0.9))
+    monkeypatch.setattr(ContextRecall, 'ascore', context_recall)
+    context_precision = AsyncMock(side_effect=Exception("some error"))
+    monkeypatch.setattr(ContextPrecision, 'ascore', context_precision)
 
-    monkeypatch.setattr(
-        retrieval_answer.ContextPrecision,
-        'ascore',
-        AsyncMock(side_effect=Exception("some error"))
-    )
-    eval_result_dict = await retrieval_answer.get_retrieval_evaluation_dict(
+    eval_result_dict = await get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
         actual_contexts=[{
@@ -108,20 +91,17 @@ async def test_get_retrieval_evaluation_dict_recall_success_precision_error(monk
 
 @pytest.mark.asyncio
 async def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
-    from graphrag_eval.steps import retrieval_answer
-
-    monkeypatch.setattr(
-        retrieval_answer.ContextRecall,
-        'ascore',
-        AsyncMock(side_effect=Exception("some error"))
+    from graphrag_eval.steps.retrieval_answer import (
+        ContextRecall,
+        ContextPrecision,
+        get_retrieval_evaluation_dict,
     )
+    recall_mock = AsyncMock(side_effect=Exception("some error"))
+    monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
+    precision_mock = AsyncMock(side_effect=Exception("other error"))
+    monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
 
-    monkeypatch.setattr(
-        retrieval_answer.ContextPrecision,
-        'ascore',
-        AsyncMock(side_effect=Exception("some error"))
-    )
-    eval_result_dict = await retrieval_answer.get_retrieval_evaluation_dict(
+    eval_result_dict = await get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
         actual_contexts=[{
@@ -131,5 +111,5 @@ async def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
     )
     assert eval_result_dict == {
         "retrieval_answer_recall_error": "some error",
-        "retrieval_answer_precision_error": "some error"
+        "retrieval_answer_precision_error": "other error"
     }

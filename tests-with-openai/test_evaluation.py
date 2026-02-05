@@ -12,6 +12,7 @@ from graphrag_eval import (
 from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
 from tests.util import read_responses
 
+
 DATA_DIR = Path(__file__).parent / "test_data"
 
 
@@ -26,17 +27,17 @@ async def test_run_evaluation_and_compute_aggregates(monkeypatch):
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
 
-    mock_result = MagicMock(value=0.9)
-    async_mock_result = AsyncMock(return_value=mock_result)
+    async_mock = AsyncMock(return_value=MagicMock(value=0.9))
 
     from graphrag_eval.answer_relevance import AnswerRelevancy
-    monkeypatch.setattr(AnswerRelevancy, 'ascore', async_mock_result)
+    monkeypatch.setattr(AnswerRelevancy, 'ascore', async_mock)
 
-    from graphrag_eval.steps.retrieval_answer import ContextRecall
-    monkeypatch.setattr(ContextRecall, 'ascore', async_mock_result)
-
-    from graphrag_eval.steps.retrieval_answer import ContextPrecision
-    monkeypatch.setattr(ContextPrecision, 'ascore', async_mock_result)
+    from graphrag_eval.steps.retrieval_answer import (
+        ContextRecall,
+        ContextPrecision
+    )
+    monkeypatch.setattr(ContextRecall, 'ascore', async_mock)
+    monkeypatch.setattr(ContextPrecision, 'ascore', async_mock)
 
     monkeypatch.setattr(
         AnswerCorrectnessEvaluator,
@@ -64,11 +65,10 @@ async def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
 
-    mock_result = MagicMock(value=0.9)
-    async_mock_result = AsyncMock(return_value=mock_result)
+    async_mock = AsyncMock(return_value=MagicMock(value=0.9))
 
     from graphrag_eval.answer_relevance import AnswerRelevancy
-    monkeypatch.setattr(AnswerRelevancy, 'ascore', async_mock_result)
+    monkeypatch.setattr(AnswerRelevancy, 'ascore', async_mock)
 
     monkeypatch.setattr(
         AnswerCorrectnessEvaluator,

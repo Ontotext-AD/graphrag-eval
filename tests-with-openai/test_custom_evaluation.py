@@ -24,7 +24,10 @@ def set_env():
 
 
 def _mock_common_calls(monkeypatch):
-    from graphrag_eval.steps.retrieval_answer import ContextRecall, ContextPrecision
+    from graphrag_eval.steps.retrieval_answer import (
+        ContextRecall,
+        ContextPrecision
+    )
     from graphrag_eval.answer_relevance import AnswerRelevancy
     from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
 
