@@ -556,6 +556,9 @@ All `actual_steps` with `name` "retrieval" contain:
 - `retrieval_answer_f1`: (optional) F1 score of the retrieved context with respect to the reference answer, if `retrieval_answer_recall` and `retrieval_answer_precision` succeed
 - `retrieval_context_recall`: (optional) recall of the retrieved context with respect to the reference answer, if evaluation succeeds
 - `retrieval_context_recall_error`: (optional) error message if `retrieval_context_recall` evaluation fails
+- `retrieval_context_precision`: (optional) precision of the retrieved context with respect to the reference answer, if evaluation succeeds
+- `retrieval_context_precision_error`: (optional) error message if `retrieval_context_precision` evaluation fails
+- `retrieval_context_f1`: (optional) F1 score of the retrieved context with respect to the reference answer, if `retrieval_context_recall` and `retrieval_context_precision` succeed
 
 #### Aggregates Keys
 
@@ -581,6 +584,8 @@ Aggregates are:
     - `retrieval_answer_precision`
     - `retrieval_answer_f1`
     - `retrieval_context_recall`
+    - `retrieval_context_precision`
+    - `retrieval_context_f1`
     - `steps`: includes:
       - `total`: for each step type how many times it was executed
       - `once_per_sample`: how many times each step was executed, counted only once per question
@@ -607,6 +612,8 @@ Aggregates are:
     - `retrieval_answer_precision`
     - `retrieval_answer_f1`
     - `retrieval_context_recall`
+    - `retrieval_context_precision`
+    - `retrieval_context_f1`
     - `steps_score`
 - `macro`: averages across templates, i.e., the mean of each metric per template, averaged. It includes the following means:
   - `input_tokens`
@@ -621,6 +628,8 @@ Aggregates are:
   - `retrieval_answer_precision`
   - `retrieval_answer_f1`
   - `retrieval_context_recall`
+  - `retrieval_context_precision`
+  - `retrieval_context_f1`
   - `steps_score`
 
 #### Example Aggregates
