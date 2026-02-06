@@ -37,10 +37,8 @@ async def get_retrieval_evaluation_dict(
 
     if "retrieval_answer_recall" in result \
     and "retrieval_answer_precision" in result:
-        result.update({
-            "retrieval_answer_f1": compute_f1(
-                result["retrieval_answer_recall"], 
-                result["retrieval_answer_precision"]
-            )
-        })
+        result["retrieval_answer_f1"] = compute_f1(
+            result["retrieval_answer_recall"], 
+            result["retrieval_answer_precision"],
+        )
     return result
