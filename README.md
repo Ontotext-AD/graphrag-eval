@@ -538,8 +538,6 @@ matched.
 - `answer_f1`: (optional) Harmonic mean of `answer_recall` and `answer_precision`
 - `answer_relevance`: (optional) The value representing how relevant is the actual answer to the question, computed using [RAGAS answer relevance](https://docs.ragas.io/en/v0.3.3/concepts/metrics/available_metrics/answer_relevance/)
 - `answer_relevance_error`: (optional) error message if answer relevance evaluation failed
-- `answer_relevance_cost`: (optional) The LLM use cost of computing 
-`answer_relevance`, in US dollars
 - `actual_steps`: (optional) copy of the steps in the evaluation target, if specified there
 - `steps_score`: (optional) a real number between 0 and 1, see how step score 
 is calculated in the section [Steps score](#Steps-score)
