@@ -1,9 +1,9 @@
 import json
-import yaml
-from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, RootModel, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from graphrag_eval import llm
 
 
 RESERVED_KEYS = {
@@ -74,9 +74,6 @@ class Config(BaseModel):
             raise ValueError(f"Output keys {conflicting_keys} are reserved")
         return self
 
-class Configs(RootModel):
-    root: list[Config]
-
 
 def create_input_template(input_key: str) -> str:
     header = input_key.replace("_", " ").capitalize()
@@ -107,9 +104,7 @@ class CustomEvaluator:
     def __init__(
         self, 
         config: Config,
-        openai_model_name: str,
-        temperature : float,
-        openai_client,
+        llm_config: llm.Config,
     ):
         self.name = config.name
         self.input_variables = config.inputs
@@ -120,20 +115,11 @@ class CustomEvaluator:
             config,
             self.output_variables
         )
-        self.openai_client = openai_client
-        self.openai_model_name = openai_model_name
-        self.temperature = temperature
+        self.llm_config = llm_config
 
     def call_llm(self, prompt: str) -> str:
-        try:
-            response = self.openai_client.responses.create(
-                model=self.openai_model_name,
-                input=prompt,
-                temperature=self.temperature
-            )
-            return response.output_text.strip("\n")
-        except Exception as e:
-            return str(e).replace("\n", "    ")
+        """Method for easier automated testing"""
+        return llm.call(self.llm_config, prompt)
 
     def format_steps(self, steps: list) -> str:
         steps_formatted = []
@@ -211,20 +197,3 @@ class CustomEvaluator:
         prompt = self.prompt_template.format(**inputs)
         response = self.call_llm(prompt)
         return self.parse_outputs(response)
-
-
-def create_evaluators(
-    config_file_path: str | Path | None, 
-    openai_client, 
-    openai_model_name, 
-    temperature
-) -> list[CustomEvaluator]:
-        if config_file_path is None:
-            return []
-        with open(config_file_path, encoding="utf-8") as f:
-            configs = yaml.safe_load(f)
-        configs_list = Configs(configs)
-        return [
-            CustomEvaluator(c, openai_model_name, temperature, openai_client)
-            for c in configs_list.root
-        ]

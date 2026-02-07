@@ -1,9 +1,9 @@
 import csv
 from pathlib import Path
 
-from openai import OpenAI
 from tqdm import tqdm
 
+from graphrag_eval import llm
 from graphrag_eval.util import compute_f1
 
 
@@ -13,6 +13,7 @@ OUT_FILE_PATH = "results/data-1.tsv"
 OUT_FIELDS = ["#Reference", "#PTarget", "#Matching", "Reasoning", "Error"]
 LLM_MODEL = "gpt-4o-mini"
 TEMPERATURE = 0.0
+
 
 
 
@@ -59,24 +60,12 @@ def extract_response_values(
 class AnswerCorrectnessEvaluator:
     def __init__(
         self,
+        llm_config: llm.Config,
         prompt_file_path: str | Path = PROMPT_FILE_PATH,
-        temperature : float = TEMPERATURE
     ):
         with open(prompt_file_path, encoding="utf-8") as f:
             self.prompt_template = f.read()
-        self.openai_client = OpenAI()
-        self.temperature = temperature
-
-    def call_llm(self, prompt: str) -> str:
-        try:
-            response = self.openai_client.chat.completions.create(
-                model=LLM_MODEL,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=self.temperature
-            )
-            return response.choices[0].message.content.strip("\n")
-        except Exception as e:
-            return str(e).replace("\n", "    ")
+        self.llm_config = llm_config
 
     def evaluate_answer(
         self,
@@ -89,7 +78,7 @@ class AnswerCorrectnessEvaluator:
             reference_answer=reference_answer,
             candidate_answer=actual_answer,
         )
-        response_str = self.call_llm(prompt)
+        response_str = llm.call(self.llm_config, prompt)
         return extract_response_values(response_str)
 
     def get_correctness_dict(
@@ -129,8 +118,9 @@ class AnswerCorrectnessEvaluator:
 def evaluate_and_write(
     in_file_path: str | Path,
     out_file_path: str | Path,
+    llm_config: llm.Config,
 ) -> None:
-    evaluator = AnswerCorrectnessEvaluator(PROMPT_FILE_PATH)
+    evaluator = AnswerCorrectnessEvaluator(llm_config=llm_config)
     with open(in_file_path, encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
         rows = [row for row in reader]
@@ -154,8 +144,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--in-file", type=str, default=IN_FILE_PATH)
     parser.add_argument("-o", "--out-file", type=str, default=OUT_FILE_PATH)
+    parser.add_argument("-l", "--llm", type=str, default=LLM_MODEL)
+    parser.add_argument("-t", "--temperature", type=float, default=TEMPERATURE)
     args = parser.parse_args()
+    llm_config_ = llm.Config(args.llm, args.temperature)
     evaluate_and_write(
         in_file_path=args.in_file,
         out_file_path=args.out_file,
+        llm_config=llm_config_
     )

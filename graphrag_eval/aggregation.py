@@ -42,6 +42,20 @@ RETAINED_METRICS = [
 ]
 
 
+def parse_custom_metrics(config_file_path: str | Path | None) -> list[str]:
+    if config_file_path:
+        import yaml
+        from . import evaluation
+        with open(config_file_path, encoding="utf-8") as f:
+            config_dict = yaml.safe_load(f)
+        config = evaluation.Config(**config_dict)
+        if config.custom_evaluations:
+            return [
+                o for c in config.custom_evaluations for o in c.outputs
+            ]
+    return []
+
+
 def stats_for_series(values: Iterable[int | float]) -> dict[str, float]:
     return {
         "sum": sum(values),
@@ -213,21 +227,13 @@ def compute_macro_stats(
 
 def compute_aggregates(
     samples: list[dict],
-    custom_eval_config_file_path: str | Path | None = None,
+    config_file_path: str | Path | None = None,
 ) -> dict:
     number_of_samples_per_template_by_status = defaultdict(lambda: defaultdict(int))
     stats_per_template = defaultdict(lambda: defaultdict(list))
     steps_summary_per_template = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
     step_metrics_per_template = defaultdict(lambda: defaultdict(list))
-    custom_metrics = []
-    if custom_eval_config_file_path:
-        import yaml
-        from .custom_evaluation import Configs
-        with open(custom_eval_config_file_path, encoding="utf-8") as f:
-            configs_list = yaml.safe_load(f)
-        configs = Configs(configs_list)
-        custom_metrics = [o for c in configs.root for o in c.outputs]
-
+    custom_metrics = parse_custom_metrics(config_file_path)
     # Compute per-template stats
     templates_ids = set()
     for sample in samples:

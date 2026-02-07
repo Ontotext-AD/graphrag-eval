@@ -7,6 +7,7 @@ from langevals_ragas.context_recall import (
     RagasContextRecallEvaluator,
 )
 
+from graphrag_eval import llm
 from graphrag_eval.util import get_f1_dict
 
 
@@ -39,12 +40,11 @@ def _evaluate(
 def get_retrieval_evaluation_dict(
     reference_contexts: list[dict[str, str]],
     actual_contexts: list[dict[str, str]],
-    model_name : str = "openai/gpt-4o-mini",
-    max_tokens : int = 65_536
+    llm_config: llm.Config
 ) -> dict:
     settings_dict = {
-        "model": model_name,
-        "max_tokens": max_tokens
+        "model": llm_config.name,
+        "max_tokens": llm_config.max_tokens
     }
     entry = RagasContextRecallEntry(
         expected_contexts=[a["text"] for a in reference_contexts],
