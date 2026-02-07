@@ -43,7 +43,10 @@ To evaluate only correctness of final answers (system responses), you can clone 
 
 1. Prepare an input TSV file with columns `Question`, `Reference answer` and `Actual answer`
 1. Execute `poetry install --with llm`
-1. Execute `OPENAI_API_KEY=<your_api_key> poetry run answer-correctness -i <input_file.tsv> -o <output_file.tsv>`
+1. Execute
+   ```<LLM_ACCESS_VARIABLE>=<your_api_key> poetry run answer-correctness -i <input_file.tsv> -o <output_file.tsv>```
+  e.g.,
+    ```OPENAI_API_KEY=XXX poetry run answer-correctness -i reference.tsv -o evaluations.tsv```
 
 We plan to improve CLI support in future releases.
 
@@ -55,16 +58,85 @@ To evaluate answers and/or steps:
 1. Format the answers and/or steps you want to evaluate: section [Responses to evaluate](#Responses-to-evaluate)
 1. To evaluate answer relevance:
     1. Include `actual_answer` in the target data to evaluate
-    1. Set environment variable `OPENAI_API_KEY` appropriately
+    1. Set the appropriate environment variable (e.g.,`OPENAI_API_KEY`) with your LLM access key
 1. To evaluate answer correctness:
     1. Include `reference_answer` in the reference dataset and `actual_answer` in the target data to evaluate
-    1. Set environment variable `OPENAI_API_KEY` appropriately
+    1. Set the appropriate environment variable (e.g.,`OPENAI_API_KEY`) with your LLM access key
 1. To evaluate steps:
     1. Include `reference_steps` in the reference data and `actual_steps` in target data to evaluate
+1. If you want to evaluate metrics that require an LLM, write a [configuration file](#configuration).
 1. Call the evaluation function with the reference data and target data: section [Usage Code](#Usage-Code)
 1. Call the aggregation function with the evaluation results: section [Usage Code](#Usage-Code)
 
-Answer evaluation (correctness and relevance) and [custom evaluation](#custom-evaluation-(custom-metrics)) use the LLM `openai/gpt-4o-mini`.
+### LLM use in evaluation
+
+The following metrics use an LLM which must be configured using a [configuration](#configuration) file:
+* answer metrics
+  * `answer_recall`
+  * `answer_precision`
+  * `answer_f1`
+  * `answer_relevance`
+* retrieval context metrics:
+  * `retrieval_answer_recall`
+  * `retrieval_answer_precision`
+  * `retrieval_answer_f1`
+  * `retrieval_context_recall`
+  * `retrieval_context_precision`
+  * `retrieval_context_f1`
+* [custom evaluation](#custom-evaluation-(custom-metrics)) 
+
+Supported LLMs are all those supported by the [`litellm`](https://github.com/BerriAI/litellm) library, including all major LLMs and local models via Ollama.
+
+### Configuration
+
+The configuration has two sections:
+* `llm`: required for metrics that require an LLM
+* `custom_evaluations`: required for custom evaluations
+
+#### Example Configuration File
+
+Below is a YAML file that defines two custom evaluations:
+1. a simple relevance evaluation
+1. a SPARQL retrieval evaluation using the reference answer
+
+This is an example of the format and may not create accurate evaluations.
+
+```YAML
+llm:
+  name: openai/gpt-4o-mini
+  temperature: 0.0
+  max_tokens: 65536
+custom_evaluations:
+  -
+    name: my_answer_relevance
+    inputs:
+      - question
+      - actual_answer
+    instructions: |
+      Evaluate how relevant is the answer to the question.
+    outputs:
+      my_answer_relevance: fraction between 0 and 1
+      my_answer_relevance_reason: reason for your evaluation
+  -
+    name: sparql_llm_evaluation
+    inputs:
+      - question
+      - reference_answer
+      - actual_steps
+    steps_keys:
+      - output
+    steps_name: sparql
+    instructions: |
+      Divide the reference answer into claims and try to match each claim to the
+      SPARQL query results. Count the:
+      - reference claims
+      - SPARQL results
+      - matching claims
+    outputs:
+      sparql_recall: Number of matching claims as a fraction of reference claims (fraction 0-1)
+      sparql_precision: Number of matching claims as a fraction of SPARQL results (fraction 0-1)
+      sparql_reason: reason for your evaluation
+```
 
 ### Reference Q&A Data
 
@@ -1140,45 +1212,7 @@ One configuration file can define multiple custom evaluations, each of which
 will be done as a separate query to the LLM. Each evaluation can have multiple 
 outputs. The format is shown in the example sections below.
 
-#### Example Custom Evaluation Configuration File
-
-Below is a YAML file that defines two custom evaluations:
-1. a simple relevance evaluation
-1. a SPARQL retrieval evaluation using the reference answer
-
-This is an example of the format and may not create accurate evaluations.
-
-```YAML
--
-  name: my_answer_relevance
-  inputs:
-    - question
-    - actual_answer
-  instructions: |
-    Evaluate how relevant is the answer to the question.
-  outputs:
-    my_answer_relevance: fraction between 0 and 1
-    my_answer_relevance_reason: reason for your evaluation
--
-  name: sparql_llm_evaluation
-  inputs:
-    - question
-    - reference_answer
-    - actual_steps
-  steps_keys:
-    - output
-  steps_name: sparql
-  instructions: |
-    Divide the reference answer into claims and try to match each claim to the
-    SPARQL query results. Count the:
-    - reference claims
-    - SPARQL results
-    - matching claims
-  outputs:
-    sparql_recall: Number of matching claims as a fraction of reference claims (fraction 0-1)
-    sparql_precision: Number of matching claims as a fraction of SPARQL results (fraction 0-1)
-    sparql_reason: reason for your evaluation
-```
+See [Example Configuration File](#example-configuration-file).
 
 #### Example Call to Evaluate Using Custom Metrics
 
