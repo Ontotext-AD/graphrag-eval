@@ -22,20 +22,20 @@ async def test_get_retrieval_evaluation_dict_success(monkeypatch):
         ContextPrecision,
         get_retrieval_evaluation_dict
     )
-    mock_result = MagicMock(value=0.9)
-    async_mock = AsyncMock(return_value=mock_result)
-    monkeypatch.setattr(ContextRecall, 'ascore', async_mock)
-    monkeypatch.setattr(ContextPrecision, 'ascore', async_mock)
+    recall_mock = AsyncMock(return_value=MagicMock(value=0.9))
+    monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
+    precision_mock = AsyncMock(return_value=MagicMock(value=0.6))
+    monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
 
     eval_result_dict = await get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
     )
-    assert eval_result_dict == {
+    assert pytest.approx(eval_result_dict) == {
         "retrieval_context_recall": 0.9,
-        "retrieval_context_precision": 0.9,
-        "retrieval_context_f1": 0.9,
+        "retrieval_context_precision": 0.6,
+        "retrieval_context_f1": 0.72,
     }
 
 
@@ -46,9 +46,9 @@ async def test_get_retrieval_evaluation_dict_recall_error(monkeypatch):
         ContextPrecision,
         get_retrieval_evaluation_dict
     )
-    recall_mock = AsyncMock(side_effect=Exception("some error"))
+    recall_mock = AsyncMock(side_effect=Exception("recall error"))
     monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
-    precision_mock = AsyncMock(return_value=MagicMock(value=0.9))
+    precision_mock = AsyncMock(return_value=MagicMock(value=0.6))
     monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
 
     eval_result_dict = await get_retrieval_evaluation_dict(
@@ -57,8 +57,8 @@ async def test_get_retrieval_evaluation_dict_recall_error(monkeypatch):
         actual_contexts=[context_1_dict],
     )
     assert eval_result_dict == {
-        "retrieval_context_recall_error": "some error",
-        "retrieval_context_precision": 0.9,
+        "retrieval_context_recall_error": "recall error",
+        "retrieval_context_precision": 0.6,
     }
 
 @pytest.mark.asyncio
@@ -70,7 +70,7 @@ async def test_get_retrieval_evaluation_dict_precision_error(monkeypatch):
     )
     recall_mock = AsyncMock(return_value=MagicMock(value=0.9))
     monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
-    precision_mock = AsyncMock(side_effect=Exception("some error"))
+    precision_mock = AsyncMock(side_effect=Exception("precision error"))
     monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
     
     eval_result_dict = await get_retrieval_evaluation_dict(
@@ -80,7 +80,7 @@ async def test_get_retrieval_evaluation_dict_precision_error(monkeypatch):
     )
     assert eval_result_dict == {
         "retrieval_context_recall": 0.9,
-        "retrieval_context_precision_error": "some error",
+        "retrieval_context_precision_error": "precision error",
     }
 
 
@@ -91,9 +91,9 @@ async def test_get_retrieval_evaluation_dict_both_error(monkeypatch):
         ContextPrecision,
         get_retrieval_evaluation_dict
     )
-    recall_mock = AsyncMock(side_effect=Exception("some error"))
+    recall_mock = AsyncMock(side_effect=Exception("recall error"))
     monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
-    precision_mock = AsyncMock(side_effect=Exception("other error"))
+    precision_mock = AsyncMock(side_effect=Exception("precision error"))
     monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
     
     eval_result_dict = await get_retrieval_evaluation_dict(
@@ -102,6 +102,6 @@ async def test_get_retrieval_evaluation_dict_both_error(monkeypatch):
         actual_contexts=[context_1_dict],
     )
     assert eval_result_dict == {
-        "retrieval_context_recall_error": "some error",
-        "retrieval_context_precision_error": "other error",
+        "retrieval_context_recall_error": "recall error",
+        "retrieval_context_precision_error": "precision error",
     }

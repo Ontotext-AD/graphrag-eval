@@ -44,7 +44,7 @@ async def test_get_retrieval_evaluation_dict_recall_error_precision_success(monk
         ContextPrecision,
         get_retrieval_evaluation_dict,
     )
-    recall_mock = AsyncMock(side_effect=Exception("some error"))
+    recall_mock = AsyncMock(side_effect=Exception("recall error"))
     monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
     precision_mock = AsyncMock(return_value=MagicMock(value=0.6))
     monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
@@ -58,7 +58,7 @@ async def test_get_retrieval_evaluation_dict_recall_error_precision_success(monk
         }],
     )
     assert eval_result_dict == {
-        "retrieval_answer_recall_error": "some error",
+        "retrieval_answer_recall_error": "recall error",
         "retrieval_answer_precision": 0.6,
     }
 
@@ -72,7 +72,7 @@ async def test_get_retrieval_evaluation_dict_recall_success_precision_error(monk
     )
     context_recall = AsyncMock(return_value= MagicMock(value=0.9))
     monkeypatch.setattr(ContextRecall, 'ascore', context_recall)
-    context_precision = AsyncMock(side_effect=Exception("some error"))
+    context_precision = AsyncMock(side_effect=Exception("precision error"))
     monkeypatch.setattr(ContextPrecision, 'ascore', context_precision)
 
     eval_result_dict = await get_retrieval_evaluation_dict(
@@ -85,7 +85,7 @@ async def test_get_retrieval_evaluation_dict_recall_success_precision_error(monk
     )
     assert eval_result_dict == {
         "retrieval_answer_recall": 0.9,
-        "retrieval_answer_precision_error": "some error"
+        "retrieval_answer_precision_error": "precision error"
     }
 
 
@@ -96,9 +96,9 @@ async def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
         ContextPrecision,
         get_retrieval_evaluation_dict,
     )
-    recall_mock = AsyncMock(side_effect=Exception("some error"))
+    recall_mock = AsyncMock(side_effect=Exception("recall error"))
     monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
-    precision_mock = AsyncMock(side_effect=Exception("other error"))
+    precision_mock = AsyncMock(side_effect=Exception("precision error"))
     monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
 
     eval_result_dict = await get_retrieval_evaluation_dict(
@@ -110,6 +110,6 @@ async def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
         }],
     )
     assert eval_result_dict == {
-        "retrieval_answer_recall_error": "some error",
-        "retrieval_answer_precision_error": "other error"
+        "retrieval_answer_recall_error": "recall error",
+        "retrieval_answer_precision_error": "precision error"
     }
