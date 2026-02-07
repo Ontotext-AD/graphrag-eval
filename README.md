@@ -96,9 +96,33 @@ The configuration has two sections:
     * `name`: (str) name of the LLM to use
     * `temperature`: (float >= 0.0) temperature to use for the LLM
     * `max_tokens`: (int > 0) maximum number of tokens to generate
-* `custom_evaluations`: required for custom evaluations
+* `custom_evaluations`: (list of the following maps) required nonempty for custom evaluations. Each map has keys:
+    * `name`: (str) name of the evaluation
+    * `inputs`: (list[str]) list of input variables. Any combination of the following:
+        * `question`
+        * `reference_answer`
+        * `reference_steps`
+        * `actual_answer`
+        * `actual_steps`
+    * `steps_keys`: (list[str]; required if `inputs` contains `actual_steps` or `reference_steps`) one or both of:
+        * `args`
+        * `output`
+    * `steps_name`: (str; required if `inputs` contains `actual_steps` or `reference_steps`) the type (name) of steps to include in the evaluation
+    * `instructions`: (str) instructions for the evaluation
+    * `outputs`: (map[str]) output variable names and descriptions
 
-#### Example Configuration File
+#### Example Configuration File With LLM Configuration
+
+Below is a YAML file that configures the LLM for metrics that require an LLM.
+
+```YAML
+llm:
+  name: openai/gpt-4o-mini
+  temperature: 0.0
+  max_tokens: 65536
+```
+
+#### Example Configuration File With Custom Evaluations
 
 Below is a YAML file that defines two custom evaluations:
 1. a simple relevance evaluation
