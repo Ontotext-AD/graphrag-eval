@@ -1,6 +1,14 @@
 import pytest
+import yaml
 
+from graphrag_eval.evaluation import Config
 from graphrag_eval.steps.retrieval_answer import get_retrieval_evaluation_dict
+
+
+path = "tests-with-openai/test_data/config-llm.yaml"
+with open(path, encoding="utf-8") as f:
+    config_dict = yaml.safe_load(f)
+config = Config(**config_dict)
 
 
 @pytest.mark.asyncio
@@ -17,9 +25,9 @@ async def test_retrieval_answer():
                 "id": "http://example.com/resource/doc/2",
                 "text": "Gases scatter sunlight"
             }
-        ]
+        ],
+        llm_config=config.llm
     )
-
     assert isinstance(result["retrieval_answer_recall"], float)
     assert isinstance(result["retrieval_answer_precision"], float)
     assert isinstance(result["retrieval_answer_f1"], float)

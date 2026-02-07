@@ -1,8 +1,16 @@
 import pytest
+import yaml
 
+from graphrag_eval.evaluation import Config
 from graphrag_eval.steps.retrieval_context_texts import (
     get_retrieval_evaluation_dict
 )
+
+
+path = "tests-with-openai/test_data/config-llm.yaml"
+with open(path, encoding="utf-8") as f:
+    config_dict = yaml.safe_load(f)
+config = Config(**config_dict)
 
 
 @pytest.mark.asyncio
@@ -28,8 +36,12 @@ async def test_retrieval_contexts():
                 "id": "http://example.com/resource/doc/4",
                 "text": "The sun shines onto the atmosphere. The atmosphere contains various gases."
             }
-        ]
+        ],
+        llm_config=config.llm,
     )
-
     assert isinstance(result["retrieval_context_recall"], float)
+    assert isinstance(result["retrieval_context_precision"], float)
+    assert isinstance(result["retrieval_context_f1"], float)
     assert 0 <= result["retrieval_context_recall"] <= 1
+    assert 0 <= result["retrieval_context_precision"] <= 1
+    assert 0 <= result["retrieval_context_f1"] <= 1
