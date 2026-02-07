@@ -114,17 +114,16 @@ def calculate_steps_score(
     return steps_score / len(reference_steps_groups)
 
 
-def evaluate_steps(reference: dict, actual: dict) -> dict:
+async def evaluate_steps(reference: dict, actual: dict) -> dict:
     eval_result = {}
     actual_steps = actual.get("actual_steps", [])
     eval_result["actual_steps"] = actual_steps
     for actual_step in actual_steps:
-        if actual_step["name"] == "retrieval":
+        if actual_step["name"] == "retrieval" and "output" in actual_step and "reference_answer" in reference:
             from .retrieval_answer import get_retrieval_evaluation_dict
-            result = get_retrieval_evaluation_dict(
+            result = await get_retrieval_evaluation_dict(
                 question_text=reference["question_text"],
-                reference_answer=reference.get("reference_answer"),
-                actual_answer=actual.get("actual_answer"),
+                reference_answer=reference["reference_answer"],
                 actual_contexts=json.loads(actual_step["output"])
             )
             actual_step.update(result)
@@ -135,12 +134,11 @@ def evaluate_steps(reference: dict, actual: dict) -> dict:
         for ref_group_idx, ref_match_idx, act_idx, _ in matches:
             reference_step = reference_steps[ref_group_idx][ref_match_idx]
             actual_step = actual_steps[act_idx]
-            if reference_step["name"] == "retrieval":
-                from .retrieval_context_texts import \
-                    get_retrieval_evaluation_dict
-                res = get_retrieval_evaluation_dict(
+            if reference_step["name"] == "retrieval" and "output" in actual_step:
+                from .retrieval_context_texts import get_retrieval_evaluation_dict
+                actual_step.update(await get_retrieval_evaluation_dict(
+                    question_text=reference["question_text"],
                     reference_contexts=json.loads(reference_step["output"]),
-                    actual_contexts=json.loads(actual_step["output"])
-                )
-                actual_step.update(res)
+                    actual_contexts=json.loads(actual_step["output"]),
+                ))
     return eval_result
