@@ -25,7 +25,7 @@ from graphrag_eval import llm
 
 
 DATA_DIR = Path(__file__).parent / "test_data"
-CONFIG_FILE_PATH = DATA_DIR / "config_with_custom_evaluations.yaml"
+CONFIG_FILE_PATH = DATA_DIR / "config-llm-and-custom-evaluations.yaml"
 
 
 def _mock_common_calls(monkeypatch):

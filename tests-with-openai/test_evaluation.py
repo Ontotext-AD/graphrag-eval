@@ -21,7 +21,7 @@ from graphrag_eval import llm
 
 
 DATA_DIR = Path(__file__).parent / "test_data"
-CONFIG_FILE_PATH = DATA_DIR / "config_simple.yaml"
+CONFIG_FILE_PATH = DATA_DIR / "config-llm.yaml"
 
 
 def test_run_evaluation_and_compute_aggregates(monkeypatch):
