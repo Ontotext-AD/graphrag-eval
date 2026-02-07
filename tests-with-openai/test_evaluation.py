@@ -14,7 +14,7 @@ from tests.util import read_responses
 
 
 DATA_DIR = Path(__file__).parent / "test_data"
-CONFIG_FILE_PATH = DATA_DIR / "config_simple.yaml"
+CONFIG_FILE_PATH = DATA_DIR / "config-llm.yaml"
 
 
 @pytest.fixture(scope="session", autouse=True)
