@@ -1,10 +1,16 @@
+import yaml
 from pprint import pprint
 
+from graphrag_eval.evaluation import Config
 from graphrag_eval.steps.retrieval_context_texts import (
     get_retrieval_evaluation_dict
 )
 
 
+path = "tests-with-openai/test_data/config-llm.yaml"
+with open(path, encoding="utf-8") as f:
+    config_dict = yaml.safe_load(f)
+config = Config(**config_dict)
 result_dict = get_retrieval_evaluation_dict(
     reference_contexts=[
         {
@@ -25,7 +31,8 @@ result_dict = get_retrieval_evaluation_dict(
             "id": "http://example.com/resource/doc/4",
             "text": "The sun shines onto the atmosphere. The atmosphere contains various gases."
         }
-    ]
+    ],
+    llm_config=config.llm,
 )
 pprint(result_dict)
 assert isinstance(result_dict["retrieval_context_recall"], float)
