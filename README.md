@@ -87,10 +87,15 @@ The following metrics use an LLM which must be configured using a [configuration
 
 Supported LLMs are all those supported by the [`litellm`](https://github.com/BerriAI/litellm) library, including all major LLMs and local models via Ollama.
 
+If no LLM is configured or the `config_file_path` parameter is not provided, these metrics are not evaluated.
+
 ### Configuration
 
 The configuration has two sections:
-* `llm`: required for metrics that require an LLM
+* `llm`: required for metrics that require an LLM. The following keys are required:
+    * `name`: (str) name of the LLM to use
+    * `temperature`: (float >= 0.0) temperature to use for the LLM
+    * `max_tokens`: (int > 0) maximum number of tokens to generate
 * `custom_evaluations`: required for custom evaluations
 
 #### Example Configuration File
