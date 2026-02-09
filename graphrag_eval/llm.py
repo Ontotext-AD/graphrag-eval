@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 class Config(BaseModel):
     name: str
-    temperature: float = Field(ge=0.0, le=1.0)
+    temperature: float = Field(ge=0.0, le=2.0)
     max_tokens: int = Field(ge=1)
 
 

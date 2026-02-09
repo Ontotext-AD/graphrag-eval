@@ -94,7 +94,7 @@ If no LLM is configured or the `config_file_path` parameter is not provided, the
 The configuration has two sections:
 * `llm`: required for metrics that require an LLM. The following keys are required:
     * `name`: (str) name of the LLM to use
-    * `temperature`: (float >= 0.0) temperature to use for the LLM
+    * `temperature`: (float in the range [0.0, 2.0]) temperature to use for the LLM
     * `max_tokens`: (int > 0) maximum number of tokens to generate
 * `custom_evaluations`: (list of the following maps) required nonempty for custom evaluations. Each map has keys:
     * `name`: (str) name of the evaluation
