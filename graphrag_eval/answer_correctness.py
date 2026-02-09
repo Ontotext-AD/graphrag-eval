@@ -147,9 +147,9 @@ def main():
     parser.add_argument("-l", "--llm", type=str, default=LLM_MODEL)
     parser.add_argument("-t", "--temperature", type=float, default=TEMPERATURE)
     args = parser.parse_args()
-    llm_config_ = llm.Config(args.llm, args.temperature)
+    llm_config = llm.Config(args.llm, args.temperature)
     evaluate_and_write(
         in_file_path=args.in_file,
         out_file_path=args.out_file,
-        llm_config=llm_config_
+        llm_config=llm_config
     )
