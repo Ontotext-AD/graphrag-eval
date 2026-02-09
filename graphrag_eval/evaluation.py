@@ -73,7 +73,6 @@ async def run_evaluation(
                         )
                     )
                 if "reference_answer" in question and config.llm:
-                    print('%%% answer_correctness')
                     from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
                     if not answer_correctness_evaluator:
                         answer_correctness_evaluator = AnswerCorrectnessEvaluator(
