@@ -2,6 +2,7 @@ import os
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+from pytest import approx
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -32,7 +33,7 @@ async def test_get_retrieval_evaluation_dict_success(monkeypatch):
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
     )
-    assert pytest.approx(eval_result_dict) == {
+    assert approx(eval_result_dict) == {
         "retrieval_context_recall": 0.9,
         "retrieval_context_precision": 0.6,
         "retrieval_context_f1": 0.72,
