@@ -1,0 +1,4 @@
+llm:
+  name: openai/gpt-4o-mini
+  temperature: 0.0
+  max_tokens: 65536

@@ -43,7 +43,7 @@ jobs:
         shell: bash -l {0}
         run: |
           conda activate graphrag-eval
-          poetry run pytest --cov=graphrag_eval --cov-report=term-missing tests-with-openai/
+          poetry run pytest --cov=graphrag_eval --cov-report=term-missing tests-with-llm/
 
       - name: Run system tests that call OpenAI
         shell: bash -l {0}

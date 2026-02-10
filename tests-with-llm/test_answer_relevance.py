@@ -2,6 +2,14 @@ from collections import namedtuple
 
 from graphrag_eval import answer_relevance
 from langevals_ragas.lib.common import RagasResult, Money
+from graphrag_eval import llm
+
+
+llm_config = llm.Config(
+    name="openai/gpt-4o-mini",
+    temperature=0.0,
+    max_tokens=1024,
+)
 
 
 def test_get_relevance_dict_eval_success(monkeypatch):
@@ -20,7 +28,8 @@ def test_get_relevance_dict_eval_success(monkeypatch):
     )
     eval_result_dict = answer_relevance.get_relevance_dict(
         "Why is the sky blue?",
-        "Because of the oxygen in the air"
+        "Because of the oxygen in the air",
+        llm_config=llm_config,
     )
     assert eval_result_dict == {
         "answer_relevance": 0.9,
@@ -40,7 +49,8 @@ def test_get_relevance_dict_eval_error(monkeypatch):
     )
     eval_result_dict = answer_relevance.get_relevance_dict(
         "Why is the sky blue?",
-        "Because of the oxygen in the air"
+        "Because of the oxygen in the air",
+        llm_config=llm_config,
     )
     assert eval_result_dict == {
         "answer_relevance_error": "details"

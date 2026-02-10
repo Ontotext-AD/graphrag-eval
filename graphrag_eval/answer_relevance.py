@@ -3,16 +3,17 @@ from langevals_ragas.response_relevancy import (
     RagasResponseRelevancyEntry
 )
 
+from graphrag_eval import llm
+
 
 def get_relevance_dict(
     question_text: str,
     actual_answer: str,
-    model_name: str = 'openai/gpt-4o-mini',
-    max_tokens: int = 65_536
+    llm_config: llm.Config,
 ) -> dict:
     settings_dict = {
-        'model': model_name,
-        'max_tokens': max_tokens
+        'model': llm_config.name,
+        'max_tokens': llm_config.max_tokens
     }
     entry = RagasResponseRelevancyEntry(
         input=question_text,
