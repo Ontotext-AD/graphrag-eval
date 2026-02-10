@@ -1,27 +1,16 @@
-from pathlib import Path
-
-import openai
-import yaml
+import os
 from copy import deepcopy
-from langevals_ragas.lib.common import RagasResult, Money
-from pytest import raises
+from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock
+
+import pytest
+import yaml
 
 from graphrag_eval import (
-    answer_correctness,
     compute_aggregates,
     custom_evaluation,
     run_evaluation,
 )
-from graphrag_eval.steps.retrieval_answer import (
-    RagasResponseContextRecallEvaluator,
-    RagasResponseContextPrecisionEvaluator,
-)
-from graphrag_eval.steps.retrieval_context_texts import (
-    RagasContextPrecisionEvaluator,
-    RagasContextRecallEvaluator,
-)
-from graphrag_eval.answer_relevance import RagasResponseRelevancyEvaluator
-from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
 from graphrag_eval.custom_evaluation import CustomEvaluator
 from tests.util import read_responses
 
@@ -29,75 +18,32 @@ from tests.util import read_responses
 DATA_DIR = Path(__file__).parent / "test_data"
 
 
+@pytest.fixture(scope="session", autouse=True)
+def set_env():
+    os.environ["OPENAI_API_KEY"] = "fake-key"
+
+
 def _mock_common_calls(monkeypatch):
-    monkeypatch.setattr(
-        RagasResponseRelevancyEvaluator,
-        'evaluate',
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="answer relevance reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
+    from graphrag_eval.steps.retrieval_answer import (
+        ContextRecall,
+        ContextPrecision
     )
-    monkeypatch.setattr(
-        RagasResponseContextRecallEvaluator,
-        "evaluate",
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="retrieval answer recall reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
-    )
-    monkeypatch.setattr(
-        RagasResponseContextPrecisionEvaluator,
-        "evaluate",
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="retrieval answer precision reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
-    )
-    monkeypatch.setattr(
-        RagasContextRecallEvaluator,
-        "evaluate",
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="retrieval context recall reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
-    )
-    monkeypatch.setattr(
-        RagasContextPrecisionEvaluator,
-        "evaluate",
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="retrieval context precision reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
-    )
-    monkeypatch.setattr(
-        answer_correctness,
-        "OpenAI",
-        lambda: None
-    )
+    from graphrag_eval.answer_relevance import AnswerRelevancy
+    from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+
+    mock = AsyncMock(return_value=MagicMock(value=0.9))
+    monkeypatch.setattr(AnswerRelevancy, 'ascore', mock)
+    monkeypatch.setattr(ContextRecall, 'ascore', mock)
+    monkeypatch.setattr(ContextPrecision, 'ascore', mock)
     monkeypatch.setattr(
         AnswerCorrectnessEvaluator,
         "call_llm",
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
-    monkeypatch.setattr(
-        openai,
-        "OpenAI",
-        lambda: None
-    )
 
 
-def test_run_custom_evaluation_ok(monkeypatch):
+@pytest.mark.asyncio
+async def test_run_custom_evaluation_ok(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
@@ -120,7 +66,7 @@ def test_run_custom_evaluation_ok(monkeypatch):
             return "0.75\t0.6\tThe reference answer has 4 claims; there are 5 "\
                 "SPARQL results; 3 claims match"
     monkeypatch.setattr(CustomEvaluator, "call_llm", mock_call_llm)
-    evaluation_results = run_evaluation(
+    evaluation_results = await run_evaluation(
         reference_data,
         actual_responses,
         custom_eval_config_file_path
@@ -142,7 +88,8 @@ def test_run_custom_evaluation_ok(monkeypatch):
     assert expected_aggregates == aggregates
 
 
-def test_run_custom_evaluation_config_error(monkeypatch):
+@pytest.mark.asyncio
+async def test_run_custom_evaluation_config_error(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
@@ -179,22 +126,18 @@ def test_run_custom_evaluation_config_error(monkeypatch):
         error_config[0]["outputs"][key] = "invalid"
         error_configs.append(error_config)
 
-    monkeypatch.setattr(
-        openai,
-        "OpenAI",
-        lambda: None
-    )
     for config in error_configs:
         monkeypatch.setattr(yaml, "safe_load", lambda _: config)
-        with raises(ValueError):
-            run_evaluation(
+        with pytest.raises(ValueError):
+            await run_evaluation(
                 reference_data,
                 actual_responses,
                 custom_eval_config_file_path
             )
 
 
-def test_run_custom_evaluation_llm_output_error(monkeypatch):
+@pytest.mark.asyncio
+async def test_run_custom_evaluation_llm_output_error(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
@@ -202,7 +145,7 @@ def test_run_custom_evaluation_llm_output_error(monkeypatch):
     custom_eval_config_file_path = DATA_DIR / "custom_eval_config.yaml"
     _mock_common_calls(monkeypatch)
     monkeypatch.setattr(CustomEvaluator, "call_llm", lambda *_: "hello")
-    evaluation_results = run_evaluation(
+    evaluation_results = await run_evaluation(
         reference_data,
         actual_responses,
         custom_eval_config_file_path
@@ -221,7 +164,8 @@ def test_run_custom_evaluation_llm_output_error(monkeypatch):
     assert expected_aggregates == aggregates
     
 
-def test_run_custom_evaluation_missing_input_fields(monkeypatch):
+@pytest.mark.asyncio
+async def test_run_custom_evaluation_missing_input_fields(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
@@ -231,7 +175,7 @@ def test_run_custom_evaluation_missing_input_fields(monkeypatch):
     del actual_responses["c10bbc8dce98a4b8832d125134a16153"]["actual_answer"]
     custom_eval_config_file_path = DATA_DIR / "custom_eval_config.yaml"
     _mock_common_calls(monkeypatch)
-    evaluation_results = run_evaluation(
+    evaluation_results = await run_evaluation(
         reference_data,
         actual_responses,
         custom_eval_config_file_path

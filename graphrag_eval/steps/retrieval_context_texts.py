@@ -1,59 +1,45 @@
-from langevals_ragas.context_precision import (
-    RagasContextPrecisionEntry,
-    RagasContextPrecisionEvaluator,
-)
-from langevals_ragas.context_recall import (
-    RagasContextRecallEntry,
-    RagasContextRecallEvaluator,
-)
+from openai import AsyncOpenAI
+from ragas.llms import llm_factory
+from ragas.metrics.collections import ContextRecall, ContextPrecision
 
-from graphrag_eval.util import get_f1_dict
+from graphrag_eval.util import compute_f1
 
 
-def _evaluate(
-    entry: RagasContextRecallEntry | RagasContextPrecisionEntry,
-    evaluator: RagasContextRecallEvaluator | RagasContextPrecisionEvaluator,
-    metric: str
-) -> dict:
-    try:
-        result = evaluator.evaluate(entry)
-        if result.status == "processed":
-            result_dict = {
-                f"retrieval_context_{metric}": result.score,
-            }
-            if result.details:
-                result_dict[f"retrieval_context_{metric}_reason"] = result.details
-            if result.cost is not None:
-                result_dict[f"retrieval_context_{metric}_cost"] = result.cost.amount
-            return result_dict
-        else:
-            return {
-                f"retrieval_context_{metric}_error": result.details,
-            }
-    except Exception as e:
-        return {
-            f"retrieval_context_{metric}_error": str(e),
-        }
+client = AsyncOpenAI()
+llm = llm_factory("gpt-4o-mini", client=client)
+recall_scorer = ContextRecall(llm=llm)
+precision_scorer = ContextPrecision(llm=llm)
 
 
-def get_retrieval_evaluation_dict(
-    reference_contexts: list[dict[str, str]],
+async def get_retrieval_evaluation_dict(
+    question_text: str,
     actual_contexts: list[dict[str, str]],
-    model_name : str = "openai/gpt-4o-mini",
-    max_tokens : int = 65_536
+    reference_contexts: list[dict[str, str]],
 ) -> dict:
-    settings_dict = {
-        "model": model_name,
-        "max_tokens": max_tokens
-    }
-    entry = RagasContextRecallEntry(
-        expected_contexts=[a["text"] for a in reference_contexts],
-        contexts=[a["text"] for a in actual_contexts]
+    reference = '\n'.join([c["text"] for c in reference_contexts])
+    retrieved_contexts = [c["text"] for c in actual_contexts]
+    params = dict(
+        user_input=question_text,
+        reference=reference,
+        retrieved_contexts=retrieved_contexts
     )
     result = {}
-    evaluator = RagasContextRecallEvaluator(settings=settings_dict)
-    result.update(_evaluate(entry, evaluator, "recall"))
-    evaluator = RagasContextPrecisionEvaluator(settings=settings_dict)
-    result.update(_evaluate(entry, evaluator, "precision"))
-    result.update(get_f1_dict(result, "retrieval_context"))
+    try:
+        recall = await recall_scorer.ascore(**params)
+        result["retrieval_context_recall"] = recall.value
+    except Exception as e:
+        result["retrieval_context_recall_error"] = str(e)
+
+    try:
+        precision = await precision_scorer.ascore(**params)
+        result["retrieval_context_precision"] = precision.value
+    except Exception as e:
+        result["retrieval_context_precision_error"] = str(e)
+
+    if "retrieval_context_recall" in result \
+    and "retrieval_context_precision" in result:
+        result["retrieval_context_f1"] = compute_f1(
+            result["retrieval_context_recall"], 
+            result["retrieval_context_precision"],
+        )
     return result

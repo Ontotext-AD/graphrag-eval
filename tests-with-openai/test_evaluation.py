@@ -1,22 +1,14 @@
+import os
 from pathlib import Path
+from unittest.mock import MagicMock, AsyncMock
 
+import pytest
 import yaml
-from langevals_ragas.lib.common import RagasResult, Money
 
 from graphrag_eval import (
-    answer_correctness,
     compute_aggregates,
     run_evaluation,
 )
-from graphrag_eval.steps.retrieval_answer import (
-    RagasResponseContextRecallEvaluator,
-    RagasResponseContextPrecisionEvaluator,
-)
-from graphrag_eval.steps.retrieval_context_texts import (
-    RagasContextPrecisionEvaluator,
-    RagasContextRecallEvaluator,
-)
-from graphrag_eval.answer_relevance import RagasResponseRelevancyEvaluator
 from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
 from tests.util import read_responses
 
@@ -24,65 +16,29 @@ from tests.util import read_responses
 DATA_DIR = Path(__file__).parent / "test_data"
 
 
-def test_run_evaluation_and_compute_aggregates(monkeypatch):
+@pytest.fixture(scope="session", autouse=True)
+def set_env():
+    os.environ["OPENAI_API_KEY"] = "fake-key"
+
+
+@pytest.mark.asyncio
+async def test_run_evaluation_and_compute_aggregates(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
-    monkeypatch.setattr(
-        RagasResponseRelevancyEvaluator,
-        'evaluate',
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="answer relevance reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
+
+    async_mock = AsyncMock(return_value=MagicMock(value=0.9))
+
+    from graphrag_eval.answer_relevance import AnswerRelevancy
+    monkeypatch.setattr(AnswerRelevancy, 'ascore', async_mock)
+
+    from graphrag_eval.steps.retrieval_answer import (
+        ContextRecall,
+        ContextPrecision
     )
-    monkeypatch.setattr(
-        RagasResponseContextRecallEvaluator,
-        "evaluate",
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="retrieval answer recall reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
-    )
-    monkeypatch.setattr(
-        RagasResponseContextPrecisionEvaluator,
-        "evaluate",
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="retrieval answer precision reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
-    )
-    monkeypatch.setattr(
-        RagasContextRecallEvaluator,
-        "evaluate",
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="retrieval context recall reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
-    )
-    monkeypatch.setattr(
-        RagasContextPrecisionEvaluator,
-        "evaluate",
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="retrieval context precision reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
-    )
-    monkeypatch.setattr(
-        answer_correctness,
-        "OpenAI",
-        lambda: None
-    )
+    monkeypatch.setattr(ContextRecall, 'ascore', async_mock)
+    monkeypatch.setattr(ContextPrecision, 'ascore', async_mock)
+
     monkeypatch.setattr(
         AnswerCorrectnessEvaluator,
         "call_llm",
@@ -90,7 +46,7 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
     )
 
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
-    evaluation_results = run_evaluation(reference_data, actual_responses)
+    evaluation_results = await run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_1.yaml").read_text(encoding="utf-8")
     )
@@ -103,25 +59,17 @@ def test_run_evaluation_and_compute_aggregates(monkeypatch):
     assert expected_aggregates == aggregates
 
 
-def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch):
+@pytest.mark.asyncio
+async def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch):
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
-    monkeypatch.setattr(
-        RagasResponseRelevancyEvaluator,
-        'evaluate',
-        lambda *_: RagasResult(
-            status="processed",
-            score=0.9,
-            details="answer relevance reason",
-            cost=Money(currency="USD", amount=0.0007)
-        )
-    )
-    monkeypatch.setattr(
-        answer_correctness,
-        "OpenAI",
-        lambda: None
-    )
+
+    async_mock = AsyncMock(return_value=MagicMock(value=0.9))
+
+    from graphrag_eval.answer_relevance import AnswerRelevancy
+    monkeypatch.setattr(AnswerRelevancy, 'ascore', async_mock)
+
     monkeypatch.setattr(
         AnswerCorrectnessEvaluator,
         "call_llm",
@@ -129,7 +77,7 @@ def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch):
     )
 
     actual_responses = read_responses(DATA_DIR / "actual_responses_3.jsonl")
-    evaluation_results = run_evaluation(reference_data, actual_responses)
+    evaluation_results = await run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_3.yaml").read_text(encoding="utf-8")
     )
@@ -141,12 +89,13 @@ def test_run_evaluation_and_compute_aggregates_no_actual_steps(monkeypatch):
     assert expected_aggregates == aggregates
 
 
-def test_run_evaluation_and_compute_aggregates_all_errors():
+@pytest.mark.asyncio
+async def test_run_evaluation_and_compute_aggregates_all_errors():
     reference_data = yaml.safe_load(
         (DATA_DIR / "reference_1.yaml").read_text(encoding="utf-8")
     )
     actual_responses = read_responses(DATA_DIR / "actual_responses_2.jsonl")
-    evaluation_results = run_evaluation(reference_data, actual_responses)
+    evaluation_results = await run_evaluation(reference_data, actual_responses)
     expected_evaluation_results = yaml.safe_load(
         (DATA_DIR / "evaluation_2.yaml").read_text(encoding="utf-8")
     )

@@ -16,21 +16,11 @@
       http://example.com/resource/doc/2\",\n    \"text\": \"Transformer OSLO T2 is\
       \ in Substation Oslo.\"\n  }\n]"
     retrieval_answer_f1: 0.9
-    retrieval_answer_f1_cost: 0.0014
     retrieval_answer_precision: 0.9
-    retrieval_answer_precision_cost: 0.0007
-    retrieval_answer_precision_reason: retrieval answer precision reason
     retrieval_answer_recall: 0.9
-    retrieval_answer_recall_cost: 0.0007
-    retrieval_answer_recall_reason: retrieval answer recall reason
-    retrieval_context_f1: 0.9
-    retrieval_context_f1_cost: 0.0014
-    retrieval_context_precision: 0.9
-    retrieval_context_precision_cost: 0.0007
-    retrieval_context_precision_reason: retrieval context precision reason
     retrieval_context_recall: 0.9
-    retrieval_context_recall_cost: 0.0007
-    retrieval_context_recall_reason: retrieval context recall reason
+    retrieval_context_precision: 0.9
+    retrieval_context_f1: 0.9
     status: success
   - args:
       query: OSLO
@@ -71,8 +61,6 @@
   answer_recall: 1.0
   answer_reference_claims_count: 2
   answer_relevance: 0.9
-  answer_relevance_cost: 0.0007
-  answer_relevance_reason: answer relevance reason
   my_answer_relevance: null
   my_answer_relevance_reason: null
   my_answer_relevance_error: "Expected 2 tab-separated values, got: hello"

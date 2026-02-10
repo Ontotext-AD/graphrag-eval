@@ -17,9 +17,4 @@ def get_f1_dict(
     f1 = compute_f1(recall, precision)
     if f1 is None:
         return {}
-    result = {f"{prefix}_f1": f1}
-    recall_cost = input_dict.get(f"{prefix}_recall_cost")
-    precision_cost = input_dict.get(f"{prefix}_precision_cost")
-    if recall_cost is not None and precision_cost is not None:
-        result[f"{prefix}_f1_cost"] = recall_cost + precision_cost
-    return result
+    return {f"{prefix}_f1": f1}

@@ -48,7 +48,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           conda activate graphrag-eval
-          poetry run python system-tests/*.py
+          poetry run pytest system-tests/*.py
 
       - name: Build package
         shell: bash -l {0}

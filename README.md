@@ -335,7 +335,7 @@ from graphrag_eval import run_evaluation, compute_aggregates
 
 reference_qas: list[dict] = [] # read your reference data
 chat_responses: dict = {} # call your implementation to get the response
-evaluation_results = run_evaluation(reference_qas, chat_responses)
+evaluation_results = await run_evaluation(reference_qas, chat_responses)
 aggregates = compute_aggregates(evaluation_results)
 ```
 
@@ -408,7 +408,6 @@ The output is a list of statistics for each question from the reference Q&A data
   answer_precision: 1.0
   answer_f1: 1.0
   answer_relevance: 0.9
-  answer_relevance_cost: 0.0007
   actual_steps:
   - name: retrieval
     id: call_3
@@ -429,12 +428,8 @@ The output is a list of statistics for each question from the reference Q&A data
       ]
     execution_timestamp: '2025-12-17T09:15:53Z'
     retrieval_answer_recall: 1.0
-    retrieval_answer_recall_reason: The context contains all the transformers listed in the reference answer
-    retrieval_answer_recall_cost: 0.0007
     retrieval_answer_precision: 1.0
-    retrieval_answer_precision_cost: 0.0003
     retrieval_answer_f1: 1.0
-    retrieval_answer_f1_cost: 0.001
   - name: autocomplete_search
     args:
       query: OSLO
@@ -543,8 +538,6 @@ matched.
 - `answer_f1`: (optional) Harmonic mean of `answer_recall` and `answer_precision`
 - `answer_relevance`: (optional) The value representing how relevant is the actual answer to the question, computed using [RAGAS answer relevance](https://docs.ragas.io/en/v0.3.3/concepts/metrics/available_metrics/answer_relevance/)
 - `answer_relevance_error`: (optional) error message if answer relevance evaluation failed
-- `answer_relevance_cost`: (optional) The LLM use cost of computing 
-`answer_relevance`, in US dollars
 - `actual_steps`: (optional) copy of the steps in the evaluation target, if specified there
 - `steps_score`: (optional) a real number between 0 and 1, see how step score 
 is calculated in the section [Steps score](#Steps-score)
@@ -555,20 +548,15 @@ is calculated in the section [Steps score](#Steps-score)
 
 All `actual_steps` with `name` "retrieval" contain:
 - `retrieval_answer_recall`: (optional) recall of the retrieved context with respect to the reference answer, if evaluation succeeds
-- `retrieval_answer_recall_reason`: (optional) LLM reasoning in evaluating `retrieval_answer_recall`
 - `retrieval_answer_recall_error`: (optional) error message if `retrieval_answer_recall` evaluation fails
-- `retrieval_answer_recall_cost`: cost of evaluating `retrieval_answer_recall`, in US dollars
 - `retrieval_answer_precision`: (optional) precision of the retrieved context with respect to the reference answer, if evaluation succeeds
 - `retrieval_answer_precision_error`: (optional) error message if `retrieval_answer_precision` evaluation fails
-- `retrieval_answer_precision_cost`: cost of evaluating `retrieval_answer_precision`, in US dollars
 - `retrieval_answer_f1`: (optional) F1 score of the retrieved context with respect to the reference answer, if `retrieval_answer_recall` and `retrieval_answer_precision` succeed
-- `retrieval_answer_f1_cost`: The sum of `retrieval_answer_recall_cost` and `retrieval_answer_precision_cost`
 - `retrieval_context_recall`: (optional) recall of the retrieved context with respect to the reference answer, if evaluation succeeds
 - `retrieval_context_recall_error`: (optional) error message if `retrieval_context_recall` evaluation fails
 - `retrieval_context_precision`: (optional) precision of the retrieved context with respect to the reference answer, if evaluation succeeds
 - `retrieval_context_precision_error`: (optional) error message if `retrieval_context_precision` evaluation fails
 - `retrieval_context_f1`: (optional) F1 score of the retrieved context with respect to the reference answer, if `retrieval_context_recall` and `retrieval_context_precision` succeed
-
 
 #### Aggregates Keys
 
@@ -618,7 +606,6 @@ Aggregates are:
     - `answer_precision`
     - `answer_f1`
     - `answer_relevance`
-    - `answer_relevance_cost`
     - `retrieval_answer_recall`
     - `retrieval_answer_precision`
     - `retrieval_answer_f1`
@@ -635,7 +622,6 @@ Aggregates are:
   - `answer_precision`
   - `answer_f1`
   - `answer_relevance`
-  - `answer_relevance_cost`
   - `retrieval_answer_recall`
   - `retrieval_answer_precision`
   - `retrieval_answer_f1`
@@ -675,12 +661,6 @@ per_template:
       mean: 0.9
       median: 0.9
       sum: 0.9
-    answer_relevance_cost:
-      min: 0.0007
-      max: 0.0007
-      mean: 0.0007
-      median: 0.0007
-      sum: 0.0007
     steps:
       total:
         autocomplete_search: 10
@@ -747,12 +727,6 @@ per_template:
       mean: 0.9
       median: 0.9
       sum: 0.9
-    answer_relevance_cost:
-      min: 0.0007
-      max: 0.0007
-      mean: 0.0007
-      median: 0.0007
-      sum: 0.0007
     steps:
       total:
         autocomplete_search: 10
@@ -817,12 +791,6 @@ per_template:
       mean: 0.9
       median: 0.9
       sum: 0.9
-    answer_relevance_cost:
-      min: 0.0007
-      max: 0.0007
-      mean: 0.0007
-      median: 0.0007
-      sum: 0.0007
     steps:
       total:
         autocomplete_search: 9
@@ -889,12 +857,6 @@ per_template:
       mean: 0.9
       median: 0.9
       sum: 0.9
-    answer_relevance_cost:
-      min: 0.0007
-      max: 0.0007
-      mean: 0.0007
-      median: 0.0007
-      sum: 0.0007
     steps:
       total:
         autocomplete_search: 20
@@ -959,12 +921,6 @@ micro:
     mean: 0.9
     median: 0.9
     sum: 0.9
-  answer_relevance_cost:
-    min: 0.0007
-    max: 0.0007
-    mean: 0.0007
-    median: 0.0007
-    sum: 0.0007
   steps_score:
     sum: 17
     mean: 0.4358974358974359
@@ -1004,8 +960,6 @@ macro:
     mean: 1.0
   answer_relevance:
     mean: 0.9
-  answer_relevance_cost:
-    mean: 0.0007
   steps_score:
     mean: 0.45
   input_tokens:

@@ -1,37 +1,28 @@
-from langevals_ragas.response_relevancy import (
-    RagasResponseRelevancyEvaluator,
-    RagasResponseRelevancyEntry
-)
+from openai import AsyncOpenAI
+from ragas.embeddings.base import embedding_factory
+from ragas.llms import llm_factory
+from ragas.metrics.collections import AnswerRelevancy
 
 
-def get_relevance_dict(
+client = AsyncOpenAI()
+llm = llm_factory("gpt-4o-mini", client=client)
+embeddings = embedding_factory("openai", model="text-embedding-3-small", client=client)
+scorer = AnswerRelevancy(llm=llm, embeddings=embeddings)
+
+
+async def get_relevance_dict(
     question_text: str,
     actual_answer: str,
-    model_name: str = 'openai/gpt-4o-mini',
-    max_tokens: int = 65_536
 ) -> dict:
-    settings_dict = {
-        'model': model_name,
-        'max_tokens': max_tokens
-    }
-    entry = RagasResponseRelevancyEntry(
-        input=question_text,
-        output=actual_answer
-    )
-    evaluator = RagasResponseRelevancyEvaluator(settings=settings_dict)
     try:
-        result = evaluator.evaluate(entry)
-        if result.status == "processed":
-            return {
-                "answer_relevance": result.score,
-                "answer_relevance_cost": result.cost.amount,
-                "answer_relevance_reason": result.details,
-            }
-        else:
-            return {
-                "answer_relevance_error": result.details
-            }
+        result = await scorer.ascore(
+            user_input=question_text,
+            response=actual_answer
+        )
+        return {
+            "answer_relevance": result.value
+        }
     except Exception as e:
         return {
-            "answer_relevance_error": str(e),
+            "answer_relevance_error": str(e)
         }
