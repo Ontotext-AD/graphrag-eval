@@ -174,7 +174,14 @@ def test_run_custom_evaluation_config_error(monkeypatch):
     c["steps_keys"].append("invalid")
     error_configs.append(error_config)
 
-    for key in custom_evaluation.RESERVED_KEYS:
+    # Create custom configs with reserved keys
+    reserved_keys = set()
+    for i in range(1, 3):
+        file_path = DATA_DIR / f"evaluation_{i}.yaml"
+        with open(file_path) as f:
+            eval_dicts = yaml.safe_load(f)
+        reserved_keys |= {k for e in eval_dicts for k in e.keys()}
+    for key in reserved_keys:
         error_config = deepcopy(correct_config)
         error_config[0]["outputs"][key] = "invalid"
         error_configs.append(error_config)
