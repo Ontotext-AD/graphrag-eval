@@ -9,7 +9,7 @@ or add the following dependency in your `pyproject.toml` file:
 graphrag-eval = "*"
 ```
 
-To evaluate answer relevance and answer correctness or use a [custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/doc/custom-evaluation.md):
+To evaluate answer relevance and answer correctness or use a [custom evaluation](custom-evaluation.md):
 
 ```bash
 pip install 'graphrag-eval[llm]'
