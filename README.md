@@ -17,4 +17,4 @@ For issues or feature requests, please open [a GitHub issue](https://github.com/
 
 ## Documentation
 
-See folder [doc/](https://github.com/Ontotext-AD/graphrag-eval/blob/main/doc)
+See folder [doc/](doc)
