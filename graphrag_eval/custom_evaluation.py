@@ -23,7 +23,7 @@ RESERVED_KEYS = {
     "answer_recall",
     "answer_f1",
     "answer_correctness_reason",
-    "answer_correctness_error"
+    "answer_correctness_error",
     "answer_relevance",
     "answer_relevance_cost",
     "answer_relevance_reason",
