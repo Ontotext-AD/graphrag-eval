@@ -25,8 +25,6 @@ RESERVED_KEYS = {
     "answer_correctness_reason",
     "answer_correctness_error"
     "answer_relevance",
-    "answer_relevance_cost",
-    "answer_relevance_reason",
     "answer_relevance_error",
     "steps_score",
     "input_tokens",

@@ -7,10 +7,10 @@ OPENAI_MODEL_NAME = "gpt-4o-mini"
 TEMPERATURE = 0.0
 
 
-def run_evaluation(
-        qa_dataset: list[dict],
-        responses_dict: dict,
-        custom_eval_config_file_path: str | Path | None = None,
+async def run_evaluation(
+    qa_dataset: list[dict],
+    responses_dict: dict,
+    custom_eval_config_file_path: str | Path | None = None,
 ) -> list[dict]:
     # Output metrics are not nested, for simpler aggregation
     answer_correctness_evaluator = None
@@ -51,7 +51,7 @@ def run_evaluation(
                 eval_result["actual_answer"] = actual_result["actual_answer"]
                 from graphrag_eval import answer_relevance
                 eval_result.update(
-                    answer_relevance.get_relevance_dict(
+                    await answer_relevance.get_relevance_dict(
                         question["question_text"],
                         actual_result["actual_answer"],
                     )
@@ -68,7 +68,7 @@ def run_evaluation(
                         )
                     )
             eval_result.update(
-                evaluate_steps(question, actual_result)
+                await evaluate_steps(question, actual_result)
             )
             for evaluator in custom_evaluators:
                 custom_metrics = evaluator.evaluate(question, actual_result)
