@@ -20,6 +20,7 @@ class Config(BaseModel):
             raise ValueError(msg)
         return self
 
+
 async def run_evaluation(
     qa_dataset: list[dict],
     responses_dict: dict,
