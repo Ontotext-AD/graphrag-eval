@@ -100,42 +100,8 @@ async def test_get_retrieval_evaluation_dict_recall_success_precision_error(monk
         llm_config=get_llm_config(),
     )
     assert eval_result_dict == {
-        "retrieval_answer_recall_error": "details",
-        "retrieval_answer_precision_error": "details",
-    }
-
-@pytest.mark.asyncio
-async def test_get_retrieval_evaluation_dict_using_actual_answer_success(monkeypatch):
-    from graphrag_eval.steps.retrieval_answer import (
-        get_retrieval_evaluation_dict
-    )
-    eval_result_dict = await get_retrieval_evaluation_dict(
-        question_text="Why is the sky blue?",
-        reference_answer="Because of the oxygen in the air",
-        actual_contexts=[context_1],
-        llm_config=get_llm_config(),
-    )
-    assert approx(eval_result_dict) == {
         "retrieval_answer_recall": 0.9,
-        "retrieval_answer_precision": 0.6,
-        "retrieval_answer_f1": 0.72,
-    }
-
-
-@pytest.mark.asyncio
-async def test_get_retrieval_evaluation_dict_using_actual_answer_recall_success_precision_error(monkeypatch):
-    from graphrag_eval.steps.retrieval_answer import (
-        get_retrieval_evaluation_dict
-    )
-    eval_result_dict = await get_retrieval_evaluation_dict(
-        question_text="Why is the sky blue?",
-        reference_answer="Because of the oxygen in the air",
-        actual_contexts=[context_1],
-        llm_config=get_llm_config(),
-    )
-    assert eval_result_dict == {
-        "retrieval_answer_recall": 0.9,
-        "retrieval_answer_precision_error": "precision error"
+        "retrieval_answer_precision_error": "precision error",
     }
 
 
@@ -161,17 +127,3 @@ async def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
         "retrieval_answer_recall_error": "recall error",
         "retrieval_answer_precision_error": "precision error"
     }
-
-
-@pytest.mark.asyncio
-async def test_get_retrieval_evaluation_dict_using_no_answers():
-    from graphrag_eval.steps.retrieval_answer import (
-        get_retrieval_evaluation_dict,
-    )
-    eval_result_dict = await get_retrieval_evaluation_dict(
-        question_text="Why is the sky blue?",
-        actual_contexts=[context_1],
-        reference_answer="Because of the oxygen in the air",
-        llm_config=get_llm_config(),
-    )
-    assert eval_result_dict == {}
