@@ -1,7 +1,12 @@
 llm:
-  name: openai/gpt-4o-mini
-  temperature: 0.0
-  max_tokens: 65536
+  generation:
+    provider: openai
+    name: gpt-4o-mini
+    temperature: 0.0
+    max_tokens: 65536
+  embedding:
+    provider: openai
+    name: text-embedding-3-small
 custom_evaluations:
   -
     name: my_answer_relevance

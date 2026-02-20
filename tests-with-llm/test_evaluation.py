@@ -7,9 +7,9 @@ import yaml
 
 from graphrag_eval import (
     compute_aggregates,
+    llm,
     run_evaluation,
 )
-from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
 from tests.util import read_responses
 
 
@@ -37,8 +37,8 @@ async def test_run_evaluation_and_compute_aggregates(monkeypatch):
     monkeypatch.setattr(ContextRecall, 'ascore', async_mock)
     monkeypatch.setattr(ContextPrecision, 'ascore', async_mock)
     monkeypatch.setattr(
-        AnswerCorrectnessEvaluator,
-        "call_llm",
+        llm,
+        "call",
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
@@ -70,8 +70,8 @@ async def test_run_evaluation_and_compute_aggregates_no_actual_steps(
     from graphrag_eval.answer_relevance import AnswerRelevancy
     monkeypatch.setattr(AnswerRelevancy, 'ascore', async_mock)
     monkeypatch.setattr(
-        AnswerCorrectnessEvaluator,
-        "call_llm",
+        llm,
+        "call",
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
     actual_responses = read_responses(DATA_DIR / "actual_responses_3.jsonl")

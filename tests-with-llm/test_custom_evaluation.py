@@ -9,6 +9,7 @@ import yaml
 from graphrag_eval import (
     compute_aggregates,
     custom_evaluation,
+    llm,
     run_evaluation,
 )
 from graphrag_eval.custom_evaluation import CustomEvaluator
@@ -30,15 +31,14 @@ def _mock_common_calls(monkeypatch):
         ContextPrecision
     )
     from graphrag_eval.answer_relevance import AnswerRelevancy
-    from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
 
     mock = AsyncMock(return_value=MagicMock(value=0.9))
     monkeypatch.setattr(AnswerRelevancy, 'ascore', mock)
     monkeypatch.setattr(ContextRecall, 'ascore', mock)
     monkeypatch.setattr(ContextPrecision, 'ascore', mock)
     monkeypatch.setattr(
-        AnswerCorrectnessEvaluator,
-        "call_llm",
+        llm,
+        "call",
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
 
