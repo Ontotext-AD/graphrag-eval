@@ -18,10 +18,5 @@ async def test_answer_relevance():
         actual_answer="Oxygen makes it blue",
         llm_config=config.llm,
     )
-    result = get_relevance_dict(
-        question_text="Why is the sky blue?",
-        actual_answer="Oxygen makes it blue",
-        llm_config=config.llm,
-    )
     assert isinstance(result["answer_relevance"], float)
     assert 0 <= result["answer_relevance"] <= 1
