@@ -8,13 +8,6 @@ class GenerationConfig(BaseModel):
     max_tokens: int = Field(ge=1)
     model_config = ConfigDict(extra='allow')
 
-    @model_validator(mode="after")
-    def validate_config(self):
-        if len(self.name.split("/")) != 2:
-            msg = "'name' format should be '<provider>/<model_name_and_version>'"
-            raise ValueError(msg)
-        return self
-
 
 class EmbeddingConfig(BaseModel):
     provider: str
