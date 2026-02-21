@@ -38,7 +38,7 @@ async def test_run_evaluation_and_compute_aggregates(monkeypatch):
     monkeypatch.setattr(ContextPrecision, 'ascore', async_mock)
     monkeypatch.setattr(
         llm,
-        "call",
+        "generate",
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
@@ -71,7 +71,7 @@ async def test_run_evaluation_and_compute_aggregates_no_actual_steps(
     monkeypatch.setattr(AnswerRelevancy, 'ascore', async_mock)
     monkeypatch.setattr(
         llm,
-        "call",
+        "generate",
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
     actual_responses = read_responses(DATA_DIR / "actual_responses_3.jsonl")

@@ -94,7 +94,7 @@ def test_evaluate_answers(monkeypatch, tmp_path):
     monkeypatch.setattr(builtins, "open", mock_open)
 
     # Mock call_llm() and tqdm()
-    monkeypatch.setattr(llm, "call", lambda *_: "2\t2\t2\treason")
+    monkeypatch.setattr(llm, "generate", lambda *_: "2\t2\t2\treason")
     monkeypatch.setattr(answer_correctness, "tqdm", lambda x: x)
 
     # Run

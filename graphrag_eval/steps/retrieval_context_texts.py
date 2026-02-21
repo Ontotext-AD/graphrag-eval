@@ -13,7 +13,7 @@ async def get_retrieval_evaluation_dict(
     question_text: str,
     actual_contexts: list[dict[str, str]],
     reference_contexts: list[dict[str, str]],
-    llm_config: llm.Config
+    generation_config: llm.GenerationConfig
 ) -> dict:
     reference = '\n'.join([c["text"] for c in reference_contexts])
     retrieved_contexts = [c["text"] for c in actual_contexts]
@@ -22,7 +22,7 @@ async def get_retrieval_evaluation_dict(
         reference=reference,
         retrieved_contexts=retrieved_contexts
     )
-    llm = llm_factory(llm_config.generation.name, client=client)
+    llm = llm_factory(generation_config.name, client=client)
     recall_scorer = ContextRecall(llm=llm)
     precision_scorer = ContextPrecision(llm=llm)
     result = {}

@@ -8,7 +8,6 @@ import yaml
 
 from graphrag_eval import (
     compute_aggregates,
-    custom_evaluation,
     llm,
     run_evaluation,
 )
@@ -38,7 +37,7 @@ def _mock_common_calls(monkeypatch):
     monkeypatch.setattr(ContextPrecision, 'ascore', mock)
     monkeypatch.setattr(
         llm,
-        "call",
+        "generate",
         lambda *_: "2\t2\t2\tanswer correctness reason"
     )
 

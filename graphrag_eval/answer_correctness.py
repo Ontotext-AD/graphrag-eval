@@ -60,12 +60,12 @@ def extract_response_values(
 class AnswerCorrectnessEvaluator:
     def __init__(
         self,
-        llm_config: llm.Config,
+        generation_config: llm.Config,
         prompt_file_path: str | Path = PROMPT_FILE_PATH,
     ):
         with open(prompt_file_path, encoding="utf-8") as f:
             self.prompt_template = f.read()
-        self.llm_config = llm_config
+        self.generation_config = generation_config
 
     def evaluate_answer(
         self,
@@ -78,7 +78,7 @@ class AnswerCorrectnessEvaluator:
             reference_answer=reference_answer,
             candidate_answer=actual_answer,
         )
-        response_str = llm.call(self.llm_config, prompt)
+        response_str = llm.generate(self.generation_config, prompt)
         return extract_response_values(response_str)
 
     def get_correctness_dict(
@@ -119,7 +119,7 @@ def evaluate_and_write(
     out_file_path: str | Path,
     llm_config: llm.Config,
 ) -> None:
-    evaluator = AnswerCorrectnessEvaluator(llm_config=llm_config)
+    evaluator = AnswerCorrectnessEvaluator(generation_config=llm_config)
     with open(in_file_path, encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
         rows = [row for row in reader]

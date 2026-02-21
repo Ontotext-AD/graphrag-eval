@@ -26,7 +26,7 @@ async def test_retrieval_answer():
                 "text": "Gases scatter sunlight"
             }
         ],
-        llm_config=config.llm
+        generation_config=config.llm.generation
     )
     assert isinstance(result["retrieval_answer_recall"], float)
     assert isinstance(result["retrieval_answer_precision"], float)

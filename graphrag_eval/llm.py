@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class GenerationConfig(BaseModel):
@@ -19,7 +19,7 @@ class Config(BaseModel):
     embedding: EmbeddingConfig
 
 
-def call(config: Config, prompt: str) -> str:
+def generate(config: GenerationConfig, prompt: str) -> str:
     import litellm
     try:
         response = litellm.completions(

@@ -10,7 +10,7 @@ client = AsyncOpenAI()
 
 
 async def get_retrieval_evaluation_dict(
-    llm_config: llm.Config,
+    generation_config: llm.GenerationConfig,
     question_text: str,
     reference_answer: str,
     actual_contexts: list[dict[str, str]],
@@ -22,7 +22,7 @@ async def get_retrieval_evaluation_dict(
         retrieved_contexts=retrieved_contexts
     )
     result = {}
-    llm = llm_factory(llm_config.generation.name, client=client)
+    llm = llm_factory(generation_config.name, client=client)
     recall_scorer = ContextRecall(llm=llm)
     precision_scorer = ContextPrecision(llm=llm)
     try:

@@ -12,19 +12,13 @@ def set_env():
     os.environ["OPENAI_API_KEY"] = "fake-key"
 
 
-def get_llm_config():
-    return llm.Config(
-        generation=llm.GenerationConfig(
+def get_generation_config():
+    return llm.GenerationConfig(
             provider="openai",
             name="gpt-4o-mini",
             temperature=0.0,
             max_tokens=1024,
-        ),
-        embedding=llm.EmbeddingConfig(
-            provider="openai",
-            name="text-embedding-ada-002",
         )
-    )
 
 
 context_1 = {
@@ -48,7 +42,7 @@ async def test_get_retrieval_evaluation_dict_success(monkeypatch):
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
         actual_contexts=[context_1],
-        llm_config=get_llm_config(),
+        generation_config=get_generation_config(),
     )
     assert approx(eval_result_dict) == {
         "retrieval_answer_recall": 0.9,
@@ -73,7 +67,7 @@ async def test_get_retrieval_evaluation_dict_recall_error_precision_success(monk
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
         actual_contexts=[context_1],
-        llm_config=get_llm_config(),
+        generation_config=get_generation_config(),
     )
     assert eval_result_dict == {
         "retrieval_answer_recall_error": "recall error",
@@ -97,7 +91,7 @@ async def test_get_retrieval_evaluation_dict_recall_success_precision_error(monk
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
         actual_contexts=[context_1],
-        llm_config=get_llm_config(),
+        generation_config=get_generation_config(),
     )
     assert eval_result_dict == {
         "retrieval_answer_recall": 0.9,
@@ -121,7 +115,7 @@ async def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
         actual_contexts=[context_1],
-        llm_config=get_llm_config(),
+        generation_config=get_generation_config(),
     )
     assert eval_result_dict == {
         "retrieval_answer_recall_error": "recall error",

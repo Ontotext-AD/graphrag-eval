@@ -102,7 +102,7 @@ class CustomEvaluator:
     def __init__(
         self, 
         config: Config,
-        llm_config: llm.Config,
+        generation_config: llm.GenerationConfig,
     ):
         self.name = config.name
         self.input_variables = config.inputs
@@ -113,11 +113,11 @@ class CustomEvaluator:
             config,
             self.output_variables
         )
-        self.llm_config = llm_config
+        self.generation_config = generation_config
 
     def call_llm(self, prompt: str) -> str:
         """Method for easier automated testing"""
-        return llm.call(self.llm_config, prompt)
+        return llm.generate(self.generation_config, prompt)
 
     def format_steps(self, steps: list) -> str:
         steps_formatted = []

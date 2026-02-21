@@ -38,7 +38,7 @@ async def run_evaluation(
     if config.custom_evaluations and config.llm:
         from .custom_evaluation import CustomEvaluator
         custom_evaluators = [
-            CustomEvaluator(c, config.llm)
+            CustomEvaluator(c, config.llm.generation)
             for c in config.custom_evaluations
         ]
     for template in qa_dataset:
@@ -77,7 +77,7 @@ async def run_evaluation(
                     from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
                     if not answer_correctness_evaluator:
                         answer_correctness_evaluator = AnswerCorrectnessEvaluator(
-                            llm_config=config.llm
+                            generation_config=config.llm.generation
                         )
                     eval_result.update(
                         answer_correctness_evaluator.get_correctness_dict(
@@ -86,7 +86,11 @@ async def run_evaluation(
                         )
                     )
             eval_result.update(
-                await evaluate_steps(question, actual_result, llm_config=config.llm)
+                await evaluate_steps(
+                    question,
+                    actual_result,
+                    generation_config=config.llm.generation if config.llm else None
+                )
             )
             for evaluator in custom_evaluators:
                 custom_metrics = evaluator.evaluate(question, actual_result)

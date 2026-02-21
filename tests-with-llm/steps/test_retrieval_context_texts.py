@@ -12,19 +12,13 @@ def set_env():
     os.environ["OPENAI_API_KEY"] = "fake-key"
 
 
-def get_llm_config():
-    return llm.Config(
-        generation=llm.GenerationConfig(
+def get_generation_config():
+    return llm.GenerationConfig(
             provider="openai",
             name="gpt-4o-mini",
             temperature=0.0,
             max_tokens=1024,
-        ),
-        embedding=llm.EmbeddingConfig(
-            provider="openai",
-            name="text-embedding-ada-002",
         )
-    )
 
 
 context_1_dict = {
@@ -49,7 +43,7 @@ async def test_get_retrieval_evaluation_dict_success(monkeypatch):
         question_text="Why is the sky blue?",
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
-        llm_config=get_llm_config(),
+        generation_config=get_generation_config(),
     )
     assert approx(eval_result_dict) == {
         "retrieval_context_recall": 0.9,
@@ -74,7 +68,7 @@ async def test_get_retrieval_evaluation_dict_recall_error(monkeypatch):
         question_text="Why is the sky blue?",
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
-        llm_config=get_llm_config(),
+        generation_config=get_generation_config(),
     )
     assert eval_result_dict == {
         "retrieval_context_recall_error": "recall error",
@@ -97,7 +91,7 @@ async def test_get_retrieval_evaluation_dict_precision_error(monkeypatch):
         question_text="Why is the sky blue?",
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
-        llm_config=get_llm_config(),
+        generation_config=get_generation_config(),
     )
     assert eval_result_dict == {
         "retrieval_context_recall": 0.9,
@@ -121,7 +115,7 @@ async def test_get_retrieval_evaluation_dict_both_error(monkeypatch):
         question_text="Why is the sky blue?",
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
-        llm_config=get_llm_config(),
+        generation_config=get_generation_config(),
     )
     assert eval_result_dict == {
         "retrieval_context_recall_error": "recall error",
