@@ -195,3 +195,12 @@ class CustomEvaluator:
         prompt = self.prompt_template.format(**inputs)
         response = self.call_llm(prompt)
         return self.parse_outputs(response)
+
+
+def create_evaluators(config: "evaluation.Config") -> list[CustomEvaluator]:
+    if config.custom_evaluations and config.llm:
+        return [
+            CustomEvaluator(c, config.llm.generation)
+            for c in config.custom_evaluations
+        ]
+    return []

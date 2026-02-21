@@ -5,12 +5,14 @@ from graphrag_eval.evaluation import Config
 from graphrag_eval.steps.retrieval_context_texts import (
     get_retrieval_evaluation_dict
 )
+from graphrag_eval import llm
 
 
 path = "tests-with-llm/test_data/config-llm.yaml"
 with open(path, encoding="utf-8") as f:
     config_dict = yaml.safe_load(f)
 config = Config(**config_dict)
+ragas_llm, _ = llm.create_llm_and_embeddings(config)
 
 
 @pytest.mark.asyncio
@@ -37,7 +39,7 @@ async def test_retrieval_contexts():
                 "text": "The sun shines onto the atmosphere. The atmosphere contains various gases."
             }
         ],
-        generation_config=config.llm.generation,
+        ragas_llm=ragas_llm,
     )
     assert isinstance(result["retrieval_context_recall"], float)
     assert isinstance(result["retrieval_context_precision"], float)

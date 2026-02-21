@@ -10,13 +10,13 @@ def get_llm_config():
     return llm.Config(
         generation=llm.GenerationConfig(
             provider="openai",
-            name="gpt-4o-mini",
+            model="gpt-4o-mini",
             temperature=0.0,
             max_tokens=1024,
         ),
         embedding=llm.EmbeddingConfig(
             provider="openai",
-            name="text-embedding-ada-002",
+            model="text-embedding-ada-002",
         )
     )
 

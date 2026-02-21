@@ -1,19 +1,13 @@
-from openai import AsyncOpenAI
-from ragas.llms import llm_factory
 from ragas.metrics.collections import ContextRecall, ContextPrecision
 
-from graphrag_eval import llm
 from graphrag_eval.util import compute_f1
 
 
-client = AsyncOpenAI()
-
-
 async def get_retrieval_evaluation_dict(
-    generation_config: llm.GenerationConfig,
     question_text: str,
     reference_answer: str,
     actual_contexts: list[dict[str, str]],
+    ragas_llm,
 ) -> dict:
     retrieved_contexts = [a["text"] for a in actual_contexts]
     params = dict(
@@ -22,9 +16,8 @@ async def get_retrieval_evaluation_dict(
         retrieved_contexts=retrieved_contexts
     )
     result = {}
-    llm = llm_factory(generation_config.name, client=client)
-    recall_scorer = ContextRecall(llm=llm)
-    precision_scorer = ContextPrecision(llm=llm)
+    recall_scorer = ContextRecall(llm=ragas_llm)
+    precision_scorer = ContextPrecision(llm=ragas_llm)
     try:
         recall = await recall_scorer.ascore(**params)
         result["retrieval_answer_recall"] = recall.value

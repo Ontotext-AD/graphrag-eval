@@ -4,21 +4,17 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from pytest import approx
 
-from graphrag_eval import llm
-
 
 @pytest.fixture(scope="session", autouse=True)
 def set_env():
     os.environ["OPENAI_API_KEY"] = "fake-key"
 
 
-def get_generation_config():
-    return llm.GenerationConfig(
-            provider="openai",
-            name="gpt-4o-mini",
-            temperature=0.0,
-            max_tokens=1024,
-        )
+def get_ragas_llm():
+    from openai import AsyncOpenAI
+    from ragas.llms import llm_factory
+
+    return llm_factory("gpt-3.5-turbo", client=AsyncOpenAI())
 
 
 context_1_dict = {
@@ -43,7 +39,7 @@ async def test_get_retrieval_evaluation_dict_success(monkeypatch):
         question_text="Why is the sky blue?",
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
-        generation_config=get_generation_config(),
+        ragas_llm=get_ragas_llm(),
     )
     assert approx(eval_result_dict) == {
         "retrieval_context_recall": 0.9,
@@ -68,7 +64,7 @@ async def test_get_retrieval_evaluation_dict_recall_error(monkeypatch):
         question_text="Why is the sky blue?",
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
-        generation_config=get_generation_config(),
+        ragas_llm=get_ragas_llm(),
     )
     assert eval_result_dict == {
         "retrieval_context_recall_error": "recall error",
@@ -91,7 +87,7 @@ async def test_get_retrieval_evaluation_dict_precision_error(monkeypatch):
         question_text="Why is the sky blue?",
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
-        generation_config=get_generation_config(),
+        ragas_llm=get_ragas_llm(),
     )
     assert eval_result_dict == {
         "retrieval_context_recall": 0.9,
@@ -115,7 +111,7 @@ async def test_get_retrieval_evaluation_dict_both_error(monkeypatch):
         question_text="Why is the sky blue?",
         reference_contexts=[context_1_dict],
         actual_contexts=[context_1_dict],
-        generation_config=get_generation_config(),
+        ragas_llm=get_ragas_llm(),
     )
     assert eval_result_dict == {
         "retrieval_context_recall_error": "recall error",

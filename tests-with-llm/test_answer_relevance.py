@@ -3,23 +3,19 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from graphrag_eval import llm
+
+def get_ragas_llm():
+    from openai import AsyncOpenAI
+    from ragas.llms import llm_factory
+
+    return llm_factory("gpt-3.5-turbo", client=AsyncOpenAI())
 
 
-def get_llm_config():
-    return llm.Config(
-        generation=llm.GenerationConfig(
-            provider="openai",
-            name="gpt-4o-mini",
-            temperature=0.0,
-            max_tokens=1024,
-        ),
-        embedding=llm.EmbeddingConfig(
-            provider="openai",
-            name="text-embedding-ada-002",
-        )
-    )
-
+def get_ragas_embeddings():
+    from openai import AsyncOpenAI
+    from ragas.embeddings.base import embedding_factory    
+    
+    return embedding_factory("openai", client=AsyncOpenAI())
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -35,7 +31,8 @@ async def test_get_relevance_dict_eval_success(monkeypatch):
     eval_result_dict = await get_relevance_dict(
         "Why is the sky blue?",
         "Because of the oxygen in the air",
-        llm_config=get_llm_config(),
+        ragas_llm=get_ragas_llm(),
+        ragas_embeddings=get_ragas_embeddings()
     )
     assert eval_result_dict == {
         "answer_relevance": 0.9
@@ -50,7 +47,8 @@ async def test_get_relevance_dict_eval_error(monkeypatch):
     eval_result_dict = await get_relevance_dict(
         "Why is the sky blue?",
         "Because of the oxygen in the air",
-        llm_config=get_llm_config(),
+        ragas_llm=get_ragas_llm(),
+        ragas_embeddings=get_ragas_embeddings()
     )
     assert eval_result_dict == {
         "answer_relevance_error": "some error"

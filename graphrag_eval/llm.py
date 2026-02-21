@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 class GenerationConfig(BaseModel):
     provider: str
-    name: str
+    model: str
     temperature: float = Field(ge=0.0, le=2.0)
     max_tokens: int = Field(ge=1)
     model_config = ConfigDict(extra='allow')
@@ -11,12 +11,36 @@ class GenerationConfig(BaseModel):
 
 class EmbeddingConfig(BaseModel):
     provider: str
-    name: str
+    model: str
 
 
 class Config(BaseModel):
     generation: GenerationConfig
-    embedding: EmbeddingConfig
+    embedding: EmbeddingConfig | None = None
+
+
+def create_llm_and_embeddings(config: "evaluation.Config"):
+    if config.llm:
+        from openai import AsyncOpenAI
+        from ragas.llms import llm_factory
+
+        client = AsyncOpenAI()
+        ragas_llm = llm_factory(
+            provider=config.llm.generation.provider,
+            model=config.llm.generation.model,
+            client=client
+        )
+        if config.llm.embedding:
+            from ragas.embeddings.base import embedding_factory
+            
+            ragas_embeddings = embedding_factory(
+                provider=config.llm.embedding.provider, 
+                model=config.llm.embedding.model,
+                client=client
+            )
+            return ragas_llm, ragas_embeddings
+        return ragas_llm, None
+    return None, None
 
 
 def generate(config: GenerationConfig, prompt: str) -> str:

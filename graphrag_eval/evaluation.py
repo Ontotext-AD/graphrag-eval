@@ -19,6 +19,14 @@ class Config(BaseModel):
             msg = "llm config is required if custom_evaluations are provided"
             raise ValueError(msg)
         return self
+    
+    @classmethod
+    def parse(cls, config_file_path: str | Path | None):
+        if config_file_path:
+            with open(config_file_path, encoding="utf-8") as f:
+                config_dict = yaml.safe_load(f)
+            return cls(**config_dict)
+        return cls()
 
 
 async def run_evaluation(
@@ -29,18 +37,9 @@ async def run_evaluation(
     # Output metrics are not nested, for simpler aggregation
     answer_correctness_evaluator = None
     evaluation_results = []
-    custom_evaluators = []
-    config = Config()
-    if config_file_path:
-        with open(config_file_path, encoding="utf-8") as f:
-            config_dict = yaml.safe_load(f)
-        config = Config(**config_dict)
-    if config.custom_evaluations and config.llm:
-        from .custom_evaluation import CustomEvaluator
-        custom_evaluators = [
-            CustomEvaluator(c, config.llm.generation)
-            for c in config.custom_evaluations
-        ]
+    config = Config.parse(config_file_path)
+    ragas_llm, ragas_embeddings = llm_.create_llm_and_embeddings(config)
+    custom_evaluators = custom_evaluation.create_evaluators(config)
     for template in qa_dataset:
         template_id = template["template_id"]
         for question in template["questions"]:
@@ -64,13 +63,14 @@ async def run_evaluation(
 
             if "actual_answer" in actual_result:
                 eval_result["actual_answer"] = actual_result["actual_answer"]
-                if config.llm:
+                if ragas_llm:
                     from graphrag_eval import answer_relevance
                     eval_result.update(
                         await answer_relevance.get_relevance_dict(
                             question["question_text"],
                             actual_result["actual_answer"],
-                            llm_config=config.llm,
+                            ragas_llm,
+                            ragas_embeddings,
                         )
                     )
                 if "reference_answer" in question and config.llm:
@@ -89,7 +89,7 @@ async def run_evaluation(
                 await evaluate_steps(
                     question,
                     actual_result,
-                    generation_config=config.llm.generation if config.llm else None
+                    ragas_llm=ragas_llm,
                 )
             )
             for evaluator in custom_evaluators:
