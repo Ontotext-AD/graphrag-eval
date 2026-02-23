@@ -91,12 +91,19 @@ If no LLM is configured or the `config_file_path` parameter is not provided, the
 
 ### Configuration
 
-The configuration has two sections:
-* `llm`: required for metrics that require an LLM. The following keys are required:
-    * `name`: (str) name of the LLM to use
-    * `temperature`: (float in the range [0.0, 2.0]) temperature to use for the LLM
-    * `max_tokens`: (int > 0) maximum number of tokens to generate
-* `custom_evaluations`: (list of the following maps) required nonempty for custom evaluations. Each map has keys:
+The configuration has two sections: `llm` and `custom_evaluation`. Example:
+
+* `llm`: required for (LLM-based metrics)[#llm-use-in-evaluation]. The following keys are required:
+    * `generation`: required. The following keys are required:
+        * `provider`: (str) name of the organization providing the generation model, as supported by LiteLLM
+        * `model`: (str) name of the generation model
+        * `temperature`: (float in the range [0.0, 2.0]) adversarial temperature for generation
+        * `max_tokens`: (int > 0) maximum number of tokens to generate
+        * Optional keys: parameters to be passed to LiteLLM for generation (for (`answer_correctness`)[#output-keys] and (custom evaluation)[#custom-evaluation-custom-metrics])
+    * `embedding`: required for (`answer_relevance`)[#output-keys].
+        * `provider`: (str) name of the organiation providing the embedding model
+        * `model`: (str) name of the embedding model
+* `custom_evaluations`: (list of the following maps) required nonempty for (custom evaluation)[#custom-evaluation-custom-metrics]. Each map has keys:
     * `name`: (str) name of the evaluation
     * `inputs`: (list[str]) list of input variables. Any combination of the following:
         * `question`
@@ -113,13 +120,18 @@ The configuration has two sections:
 
 #### Example Configuration File With LLM Configuration
 
-Below is a YAML file that configures the LLM for metrics that require an LLM.
+Below is a YAML file that configures the LLM generation ((for metrics that require an LLM)[#llm-use-in-evaluation]) and embedding (for (answer relevance)[#otuput-keys]).
 
 ```YAML
 llm:
-  name: openai/gpt-4o-mini
-  temperature: 0.0
-  max_tokens: 65536
+  generation:
+    provider: openai
+    model: gpt-4o-mini
+    temperature: 0.0
+    max_tokens: 65536
+  embedding:
+    provider: openai
+    model: text-embedding-3-small
 ```
 
 #### Example Configuration File With Custom Evaluations
@@ -132,9 +144,14 @@ This is an example of the format and may not create accurate evaluations.
 
 ```YAML
 llm:
-  name: openai/gpt-4o-mini
-  temperature: 0.0
-  max_tokens: 65536
+  generation:
+    provider: openai
+    model: gpt-4o-mini
+    temperature: 0.0
+    max_tokens: 65536
+  embedding:
+    provider: openai
+    model: text-embedding-3-small
 custom_evaluations:
   -
     name: my_answer_relevance
