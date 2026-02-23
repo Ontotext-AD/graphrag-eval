@@ -99,11 +99,11 @@ The configuration has two sections: `llm` and `custom_evaluation`. Example:
         * `model`: (str) name of the generation model
         * `temperature`: (float in the range [0.0, 2.0]) adversarial temperature for generation
         * `max_tokens`: (int > 0) maximum number of tokens to generate
-        * Optional keys: parameters to be passed to LiteLLM for generation (for (`answer_correctness`)[#output-keys] and (custom evaluation)[#custom-evaluation-custom-metrics])
+        * Optional keys: parameters to be passed to LiteLLM for generation (for (`answer_correctness`)[#output-keys] and (custom evaluation)[#custom-evaluation-(custom-metrics)])
     * `embedding`: required for (`answer_relevance`)[#output-keys].
         * `provider`: (str) name of the organiation providing the embedding model
         * `model`: (str) name of the embedding model
-* `custom_evaluations`: (list of the following maps) required nonempty for (custom evaluation)[#custom-evaluation-custom-metrics]. Each map has keys:
+* `custom_evaluations`: (list of the following maps) required nonempty for (custom evaluation)[#custom-evaluation-(custom-metrics)]. Each map has keys:
     * `name`: (str) name of the evaluation
     * `inputs`: (list[str]) list of input variables. Any combination of the following:
         * `question`
