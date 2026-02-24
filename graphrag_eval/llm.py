@@ -1,5 +1,5 @@
-from ragas.embeddings.base import BaseRagasEmbedding
-from ragas.llms.base import InstructorBaseRagasLLM
+from typing import Optional
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -22,7 +22,7 @@ class Config(BaseModel):
 
 
 def create_llm_and_embedder(config: "evaluation.Config") -> \
-tuple[InstructorBaseRagasLLM | None, BaseRagasEmbedding | None]:
+tuple[Optional["InstructorBaseRagasLLM"], Optional["BaseRagasEmbedding"]]:
     if config.llm:
         import litellm
         from ragas.llms import llm_factory
