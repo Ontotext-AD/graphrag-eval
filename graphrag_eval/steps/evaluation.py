@@ -3,8 +3,6 @@ from collections import defaultdict
 from collections.abc import Sequence
 from typing import Any
 
-from ragas.llms.base import InstructorBaseRagasLLM
-
 from .iri_discovery import do_iri_discovery_steps_equal
 from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
@@ -119,7 +117,7 @@ def calculate_steps_score(
 async def evaluate_steps(
     reference: dict,
     actual: dict,
-    ragas_llm: InstructorBaseRagasLLM,
+    ragas_llm: "InstructorBaseRagasLLM",
 ) -> dict:
     retrieval_evaluator_using_answers = None
     retrieval_evaluator_using_texts = None
