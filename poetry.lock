@@ -4205,4 +4205,4 @@ llm = ["langchain-openai", "ragas"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.13"
-content-hash = "6c77e07275b414f5380057c5c9e75587efba6606b5b1b5adca061fcd6bc16437"
+content-hash = "1fa2abfd9b91c9c44f732dd36e0c837d0ca52870f2b0d14896aa50ff03ece99e"
