@@ -46,9 +46,9 @@ def create_llm_and_embeddings(config: "evaluation.Config"):
 def generate(config: GenerationConfig, prompt: str) -> str:
     import litellm
     try:
-        response = litellm.completions(
+        response = litellm.completion(
         messages=[{"role": "user", "content": prompt}],
-        **config.dict()
+        **config.model_dump()
         )
         return response.choices[0].message.content.strip("\n")
     except Exception as e:
