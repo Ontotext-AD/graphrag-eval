@@ -32,9 +32,9 @@ def _mock_common_calls(monkeypatch):
     from graphrag_eval.answer_relevance import AnswerRelevancy
 
     mock = AsyncMock(return_value=MagicMock(value=0.9))
-    monkeypatch.setattr(AnswerRelevancy, 'ascore', mock)
-    monkeypatch.setattr(ContextRecall, 'ascore', mock)
-    monkeypatch.setattr(ContextPrecision, 'ascore', mock)
+    monkeypatch.setattr(AnswerRelevancy, "ascore", mock)
+    monkeypatch.setattr(ContextRecall, "ascore", mock)
+    monkeypatch.setattr(ContextPrecision, "ascore", mock)
     monkeypatch.setattr(
         llm,
         "generate",
@@ -99,34 +99,34 @@ async def test_run_custom_evaluation_config_error(monkeypatch):
     error_configs = []
 
     error_config = deepcopy(correct_config)
-    del error_config['llm']
+    del error_config["llm"]
     error_configs.append(error_config)
 
     for custom_evals_configs in [], {}, [[]]:
         error_config = deepcopy(correct_config)
-        error_config['custom_evaluations'] = custom_evals_configs
+        error_config["custom_evaluations"] = custom_evals_configs
         error_configs.append(error_config)
 
     for key in ["name", "inputs", "instructions", "outputs"]:
         error_config = deepcopy(correct_config)
-        del error_config['custom_evaluations'][0][key]
+        del error_config["custom_evaluations"][0][key]
         error_configs.append(error_config)
     
     error_config = deepcopy(correct_config)
-    error_config['custom_evaluations'][0]["extra"] = "invalid"
+    error_config["custom_evaluations"][0]["extra"] = "invalid"
     error_configs.append(error_config)
     
     for k1 in "steps_name", "steps_keys":
         # custom_evaluations[1] has "reference_steps" and "actual_steps"
         for k2 in "reference_steps", "actual_steps":
             error_config = deepcopy(correct_config)
-            c = error_config['custom_evaluations'][1]
+            c = error_config["custom_evaluations"][1]
             del c[k1]
             del c["inputs"][c["inputs"].index(k2)]
             error_configs.append(error_config)
     
     error_config = deepcopy(correct_config)
-    c = error_config['custom_evaluations'][1]
+    c = error_config["custom_evaluations"][1]
     c["steps_keys"].append("invalid")
     error_configs.append(error_config)
 
@@ -140,7 +140,7 @@ async def test_run_custom_evaluation_config_error(monkeypatch):
             reserved_keys |= eval.keys()
     for key in reserved_keys:
         error_config = deepcopy(correct_config)
-        error_config['custom_evaluations'][0]["outputs"][key] = "invalid"
+        error_config["custom_evaluations"][0]["outputs"][key] = "invalid"
         error_configs.append(error_config)
 
     for config in error_configs:
