@@ -45,7 +45,8 @@ To evaluate only correctness of final answers (system responses), you can clone 
 1. Execute `poetry install --with llm`
 1. Execute
    ```<LLM_ACCESS_VARIABLE>=<your_api_key> poetry run answer-correctness -i <input_file.tsv> -o <output_file.tsv>```
-  e.g.,
+  replacing `<LLM_ACCESS_VARIABLE>` by the variable used by your LLM provider to specify your LLM use key.
+  Example:
     ```OPENAI_API_KEY=XXX poetry run answer-correctness -i reference.tsv -o evaluations.tsv```
 
 We plan to improve CLI support in future releases.
@@ -83,7 +84,7 @@ The following metrics use an LLM which must be configured using a [configuration
   * `retrieval_context_recall`
   * `retrieval_context_precision`
   * `retrieval_context_f1`
-* [custom evaluation](#custom-evaluation-(custom-metrics)) 
+* [custom evaluation](#custom-evaluation-custom-metrics)
 
 Supported LLMs are all those supported by the [`litellm`](https://github.com/BerriAI/litellm) library, including all major LLMs and local models via Ollama.
 
@@ -93,17 +94,17 @@ If no LLM is configured or the `config_file_path` parameter is not provided, the
 
 The configuration has two sections: `llm` and `custom_evaluation`. Example:
 
-* `llm`: required for (LLM-based metrics)[#llm-use-in-evaluation]. The following keys are required:
+* `llm`: required for [LLM-based metrics](#llm-use-in-evaluation). The following keys are required:
     * `generation`: required. The following keys are required:
         * `provider`: (str) name of the organization providing the generation model, as supported by LiteLLM
         * `model`: (str) name of the generation model
         * `temperature`: (float in the range [0.0, 2.0]) adversarial temperature for generation
         * `max_tokens`: (int > 0) maximum number of tokens to generate
-        * Optional keys: parameters to be passed to LiteLLM for generation (for (`answer_correctness`)[#output-keys] and (custom evaluation)[#custom-evaluation-(custom-metrics)])
-    * `embedding`: required for (`answer_relevance`)[#output-keys].
+        * Optional keys: parameters to be passed to LiteLLM for generation (for [`answer_correctness`](#output-keys) and [custom evaluation](#custom-evaluation-custom-metrics))
+    * `embedding`: required for [`answer_relevance`](#output-keys).
         * `provider`: (str) name of the organiation providing the embedding model
         * `model`: (str) name of the embedding model
-* `custom_evaluations`: (list of the following maps) required nonempty for (custom evaluation)[#custom-evaluation-(custom-metrics)]. Each map has keys:
+* `custom_evaluations`: (list of the following maps) required nonempty for [custom evaluation](#custom-evaluation-custom-metrics). Each map has keys:
     * `name`: (str) name of the evaluation
     * `inputs`: (list[str]) list of input variables. Any combination of the following:
         * `question`
@@ -120,7 +121,7 @@ The configuration has two sections: `llm` and `custom_evaluation`. Example:
 
 #### Example Configuration File With LLM Configuration
 
-Below is a YAML file that configures the LLM generation ((for metrics that require an LLM)[#llm-use-in-evaluation]) and embedding (for (answer relevance)[#otuput-keys]).
+Below is a YAML file that configures the LLM generation (for [metrics that require an LLM](#llm-use-in-evaluation)) and embedding (for [`answer_relevance`](#otuput-keys)).
 
 ```YAML
 llm:
