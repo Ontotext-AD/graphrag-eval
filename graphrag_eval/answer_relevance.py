@@ -7,9 +7,9 @@ async def get_relevance_dict(
     question_text: str,
     actual_answer: str,
     ragas_llm: InstructorBaseRagasLLM,
-    ragas_embeddings: BaseRagasEmbedding,
+    ragas_embedder: BaseRagasEmbedding,
 ) -> dict:
-    scorer = AnswerRelevancy(llm=ragas_llm, embeddings=ragas_embeddings)
+    scorer = AnswerRelevancy(llm=ragas_llm, embeddings=ragas_embedder)
     try:
         result = await scorer.ascore(
             user_input=question_text,

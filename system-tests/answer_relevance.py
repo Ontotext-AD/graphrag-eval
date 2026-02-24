@@ -9,7 +9,7 @@ path = "tests-with-llm/test_data/config-llm.yaml"
 with open(path, encoding="utf-8") as f:
     config_dict = yaml.safe_load(f)
 config = Config(**config_dict)
-ragas_llm, ragas_embeddings = llm.create_llm_and_embeddings(config)
+ragas_llm, ragas_embedder = llm.create_llm_and_embedder(config)
 
 
 @pytest.mark.asyncio
@@ -18,7 +18,7 @@ async def test_answer_relevance():
         question_text="Why is the sky blue?",
         actual_answer="Oxygen makes it blue",
         ragas_llm=ragas_llm,
-        ragas_embeddings=ragas_embeddings
+        ragas_embedder=ragas_embedder
     )
     assert isinstance(result["answer_relevance"], float)
     assert 0 <= result["answer_relevance"] <= 1

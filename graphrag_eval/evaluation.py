@@ -4,7 +4,7 @@ import yaml
 from pydantic import BaseModel, Field, model_validator
 
 from . import custom_evaluation
-from .llm import Config as LLMConfig, create_llm_and_embeddings
+from .llm import Config as LLMConfig, create_llm_and_embedder
 from .steps.evaluation import evaluate_steps
 
 
@@ -38,7 +38,7 @@ async def run_evaluation(
     answer_correctness_evaluator = None
     evaluation_results = []
     config = Config.parse(config_file_path)
-    ragas_llm, ragas_embeddings = create_llm_and_embeddings(config)
+    ragas_llm, ragas_embedder = create_llm_and_embedder(config)
     custom_evaluators = custom_evaluation.create_evaluators(config)
     for template in qa_dataset:
         template_id = template["template_id"]
@@ -70,7 +70,7 @@ async def run_evaluation(
                             question["question_text"],
                             actual_result["actual_answer"],
                             ragas_llm,
-                            ragas_embeddings,
+                            ragas_embedder,
                         )
                     )
                 if "reference_answer" in question and config.llm:

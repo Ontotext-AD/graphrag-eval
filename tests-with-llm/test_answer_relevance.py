@@ -13,7 +13,7 @@ def get_ragas_llm() -> InstructorBaseRagasLLM:
     return llm_factory("gpt-3.5-turbo", client=AsyncOpenAI())
 
 
-def get_ragas_embeddings():
+def get_ragas_embedder():
     from openai import AsyncOpenAI
     from ragas.embeddings.base import embedding_factory    
     
@@ -34,7 +34,7 @@ async def test_get_relevance_dict_eval_success(monkeypatch):
         "Why is the sky blue?",
         "Because of the oxygen in the air",
         ragas_llm=get_ragas_llm(),
-        ragas_embeddings=get_ragas_embeddings()
+        ragas_embedder=get_ragas_embedder()
     )
     assert eval_result_dict == {
         "answer_relevance": 0.9
@@ -50,7 +50,7 @@ async def test_get_relevance_dict_eval_error(monkeypatch):
         "Why is the sky blue?",
         "Because of the oxygen in the air",
         ragas_llm=get_ragas_llm(),
-        ragas_embeddings=get_ragas_embeddings()
+        ragas_embedder=get_ragas_embedder()
     )
     assert eval_result_dict == {
         "answer_relevance_error": "some error"

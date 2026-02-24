@@ -21,7 +21,7 @@ class Config(BaseModel):
     embedding: EmbeddingConfig | None = None
 
 
-def create_llm_and_embeddings(config: "evaluation.Config") -> \
+def create_llm_and_embedder(config: "evaluation.Config") -> \
 tuple[InstructorBaseRagasLLM | None, BaseRagasEmbedding | None]:
     if config.llm:
         from openai import AsyncOpenAI
@@ -36,12 +36,12 @@ tuple[InstructorBaseRagasLLM | None, BaseRagasEmbedding | None]:
         if config.llm.embedding:
             from ragas.embeddings.base import embedding_factory
             
-            ragas_embeddings = embedding_factory(
+            ragas_embedder = embedding_factory(
                 provider=config.llm.embedding.provider, 
                 model=config.llm.embedding.model,
                 client=client
             )
-            return ragas_llm, ragas_embeddings
+            return ragas_llm, ragas_embedder
         return ragas_llm, None
     return None, None
 
