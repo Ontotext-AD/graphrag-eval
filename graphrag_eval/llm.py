@@ -24,14 +24,13 @@ class Config(BaseModel):
 def create_llm_and_embedder(config: "evaluation.Config") -> \
 tuple[InstructorBaseRagasLLM | None, BaseRagasEmbedding | None]:
     if config.llm:
-        from openai import AsyncOpenAI
+        import litellm
         from ragas.llms import llm_factory
 
-        client = AsyncOpenAI()
         ragas_llm = llm_factory(
-            provider=config.llm.generation.provider,
-            model=config.llm.generation.model,
-            client=client
+            provider="litellm",
+            model=f"{config.llm.generation.provider}/{config.llm.generation.model}",
+            client=litellm.acompletion,
         )
         if config.llm.embedding:
             from ragas.embeddings.base import embedding_factory
@@ -39,7 +38,7 @@ tuple[InstructorBaseRagasLLM | None, BaseRagasEmbedding | None]:
             ragas_embedder = embedding_factory(
                 provider=config.llm.embedding.provider, 
                 model=config.llm.embedding.model,
-                client=client
+                client=litellm
             )
             return ragas_llm, ragas_embedder
         return ragas_llm, None

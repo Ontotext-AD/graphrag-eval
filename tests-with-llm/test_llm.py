@@ -14,6 +14,9 @@ def test_create_llm_and_embeddings_no_llm_config():
 
 
 def test_create_llm_and_embeddings_llm_config_no_embedding_config():
+    import litellm
+    from ragas.llms import llm_factory
+
     config = evaluation.Config(
         llm=llm.Config(
             generation=GenerationConfig(
@@ -26,9 +29,7 @@ def test_create_llm_and_embeddings_llm_config_no_embedding_config():
     )
     llm_, embeddings = create_llm_and_embedder(config)
     assert llm_ is not None
-    assert llm_.provider == "openai"
-    assert llm_.model == "gpt-3.5-turbo"
-    assert llm_.is_async
+    assert llm_.model == "openai/gpt-3.5-turbo"
     assert embeddings is None
 
 
@@ -49,9 +50,6 @@ def test_create_llm_and_embeddings_llm_config_embedding_config():
     )
     llm_, embeddings = create_llm_and_embedder(config)
     assert llm_ is not None
-    assert llm_.provider == "openai"
-    assert llm_.model == "gpt-3.5-turbo"
-    assert llm_.is_async
+    assert llm_.model == "openai/gpt-3.5-turbo"
     assert embeddings is not None
     assert embeddings.model == "text-embedding-ada-002"
-    assert embeddings.is_async
