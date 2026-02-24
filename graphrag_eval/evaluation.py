@@ -36,6 +36,7 @@ async def run_evaluation(
 ) -> list[dict]:
     # Output metrics are not nested, for simpler aggregation
     answer_correctness_evaluator = None
+    relevance_evaluator = None
     evaluation_results = []
     config = Config.parse(config_file_path)
     ragas_llm, ragas_embedder = create_llm_and_embedder(config)
@@ -64,13 +65,13 @@ async def run_evaluation(
             if "actual_answer" in actual_result:
                 eval_result["actual_answer"] = actual_result["actual_answer"]
                 if ragas_llm:
-                    from graphrag_eval import answer_relevance
+                    if not relevance_evaluator:
+                        from graphrag_eval.answer_relevance import Evaluator
+                        relevance_evaluator = Evaluator(ragas_llm, ragas_embedder)
                     eval_result.update(
-                        await answer_relevance.get_relevance_dict(
+                        await relevance_evaluator.get_relevance_dict(
                             question["question_text"],
                             actual_result["actual_answer"],
-                            ragas_llm,
-                            ragas_embedder,
                         )
                     )
                 if "reference_answer" in question and config.llm:
@@ -92,8 +93,8 @@ async def run_evaluation(
                     ragas_llm,
                 )
             )
-            for evaluator in custom_evaluators:
-                custom_metrics = evaluator.evaluate(question, actual_result)
+            for relevance_evaluator in custom_evaluators:
+                custom_metrics = relevance_evaluator.evaluate(question, actual_result)
                 eval_result.update(**custom_metrics)
             for key in "input_tokens", "output_tokens", "total_tokens", "elapsed_sec":
                 if key in actual_result:

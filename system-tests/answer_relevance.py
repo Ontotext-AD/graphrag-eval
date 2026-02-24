@@ -2,7 +2,7 @@ import pytest
 import yaml
 
 from graphrag_eval.evaluation import Config
-from graphrag_eval.answer_relevance import get_relevance_dict
+from graphrag_eval.answer_relevance import Evaluator
 from graphrag_eval import llm
 
 path = "tests-with-llm/test_data/config-llm.yaml"
@@ -14,11 +14,10 @@ ragas_llm, ragas_embedder = llm.create_llm_and_embedder(config)
 
 @pytest.mark.asyncio
 async def test_answer_relevance():
-    result = await get_relevance_dict(
+    evaluator = Evaluator(ragas_llm, ragas_embedder)
+    result = await evaluator.get_relevance_dict(
         question_text="Why is the sky blue?",
         actual_answer="Oxygen makes it blue",
-        ragas_llm=ragas_llm,
-        ragas_embedder=ragas_embedder
     )
     assert isinstance(result["answer_relevance"], float)
     assert 0 <= result["answer_relevance"] <= 1
