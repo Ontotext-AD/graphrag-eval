@@ -122,6 +122,9 @@ async def evaluate_steps(
     actual: dict,
     ragas_llm: InstructorBaseRagasLLM,
 ) -> dict:
+    retrieval_evaluator_using_answers = None
+    retrieval_evaluator_using_texts = None
+    
     eval_result = {}
     actual_steps = actual.get("actual_steps", [])
     eval_result["actual_steps"] = actual_steps
@@ -129,13 +132,15 @@ async def evaluate_steps(
         for actual_step in actual_steps:
             if actual_step["name"] == "retrieval" \
             and "output" in actual_step \
-            and "reference_answer" in reference:
-                from .retrieval_answer import get_retrieval_evaluation_dict
-                result = await get_retrieval_evaluation_dict(
+            and "reference_answer" in reference:                
+                if not retrieval_evaluator_using_answers:
+                    from .retrieval_answer import Evaluator
+                    retrieval_evaluator_using_answers = Evaluator(ragas_llm)
+                result = await retrieval_evaluator_using_answers\
+                .get_retrieval_evaluation_dict(
                     question_text=reference["question_text"],
                     reference_answer=reference["reference_answer"],
                     actual_contexts=json.loads(actual_step["output"]),
-                    ragas_llm=ragas_llm,
                 )
                 actual_step.update(result)
     if "reference_steps" in reference:
@@ -146,15 +151,17 @@ async def evaluate_steps(
             for ref_group_idx, ref_match_idx, act_idx, _ in matches:
                 reference_step = reference_steps[ref_group_idx][ref_match_idx]
                 actual_step = actual_steps[act_idx]
-                if reference_step["name"] == "retrieval" and "output" in actual_step:
-                    from .retrieval_context_texts \
-                        import get_retrieval_evaluation_dict
+                if reference_step["name"] == "retrieval" and "output" in actual_step:                    
+                    if not retrieval_evaluator_using_texts:
+                        from .retrieval_context_texts import Evaluator
+                        retrieval_evaluator_using_texts = Evaluator(ragas_llm)
+                    
                     actual_step.update(
-                        await get_retrieval_evaluation_dict(
+                        await retrieval_evaluator_using_texts\
+                        .get_retrieval_evaluation_dict(
                             question_text=reference["question_text"],
                             reference_contexts=json.loads(reference_step["output"]),
                             actual_contexts=json.loads(actual_step["output"]),
-                            ragas_llm=ragas_llm,
                         )
                     )
     return eval_result

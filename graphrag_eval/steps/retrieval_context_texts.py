@@ -4,38 +4,42 @@ from ragas.metrics.collections import ContextRecall, ContextPrecision
 from graphrag_eval.util import compute_f1
 
 
-async def get_retrieval_evaluation_dict(
-    question_text: str,
-    actual_contexts: list[dict[str, str]],
-    reference_contexts: list[dict[str, str]],
-    ragas_llm: InstructorBaseRagasLLM,
-) -> dict:
-    reference = '\n'.join([c["text"] for c in reference_contexts])
-    retrieved_contexts = [c["text"] for c in actual_contexts]
-    params = dict(
-        user_input=question_text,
-        reference=reference,
-        retrieved_contexts=retrieved_contexts
-    )
-    recall_scorer = ContextRecall(llm=ragas_llm)
-    precision_scorer = ContextPrecision(llm=ragas_llm)
-    result = {}
-    try:
-        recall = await recall_scorer.ascore(**params)
-        result["retrieval_context_recall"] = recall.value
-    except Exception as e:
-        result["retrieval_context_recall_error"] = str(e)
+class Evaluator:
+    def __init__(self, ragas_llm: InstructorBaseRagasLLM):
+        self.ragas_llm = ragas_llm
 
-    try:
-        precision = await precision_scorer.ascore(**params)
-        result["retrieval_context_precision"] = precision.value
-    except Exception as e:
-        result["retrieval_context_precision_error"] = str(e)
-
-    if "retrieval_context_recall" in result \
-    and "retrieval_context_precision" in result:
-        result["retrieval_context_f1"] = compute_f1(
-            result["retrieval_context_recall"], 
-            result["retrieval_context_precision"],
+    async def get_retrieval_evaluation_dict(
+        self,
+        question_text: str,
+        actual_contexts: list[dict[str, str]],
+        reference_contexts: list[dict[str, str]],
+    ) -> dict:
+        reference = '\n'.join([c["text"] for c in reference_contexts])
+        retrieved_contexts = [c["text"] for c in actual_contexts]
+        params = dict(
+            user_input=question_text,
+            reference=reference,
+            retrieved_contexts=retrieved_contexts
         )
-    return result
+        recall_scorer = ContextRecall(llm=self.ragas_llm)
+        precision_scorer = ContextPrecision(llm=self.ragas_llm)
+        result = {}
+        try:
+            recall = await recall_scorer.ascore(**params)
+            result["retrieval_context_recall"] = recall.value
+        except Exception as e:
+            result["retrieval_context_recall_error"] = str(e)
+    
+        try:
+            precision = await precision_scorer.ascore(**params)
+            result["retrieval_context_precision"] = precision.value
+        except Exception as e:
+            result["retrieval_context_precision_error"] = str(e)
+    
+        if "retrieval_context_recall" in result \
+        and "retrieval_context_precision" in result:
+            result["retrieval_context_f1"] = compute_f1(
+                result["retrieval_context_recall"], 
+                result["retrieval_context_precision"],
+            )
+        return result

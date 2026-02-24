@@ -2,9 +2,7 @@ import pytest
 import yaml
 
 from graphrag_eval.evaluation import Config
-from graphrag_eval.steps.retrieval_context_texts import (
-    get_retrieval_evaluation_dict
-)
+from graphrag_eval.steps.retrieval_context_texts import Evaluator
 from graphrag_eval import llm
 
 
@@ -17,7 +15,9 @@ ragas_llm, _ = llm.create_llm_and_embedder(config)
 
 @pytest.mark.asyncio
 async def test_retrieval_contexts():
-    result = await get_retrieval_evaluation_dict(
+    
+    evaluator = Evaluator(ragas_llm)
+    result = await evaluator.get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_contexts=[
             {
@@ -39,7 +39,6 @@ async def test_retrieval_contexts():
                 "text": "The sun shines onto the atmosphere. The atmosphere contains various gases."
             }
         ],
-        ragas_llm=ragas_llm,
     )
     assert isinstance(result["retrieval_context_recall"], float)
     assert isinstance(result["retrieval_context_precision"], float)

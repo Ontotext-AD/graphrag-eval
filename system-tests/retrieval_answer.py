@@ -2,7 +2,7 @@ import pytest
 import yaml
 
 from graphrag_eval.evaluation import Config
-from graphrag_eval.steps.retrieval_answer import get_retrieval_evaluation_dict
+from graphrag_eval.steps.retrieval_answer import Evaluator
 from graphrag_eval import llm
 
 
@@ -15,7 +15,8 @@ ragas_llm, _ = llm.create_llm_and_embedder(config)
 
 @pytest.mark.asyncio
 async def test_retrieval_answer():
-    result = await get_retrieval_evaluation_dict(
+    evaluator = Evaluator(ragas_llm)
+    result = await evaluator.get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of Rayleigh scattering.",
         actual_contexts=[
@@ -28,7 +29,6 @@ async def test_retrieval_answer():
                 "text": "Gases scatter sunlight"
             }
         ],
-        ragas_llm=ragas_llm,
     )
     assert isinstance(result["retrieval_answer_recall"], float)
     assert isinstance(result["retrieval_answer_precision"], float)
