@@ -1,11 +1,13 @@
+from ragas.embeddings.base import BaseRagasEmbedding
+from ragas.llms.base import InstructorBaseRagasLLM
 from ragas.metrics.collections import AnswerRelevancy
 
 
 async def get_relevance_dict(
     question_text: str,
     actual_answer: str,
-    ragas_llm,
-    ragas_embeddings,
+    ragas_llm: InstructorBaseRagasLLM,
+    ragas_embeddings: BaseRagasEmbedding,
 ) -> dict:
     scorer = AnswerRelevancy(llm=ragas_llm, embeddings=ragas_embeddings)
     try:

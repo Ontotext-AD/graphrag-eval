@@ -1,3 +1,4 @@
+from ragas.llms.base import InstructorBaseRagasLLM
 from ragas.metrics.collections import ContextRecall, ContextPrecision
 
 from graphrag_eval.util import compute_f1
@@ -7,7 +8,7 @@ async def get_retrieval_evaluation_dict(
     question_text: str,
     actual_contexts: list[dict[str, str]],
     reference_contexts: list[dict[str, str]],
-    ragas_llm,
+    ragas_llm: InstructorBaseRagasLLM,
 ) -> dict:
     reference = '\n'.join([c["text"] for c in reference_contexts])
     retrieved_contexts = [c["text"] for c in actual_contexts]

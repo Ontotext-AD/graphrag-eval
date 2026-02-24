@@ -1,6 +1,8 @@
 import os
 from unittest.mock import AsyncMock, MagicMock
 
+from ragas.llms.base import InstructorBaseRagasLLM
+
 import pytest
 from pytest import approx
 
@@ -10,7 +12,7 @@ def set_env():
     os.environ["OPENAI_API_KEY"] = "fake-key"
 
 
-def get_ragas_llm():
+def get_ragas_llm() -> InstructorBaseRagasLLM:
     from openai import AsyncOpenAI
     from ragas.llms import llm_factory
 

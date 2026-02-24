@@ -3,6 +3,8 @@ from collections import defaultdict
 from collections.abc import Sequence
 from typing import Any
 
+from ragas.llms.base import InstructorBaseRagasLLM
+
 from graphrag_eval import llm
 from .iri_discovery import do_iri_discovery_steps_equal
 from .retrieval_context_ids import recall_at_k
@@ -118,7 +120,7 @@ def calculate_steps_score(
 async def evaluate_steps(
     reference: dict,
     actual: dict,
-    ragas_llm,
+    ragas_llm: InstructorBaseRagasLLM,
 ) -> dict:
     eval_result = {}
     actual_steps = actual.get("actual_steps", [])

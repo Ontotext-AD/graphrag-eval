@@ -1,3 +1,5 @@
+from ragas.embeddings.base import BaseRagasEmbedding
+from ragas.llms.base import InstructorBaseRagasLLM
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -19,7 +21,8 @@ class Config(BaseModel):
     embedding: EmbeddingConfig | None = None
 
 
-def create_llm_and_embeddings(config: "evaluation.Config"):
+def create_llm_and_embeddings(config: "evaluation.Config") -> \
+tuple[InstructorBaseRagasLLM | None, BaseRagasEmbedding | None]:
     if config.llm:
         from openai import AsyncOpenAI
         from ragas.llms import llm_factory

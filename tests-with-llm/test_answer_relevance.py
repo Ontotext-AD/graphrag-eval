@@ -1,10 +1,12 @@
 import os
 from unittest.mock import AsyncMock, MagicMock
 
+from ragas.llms.base import InstructorBaseRagasLLM
+
 import pytest
 
 
-def get_ragas_llm():
+def get_ragas_llm() -> InstructorBaseRagasLLM:
     from openai import AsyncOpenAI
     from ragas.llms import llm_factory
 
