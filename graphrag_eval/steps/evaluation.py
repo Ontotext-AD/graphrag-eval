@@ -133,7 +133,7 @@ async def evaluate_steps(
                 from .retrieval_answer import get_retrieval_evaluation_dict
                 result = await get_retrieval_evaluation_dict(
                     question_text=reference["question_text"],
-                    reference_answer=reference.get("reference_answer"),
+                    reference_answer=reference["reference_answer"],
                     actual_contexts=json.loads(actual_step["output"]),
                     ragas_llm=ragas_llm,
                 )
@@ -149,11 +149,12 @@ async def evaluate_steps(
                 if reference_step["name"] == "retrieval" and "output" in actual_step:
                     from .retrieval_context_texts \
                         import get_retrieval_evaluation_dict
-                    res = await get_retrieval_evaluation_dict(
-                        question_text=reference["question_text"],
-                        reference_contexts=json.loads(reference_step["output"]),
-                        actual_contexts=json.loads(actual_step["output"]),
-                        ragas_llm=ragas_llm,
+                    actual_step.update(
+                        await get_retrieval_evaluation_dict(
+                            question_text=reference["question_text"],
+                            reference_contexts=json.loads(reference_step["output"]),
+                            actual_contexts=json.loads(actual_step["output"]),
+                            ragas_llm=ragas_llm,
+                        )
                     )
-                    actual_step.update(res)
     return eval_result
