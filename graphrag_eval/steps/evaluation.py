@@ -5,7 +5,6 @@ from typing import Any
 
 from ragas.llms.base import InstructorBaseRagasLLM
 
-from graphrag_eval import llm
 from .iri_discovery import do_iri_discovery_steps_equal
 from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
