@@ -89,7 +89,7 @@ async def run_evaluation(
                 await evaluate_steps(
                     question,
                     actual_result,
-                    ragas_llm=ragas_llm,
+                    ragas_llm,
                 )
             )
             for evaluator in custom_evaluators:
