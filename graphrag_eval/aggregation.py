@@ -1,9 +1,12 @@
 import json
+import yaml
 from collections import defaultdict
 from collections.abc import Sequence
 from pathlib import Path
 from statistics import mean, median
 from typing import Any, Collection, Iterable
+
+from . import evaluation
 
 
 METRICS = [
@@ -37,8 +40,6 @@ RETAINED_METRICS = [
 
 def parse_custom_metrics(config_file_path: str | Path | None) -> list[str]:
     if config_file_path:
-        import yaml
-        from . import evaluation
         with open(config_file_path, encoding="utf-8") as f:
             config_dict = yaml.safe_load(f)
         config = evaluation.Config(**config_dict)
