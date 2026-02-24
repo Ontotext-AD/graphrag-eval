@@ -32,14 +32,17 @@ tuple[Optional["InstructorBaseRagasLLM"], Optional["BaseRagasEmbedding"]]:
             model=f"{config.llm.generation.provider}/{config.llm.generation.model}",
             client=litellm.acompletion,
         )
+        ragas_llm.is_async = True
+
         if config.llm.embedding:
             from ragas.embeddings.base import embedding_factory
             
             ragas_embedder = embedding_factory(
-                provider=config.llm.embedding.provider, 
+                provider="litellm",
                 model=config.llm.embedding.model,
-                client=litellm
             )
+            ragas_embedder.is_async = True
+            
             return ragas_llm, ragas_embedder
         return ragas_llm, None
     return None, None

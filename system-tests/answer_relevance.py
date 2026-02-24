@@ -19,5 +19,6 @@ async def test_answer_relevance():
         question_text="Why is the sky blue?",
         actual_answer="Oxygen makes it blue",
     )
+    print(result)
     assert isinstance(result["answer_relevance"], float)
     assert 0 <= result["answer_relevance"] <= 1
