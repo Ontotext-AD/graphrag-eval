@@ -14,14 +14,14 @@ class Config(BaseModel):
         = Field(default=None, min_length=1)
 
     @model_validator(mode="after")
-    def validate_config(self):
+    def validate_config(self) -> "Config":
         if self.custom_evaluations and not self.llm:
             msg = "llm config is required if custom_evaluations are provided"
             raise ValueError(msg)
         return self
     
     @classmethod
-    def parse(cls, config_file_path: str | Path | None):
+    def parse(cls, config_file_path: str | Path | None) -> "Config":
         if config_file_path:
             with open(config_file_path, encoding="utf-8") as f:
                 config_dict = yaml.safe_load(f)
