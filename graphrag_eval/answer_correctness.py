@@ -15,8 +15,6 @@ LLM_MODEL = "gpt-4o-mini"
 TEMPERATURE = 0.0
 
 
-
-
 def compute_recall_precision_f1(
     n_pos: int | None,
     n_pred_pos: int | None,
@@ -139,12 +137,28 @@ def evaluate_and_write(
 
 
 def main():
-    import argparse
-    parser = argparse.ArgumentParser()
+    from argparse import ArgumentParser, ArgumentTypeError
+
+    def float_between_0_0_and_2_0(value):
+        try:
+            f = float(value)
+        except ValueError:
+            raise ArgumentTypeError(f"Invalid float value: {value}")
+        
+        if f < 0.0 or f > 2.0:
+            raise ArgumentTypeError(f"Value must be between 0.0 and 2.0, got {f}")
+        return f
+
+    parser = ArgumentParser()    
     parser.add_argument("-i", "--in-file", type=str, default=IN_FILE_PATH)
     parser.add_argument("-o", "--out-file", type=str, default=OUT_FILE_PATH)
-    parser.add_argument("-l", "--llm", type=str, default=LLM_MODEL)
-    parser.add_argument("-t", "--temperature", type=float, default=TEMPERATURE)
+    parser.add_argument("-l", "--llm", type=str, default=LLM_MODEL)    
+    parser.add_argument(
+        "-t",
+        "--temperature",
+        type=float_between_0_0_and_2_0,
+        default=TEMPERATURE
+    )
     args = parser.parse_args()
     llm_config = llm.Config(args.llm, args.temperature)
     evaluate_and_write(
