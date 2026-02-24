@@ -17,15 +17,14 @@ repository = "https://github.com/Ontotext-AD/graphrag-eval"
 [tool.poetry.dependencies]
 python-dateutil = "2.9.0.post0"
 ragas = { version = "0.4.3", optional = true }
-langchain-openai = { version = "1.1.7", optional = true }
 pydantic = "2.12.5"
 
 [tool.poetry.extras]
-llm = ["ragas", "langchain-openai", "pyyaml"]
+llm = ["ragas", "litellm", "pyyaml"]
 
 [tool.poetry.group.llm.dependencies]
 ragas = "0.4.3"
-langchain-openai = "1.1.7"
+litellm = "^1"
 pyyaml = "6.0.3"
 
 [tool.poetry.group.llm]
