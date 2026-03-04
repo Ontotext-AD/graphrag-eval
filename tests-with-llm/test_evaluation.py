@@ -33,9 +33,9 @@ async def test_run_evaluation_and_compute_aggregates(monkeypatch):
         ContextRecall,
         ContextPrecision
     )
-    monkeypatch.setattr(AnswerRelevancy, 'ascore', async_mock)
-    monkeypatch.setattr(ContextRecall, 'ascore', async_mock)
-    monkeypatch.setattr(ContextPrecision, 'ascore', async_mock)
+    monkeypatch.setattr(AnswerRelevancy, "ascore", async_mock)
+    monkeypatch.setattr(ContextRecall, "ascore", async_mock)
+    monkeypatch.setattr(ContextPrecision, "ascore", async_mock)
     monkeypatch.setattr(
         llm,
         "generate",
@@ -68,7 +68,7 @@ async def test_run_evaluation_and_compute_aggregates_no_actual_steps(
     )
     async_mock = AsyncMock(return_value=MagicMock(value=0.9))
     from graphrag_eval.answer_relevance import AnswerRelevancy
-    monkeypatch.setattr(AnswerRelevancy, 'ascore', async_mock)
+    monkeypatch.setattr(AnswerRelevancy, "ascore", async_mock)
     monkeypatch.setattr(
         llm,
         "generate",
