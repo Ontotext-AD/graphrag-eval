@@ -2,7 +2,10 @@ from ragas.embeddings.base import BaseRagasEmbedding
 from ragas.llms.base import InstructorBaseRagasLLM
 from ragas.metrics.collections import AnswerRelevancy
 
+from graphrag_eval.util import singleton
 
+
+@singleton
 class Evaluator:
     def __init__(self, ragas_llm: InstructorBaseRagasLLM, ragas_embedder: BaseRagasEmbedding):
         self.scorer = AnswerRelevancy(llm=ragas_llm, embeddings=ragas_embedder)

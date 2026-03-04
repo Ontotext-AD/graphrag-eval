@@ -4,7 +4,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 from graphrag_eval import llm
-from graphrag_eval.util import compute_f1
+from graphrag_eval.util import compute_f1, singleton
 
 
 IN_FILE_PATH = "../data/data-1.tsv"
@@ -81,6 +81,7 @@ def extract_response_values(
     return n_ref, n_actual, n_matching, vals[3], ""
 
 
+@singleton
 class AnswerCorrectnessEvaluator:
     def __init__(
         self,

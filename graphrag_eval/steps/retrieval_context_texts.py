@@ -1,9 +1,10 @@
 from ragas.llms.base import InstructorBaseRagasLLM
 from ragas.metrics.collections import ContextRecall, ContextPrecision
 
-from graphrag_eval.util import compute_f1
+from graphrag_eval.util import compute_f1, singleton
 
 
+@singleton
 class Evaluator:
     def __init__(self, ragas_llm: InstructorBaseRagasLLM):
         self.recall_scorer = ContextRecall(llm=ragas_llm)

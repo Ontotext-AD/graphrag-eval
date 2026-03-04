@@ -131,9 +131,8 @@ async def evaluate_steps(
             if actual_step["name"] == "retrieval" \
             and "output" in actual_step \
             and "reference_answer" in reference:
-                if not retrieval_evaluator_using_answers:
-                    from .retrieval_answer import Evaluator
-                    retrieval_evaluator_using_answers = Evaluator(ragas_llm)
+                from .retrieval_answer import Evaluator
+                retrieval_evaluator_using_answers = Evaluator(ragas_llm)
                 result = await retrieval_evaluator_using_answers\
                 .get_retrieval_evaluation_dict(
                     question_text=reference["question_text"],
@@ -150,10 +149,8 @@ async def evaluate_steps(
                 reference_step = reference_steps[ref_group_idx][ref_match_idx]
                 actual_step = actual_steps[act_idx]
                 if reference_step["name"] == "retrieval" and "output" in actual_step:
-                    if not retrieval_evaluator_using_texts:
-                        from .retrieval_context_texts import Evaluator
-                        retrieval_evaluator_using_texts = Evaluator(ragas_llm)
-                    
+                    from .retrieval_context_texts import Evaluator
+                    retrieval_evaluator_using_texts = Evaluator(ragas_llm)
                     actual_step.update(
                         await retrieval_evaluator_using_texts\
                         .get_retrieval_evaluation_dict(

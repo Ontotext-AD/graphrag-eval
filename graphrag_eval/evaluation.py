@@ -65,9 +65,8 @@ async def run_evaluation(
             if "actual_answer" in actual_result:
                 eval_result["actual_answer"] = actual_result["actual_answer"]
                 if ragas_llm:
-                    if not relevance_evaluator:
-                        from graphrag_eval.answer_relevance import Evaluator
-                        relevance_evaluator = Evaluator(ragas_llm, ragas_embedder)
+                    from graphrag_eval.answer_relevance import Evaluator
+                    relevance_evaluator = Evaluator(ragas_llm, ragas_embedder)
                     eval_result.update(
                         await relevance_evaluator.get_relevance_dict(
                             question["question_text"],
@@ -76,10 +75,9 @@ async def run_evaluation(
                     )
                 if "reference_answer" in question and config.llm:
                     from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
-                    if not answer_correctness_evaluator:
-                        answer_correctness_evaluator = AnswerCorrectnessEvaluator(
-                            generation_config=config.llm.generation
-                        )
+                    answer_correctness_evaluator = AnswerCorrectnessEvaluator(
+                        generation_config=config.llm.generation
+                    )
                     eval_result.update(
                         answer_correctness_evaluator.get_correctness_dict(
                             question,
