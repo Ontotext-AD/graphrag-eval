@@ -52,8 +52,8 @@ def generate(config: GenerationConfig, prompt: str) -> str:
     import litellm
     try:
         response = litellm.completion(
-        messages=[{"role": "user", "content": prompt}],
-        **config.model_dump()
+            messages=[{"role": "user", "content": prompt}],
+            **config.model_dump()
         )
         return response.choices[0].message.content.strip("\n")
     except Exception as e:
