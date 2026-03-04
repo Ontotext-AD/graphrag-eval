@@ -6,7 +6,8 @@ from graphrag_eval.util import compute_f1
 
 class Evaluator:
     def __init__(self, ragas_llm: InstructorBaseRagasLLM):
-        self.ragas_llm = ragas_llm
+        self.recall_scorer = ContextRecall(llm=ragas_llm)
+        self.precision_scorer = ContextPrecision(llm=ragas_llm)
 
     async def get_retrieval_evaluation_dict(
         self,
@@ -21,16 +22,14 @@ class Evaluator:
             retrieved_contexts=retrieved_contexts
         )
         result = {}
-        recall_scorer = ContextRecall(llm=self.ragas_llm)
-        precision_scorer = ContextPrecision(llm=self.ragas_llm)
         try:
-            recall = await recall_scorer.ascore(**params)
+            recall = await self.recall_scorer.ascore(**params)
             result["retrieval_answer_recall"] = recall.value
         except Exception as e:
             result["retrieval_answer_recall_error"] = str(e)
     
         try:
-            precision = await precision_scorer.ascore(**params)
+            precision = await self.precision_scorer.ascore(**params)
             result["retrieval_answer_precision"] = precision.value
         except Exception as e:
             result["retrieval_answer_precision_error"] = str(e)
