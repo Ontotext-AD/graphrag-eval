@@ -35,8 +35,6 @@ async def run_evaluation(
     config_file_path: str | Path | None = None,
 ) -> list[dict]:
     # Output metrics are not nested, for simpler aggregation
-    answer_correctness_evaluator = None
-    relevance_evaluator = None
     evaluation_results = []
     config = Config.parse(config_file_path)
     ragas_llm, ragas_embedder = create_llm_and_embedder(config)

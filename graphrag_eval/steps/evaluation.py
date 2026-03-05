@@ -119,10 +119,7 @@ async def evaluate_steps(
     reference: dict,
     actual: dict,
     ragas_llm: "InstructorBaseRagasLLM",
-) -> dict:
-    retrieval_evaluator_using_answers = None
-    retrieval_evaluator_using_texts = None
-    
+) -> dict:    
     eval_result = {}
     actual_steps = actual.get("actual_steps", [])
     eval_result["actual_steps"] = actual_steps
