@@ -50,10 +50,14 @@ tuple[Optional["InstructorBaseRagasLLM"], Optional["BaseRagasEmbedding"]]:
 
 def generate(config: GenerationConfig, prompt: str) -> str:
     import litellm
+    params = config.model_dump()
+    model = params.pop("model")
+    provider = params.pop("provider", None)
     try:
         response = litellm.completion(
+            model=f"{provider}/{model}",
             messages=[{"role": "user", "content": prompt}],
-            **config.model_dump()
+            **params
         )
         return response.choices[0].message.content.strip("\n")
     except Exception as e:

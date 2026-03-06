@@ -1,0 +1,35 @@
+import pytest
+import yaml
+
+from graphrag_eval import llm
+from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+from graphrag_eval.evaluation import Config
+
+
+path = "tests-with-llm/test_data/config-llm.yaml"
+with open(path, encoding="utf-8") as f:
+    config_dict = yaml.safe_load(f)
+config = Config(**config_dict)
+ragas_llm, ragas_embedder = llm.create_llm_and_embedder(config)
+
+
+reference = {
+    "template_id": "knowledge_questions",
+    "question_id": "bulgaria",
+    "question_text": "What is the capital of Bulgaria?",
+    "reference_answer": "Sofia",
+}
+actual = {
+	"question_id": "bulgaria",
+	"actual_answer": "The capital of Bulgaria is Sofia"
+}
+async def test_answer_correctness():
+    evaluator = AnswerCorrectnessEvaluator(generation_config=config.generation)
+    litellm._turn_on_debug()
+    result = evaluator.get_correctness_dict(reference, actual)
+    assert isinstance(result["answer_recall"], float)
+    assert isinstance(result["answer_precision"], float)
+    assert isinstance(result["answer_f1"], float)
+    assert 0.0 <= result["answer_recall"] <= 1.0
+    assert 0.0 <= result["answer_precision"] <= 1.0
+    assert 0.0 <= result["answer_f1"] <= 1.0
