@@ -1,4 +1,4 @@
-import pytest
+import litellm
 import yaml
 
 from graphrag_eval import llm
@@ -14,7 +14,7 @@ ragas_llm, ragas_embedder = llm.create_llm_and_embedder(config)
 
 
 reference = {
-    "template_id": "knowledge_questions",
+    "template_id": "geography",
     "question_id": "bulgaria",
     "question_text": "What is the capital of Bulgaria?",
     "reference_answer": "Sofia",
@@ -23,8 +23,9 @@ actual = {
 	"question_id": "bulgaria",
 	"actual_answer": "The capital of Bulgaria is Sofia"
 }
-async def test_answer_correctness():
-    evaluator = AnswerCorrectnessEvaluator(generation_config=config.generation)
+
+def test_answer_correctness():
+    evaluator = AnswerCorrectnessEvaluator(llm=ragas_llm)
     litellm._turn_on_debug()
     result = evaluator.get_correctness_dict(reference, actual)
     assert isinstance(result["answer_recall"], float)
