@@ -100,7 +100,9 @@ The configuration has two sections: `llm` and `custom_evaluation`. Example:
         * `model`: (str) name of the generation model
         * `temperature`: (float in the range [0.0, 2.0]) adversarial temperature for generation
         * `max_tokens`: (int > 0) maximum number of tokens to generate
-        * Optional keys: parameters to be passed to LiteLLM for generation (for [`answer_correctness`](#output-keys) and [custom evaluation](#custom-evaluation-custom-metrics))
+        * Optional keys: parameters to be passed to LiteLLM for generation (for [`answer_correctness`](#output-keys) and [custom evaluation](#custom-evaluation-custom-metrics)). Examples:
+          * `base_url`: (str) base URL for the generation model, alternative to the provider's default URL
+          * `api_key`: (str) API key for the generation model, alternative to setting the environment variable corresponding to the provider (e.g. `OPENAI_API_KEY` for OpenAI)
     * `embedding`: required for [`answer_relevance`](#output-keys).
         * `provider`: (str) name of the organiation providing the embedding model
         * `model`: (str) name of the embedding model
