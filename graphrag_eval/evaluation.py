@@ -71,10 +71,10 @@ async def run_evaluation(
                             actual_result["actual_answer"],
                         )
                     )
-                if "reference_answer" in question and config.llm:
+                if "reference_answer" in question and ragas_llm:
                     from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
                     answer_correctness_evaluator = AnswerCorrectnessEvaluator(
-                        generation_config=config.llm.generation
+                        llm=ragas_llm
                     )
                     eval_result.update(
                         answer_correctness_evaluator.get_correctness_dict(

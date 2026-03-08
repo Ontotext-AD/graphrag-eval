@@ -3,8 +3,6 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from graphrag_eval import llm
-
 
 RESERVED_KEYS = {
     "template_id",
@@ -102,7 +100,7 @@ class CustomEvaluator:
     def __init__(
         self, 
         config: Config,
-        generation_config: llm.GenerationConfig,
+        llm: "InstructorBaseRagasLLM",
     ):
         self.name = config.name
         self.input_variables = config.inputs
@@ -113,11 +111,11 @@ class CustomEvaluator:
             config,
             self.output_variables
         )
-        self.generation_config = generation_config
+        self.llm = llm
 
-    def call_llm(self, prompt: str) -> str:
-        """Method for easier automated testing"""
-        return llm.generate(self.generation_config, prompt)
+    def _generate(self, prompt: str) -> str:
+        """Wrapper method for easier testing"""
+        return self.llm.generate(prompt, None).choices[0].message.content
 
     def format_steps(self, steps: list) -> str:
         steps_formatted = []
@@ -193,7 +191,7 @@ class CustomEvaluator:
                 return self.error("Malformed actual step JSON")
             inputs["actual_steps"] = formatted_steps_lists
         prompt = self.prompt_template.format(**inputs)
-        response = self.call_llm(prompt)
+        response = self._generate(prompt)
         return self.parse_outputs(response)
 
 

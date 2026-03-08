@@ -1,13 +1,12 @@
 import os
 from pathlib import Path
-from unittest.mock import MagicMock, AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import yaml
 
 from graphrag_eval import (
     compute_aggregates,
-    llm,
     run_evaluation,
 )
 from tests.util import read_responses
@@ -15,6 +14,16 @@ from tests.util import read_responses
 
 DATA_DIR = Path(__file__).parent / "test_data"
 CONFIG_FILE_PATH = DATA_DIR / "config-llm.yaml"
+
+
+def mock_answer_correctness_evaluator(monkeypatch):
+    from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+    evaluator_instance = AnswerCorrectnessEvaluator(llm=MagicMock())
+    monkeypatch.setattr(
+        evaluator_instance, 
+        "_generate", 
+        lambda prompt: "2\t2\t2\tanswer correctness reason"
+    )
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -36,11 +45,7 @@ async def test_run_evaluation_and_compute_aggregates(monkeypatch):
     monkeypatch.setattr(AnswerRelevancy, "ascore", async_mock)
     monkeypatch.setattr(ContextRecall, "ascore", async_mock)
     monkeypatch.setattr(ContextPrecision, "ascore", async_mock)
-    monkeypatch.setattr(
-        llm,
-        "generate",
-        lambda *_: "2\t2\t2\tanswer correctness reason"
-    )
+    mock_answer_correctness_evaluator(monkeypatch)
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     evaluation_results = await run_evaluation(
         reference_data,
@@ -69,11 +74,7 @@ async def test_run_evaluation_and_compute_aggregates_no_actual_steps(
     async_mock = AsyncMock(return_value=MagicMock(value=0.9))
     from graphrag_eval.answer_relevance import AnswerRelevancy
     monkeypatch.setattr(AnswerRelevancy, "ascore", async_mock)
-    monkeypatch.setattr(
-        llm,
-        "generate",
-        lambda *_: "2\t2\t2\tanswer correctness reason"
-    )
+    mock_answer_correctness_evaluator(monkeypatch)
     actual_responses = read_responses(DATA_DIR / "actual_responses_3.jsonl")
     evaluation_results = await run_evaluation(
         reference_data,

@@ -4,6 +4,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 from graphrag_eval import llm
+from graphrag_eval.evaluation import Config
 from graphrag_eval.util import compute_f1, singleton
 
 
@@ -11,8 +12,10 @@ IN_FILE_PATH = "../data/data-1.tsv"
 PROMPT_FILE_PATH = Path(__file__).parent / "prompts" / "template.md"
 OUT_FILE_PATH = "results/data-1.tsv"
 OUT_FIELDS = ["#Reference", "#PTarget", "#Matching", "Reasoning", "Error"]
+LLM_PROVIDER = "openai"
 LLM_MODEL = "gpt-4o-mini"
 TEMPERATURE = 0.0
+MAX_TOKENS = 1024
 
 
 def parse_args() -> "argparse.Namespace":
@@ -31,7 +34,9 @@ def parse_args() -> "argparse.Namespace":
     parser = ArgumentParser()    
     parser.add_argument("-i", "--in-file", type=str, default=IN_FILE_PATH)
     parser.add_argument("-o", "--out-file", type=str, default=OUT_FILE_PATH)
-    parser.add_argument("-l", "--llm", type=str, default=LLM_MODEL)    
+    parser.add_argument("-p", "--provider", type=str, default=LLM_PROVIDER)
+    parser.add_argument("-l", "--llm", type=str, default=LLM_MODEL)
+    parser.add_argument("-m", "--max-tokens", type=int, default=MAX_TOKENS)    
     parser.add_argument(
         "-t",
         "--temperature",
@@ -85,12 +90,16 @@ def extract_response_values(
 class AnswerCorrectnessEvaluator:
     def __init__(
         self,
-        generation_config: llm.Config,
+        llm: "InstructorBaseRagasLLM",
         prompt_file_path: str | Path = PROMPT_FILE_PATH,
     ):
         with open(prompt_file_path, encoding="utf-8") as f:
             self.prompt_template = f.read()
-        self.generation_config = generation_config
+        self.llm = llm
+
+    def _generate(self, prompt):
+        """Wrapper method for easier testing"""
+        return self.llm.generate(prompt, None).choices[0].message.content
 
     def evaluate_answer(
         self,
@@ -103,7 +112,7 @@ class AnswerCorrectnessEvaluator:
             reference_answer=reference_answer,
             candidate_answer=actual_answer,
         )
-        response_str = llm.generate(self.generation_config, prompt)
+        response_str = self._generate(prompt)
         return extract_response_values(response_str)
 
     def get_correctness_dict(
@@ -142,9 +151,10 @@ class AnswerCorrectnessEvaluator:
 def evaluate_and_write(
     in_file_path: str | Path,
     out_file_path: str | Path,
-    llm_config: llm.Config,
+    config: "evaluation.Config",
 ) -> None:
-    evaluator = AnswerCorrectnessEvaluator(generation_config=llm_config)
+    ragas_llm, _ = llm.create_llm_and_embedder(config)
+    evaluator = AnswerCorrectnessEvaluator(llm=ragas_llm)
     with open(in_file_path, encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
         rows = [row for row in reader]
@@ -165,9 +175,18 @@ def evaluate_and_write(
 
 def main():
     args = parse_args()
-    llm_config = llm.Config(args.llm, args.temperature)
+    config = Config(
+        llm=llm.Config(
+            generation=llm.GenerationConfig(
+                provider=args.provider,
+                model=args.llm,
+                temperature=args.temperature,
+                max_tokens=args.max_tokens,
+            )
+        )
+    )
     evaluate_and_write(
-        in_file_path=args.in_file,
-        out_file_path=args.out_file,
-        llm_config=llm_config
+        args.in_file,
+        args.out_file,
+        config,
     )

@@ -6,8 +6,8 @@ from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
 from graphrag_eval.evaluation import Config
 
 
-path = "tests-with-llm/test_data/config-llm.yaml"
-with open(path, encoding="utf-8") as f:
+config_path = "tests-with-llm/test_data/config-llm.yaml"
+with open(config_path, encoding="utf-8") as f:
     config_dict = yaml.safe_load(f)
 config = Config(**config_dict)
 ragas_llm, ragas_embedder = llm.create_llm_and_embedder(config)
@@ -26,7 +26,6 @@ actual = {
 
 def test_answer_correctness():
     evaluator = AnswerCorrectnessEvaluator(llm=ragas_llm)
-    litellm._turn_on_debug()
     result = evaluator.get_correctness_dict(reference, actual)
     assert isinstance(result["answer_recall"], float)
     assert isinstance(result["answer_precision"], float)
