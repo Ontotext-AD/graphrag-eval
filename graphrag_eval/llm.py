@@ -14,6 +14,7 @@ class GenerationConfig(BaseModel):
 class EmbeddingConfig(BaseModel):
     provider: str
     model: str
+    model_config = ConfigDict(extra='allow')
 
 
 class Config(BaseModel):
@@ -27,19 +28,25 @@ tuple[Optional["InstructorBaseRagasLLM"], Optional["BaseRagasEmbedding"]]:
         import litellm
         from ragas.llms import llm_factory
 
+        litellm.drop_params = True  # Remove unsupported params from requests
+
+        params = config.llm.generation.model_dump()
         ragas_llm = llm_factory(
             provider="litellm",
-            model=f"{config.llm.generation.provider}/{config.llm.generation.model}",
+            model=f"{params.pop('provider')}/{params.pop('model')}",
             client=litellm.acompletion,
+            **params,
         )
         ragas_llm.is_async = True
 
         if config.llm.embedding:
             from ragas.embeddings.base import embedding_factory
             
+            params = config.llm.embedding.model_dump()
             ragas_embedder = embedding_factory(
                 provider="litellm",
-                model=config.llm.embedding.model,
+                model=f"{params.pop('provider')}/{params.pop('model')}",
+                **params,
             )
             ragas_embedder.is_async = True
             

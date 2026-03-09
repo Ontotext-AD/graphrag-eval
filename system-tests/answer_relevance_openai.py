@@ -6,7 +6,7 @@ from graphrag_eval.answer_relevance import Evaluator
 from graphrag_eval import llm
 
 
-path = "tests-with-llm/test_data/config-llm.yaml"
+path = "tests-with-llm/test_data/config-openai.yaml"
 with open(path, encoding="utf-8") as f:
     config_dict = yaml.safe_load(f)
 config = Config(**config_dict)

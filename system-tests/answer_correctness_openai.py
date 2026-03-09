@@ -1,4 +1,3 @@
-import litellm
 import yaml
 
 from graphrag_eval import llm
@@ -6,7 +5,7 @@ from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
 from graphrag_eval.evaluation import Config
 
 
-config_path = "tests-with-llm/test_data/config-llm.yaml"
+config_path = "tests-with-llm/test_data/config-openai.yaml"
 with open(config_path, encoding="utf-8") as f:
     config_dict = yaml.safe_load(f)
 config = Config(**config_dict)

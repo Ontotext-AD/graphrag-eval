@@ -13,7 +13,7 @@ from tests.util import read_responses
 
 
 DATA_DIR = Path(__file__).parent / "test_data"
-CONFIG_FILE_PATH = DATA_DIR / "config-llm.yaml"
+CONFIG_FILE_PATH = DATA_DIR / "config-openai.yaml"
 
 
 def mock_answer_correctness_evaluator(monkeypatch):
