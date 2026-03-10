@@ -153,7 +153,7 @@ def evaluate_and_write(
     out_file_path: str | Path,
     config: "evaluation.Config",
 ) -> None:
-    ragas_llm, _ = llm.create_llm_and_embedder(config)
+    ragas_llm = llm.create_llm(config)
     evaluator = AnswerCorrectnessEvaluator(llm=ragas_llm)
     with open(in_file_path, encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")

@@ -4,7 +4,7 @@ import yaml
 from pydantic import BaseModel, Field, model_validator
 
 from . import custom_evaluation
-from .llm import Config as LLMConfig, create_llm_and_embedder
+from .llm import Config as LLMConfig, create_llm, create_embedder
 from .steps.evaluation import evaluate_steps
 
 
@@ -37,7 +37,8 @@ async def run_evaluation(
     # Output metrics are not nested, for simpler aggregation
     evaluation_results = []
     config = Config.parse(config_file_path)
-    ragas_llm, ragas_embedder = create_llm_and_embedder(config)
+    ragas_llm = create_llm(config)
+    ragas_embedder = create_embedder(config)
     custom_evaluators = custom_evaluation.create_evaluators(config)
     for template in qa_dataset:
         template_id = template["template_id"]

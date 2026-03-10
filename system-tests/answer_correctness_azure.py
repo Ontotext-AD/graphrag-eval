@@ -1,4 +1,3 @@
-import litellm
 import yaml
 
 from graphrag_eval import llm
@@ -10,7 +9,8 @@ config_path = "tests-with-llm/test_data/config-azure.yaml"
 with open(config_path, encoding="utf-8") as f:
     config_dict = yaml.safe_load(f)
 config = Config(**config_dict)
-ragas_llm, ragas_embedder = llm.create_llm_and_embedder(config)
+ragas_llm = llm.create_llm(config)
+ragas_embedder = llm.create_embedder(config)
 
 reference = {
     "template_id": "geography",

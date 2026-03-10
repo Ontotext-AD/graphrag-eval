@@ -10,7 +10,8 @@ path = "tests-with-llm/test_data/config-openai.yaml"
 with open(path, encoding="utf-8") as f:
     config_dict = yaml.safe_load(f)
 config = Config(**config_dict)
-ragas_llm, ragas_embedder = llm.create_llm_and_embedder(config)
+ragas_llm = llm.create_llm(config)
+ragas_embedder = llm.create_embedder(config)
 
 
 @pytest.mark.asyncio

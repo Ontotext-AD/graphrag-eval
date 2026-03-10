@@ -14,8 +14,8 @@ with open(path, encoding="utf-8") as f:
 config_dict["llm"]["generation"]["api_key"] = os.getenv("AZURE_OPENAI_GENERATION_KEY")
 config_dict["llm"]["embedding"]["api_key"] = os.getenv("AZURE_OPENAI_EMBEDDING_KEY")
 config = Config(**config_dict)
-ragas_llm, ragas_embedder = llm.create_llm_and_embedder(config)
-
+ragas_llm = llm.create_llm(config)
+ragas_embedder = llm.create_embedder(config)
 
 @pytest.mark.asyncio
 async def test_answer_relevance():
