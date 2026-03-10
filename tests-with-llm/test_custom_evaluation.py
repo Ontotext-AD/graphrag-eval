@@ -15,7 +15,7 @@ from tests.util import read_responses
 
 
 DATA_DIR = Path(__file__).parent / "test_data"
-CONFIG_FILE_PATH = DATA_DIR / "config-llm-and-custom-evaluations.yaml"
+CONFIG_FILE_PATH = DATA_DIR / "config-openai-and-custom-evaluations.yaml"
 
 
 def mock_answer_correctness_evaluator(monkeypatch):

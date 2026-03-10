@@ -52,4 +52,4 @@ def test_create_llm_and_embeddings_llm_config_embedding_config():
     assert llm_ is not None
     assert llm_.model == "openai/gpt-3.5-turbo"
     assert embeddings is not None
-    assert embeddings.model == "text-embedding-ada-002"
+    assert embeddings.model == "openai/text-embedding-ada-002"
