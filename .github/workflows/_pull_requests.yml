@@ -45,10 +45,13 @@ jobs:
           conda activate graphrag-eval
           poetry run pytest --cov=graphrag_eval --cov-report=term-missing tests-with-llm/
 
-      - name: Run system tests that call OpenAI
+      - name: Run system tests that use LLMs
         shell: bash -l {0}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AZURE_OPENAI_GENERATION_KEY: ${{ secrets.AZURE_OPENAI_GENERATION_KEY }}
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_EMBEDDING_KEY: ${{ secrets.AZURE_OPENAI_EMBEDDING_KEY }}
         run: |
           conda activate graphrag-eval
-          poetry run pytest system-tests/*.py
+          poetry run pytest -vv -s system-tests/*.py

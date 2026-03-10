@@ -12,7 +12,6 @@ with open(config_path, encoding="utf-8") as f:
 config = Config(**config_dict)
 ragas_llm, ragas_embedder = llm.create_llm_and_embedder(config)
 
-
 reference = {
     "template_id": "geography",
     "question_id": "bulgaria",
