@@ -18,3 +18,15 @@ def get_f1_dict(
     if f1 is None:
         return {}
     return {f"{prefix}_f1": f1}
+
+
+def singleton(cls):
+    """A decorator to create a singleton class"""
+    instances = {}
+    
+    def get_instance(*args, **kwargs):
+        if cls not in instances:
+            instances[cls] = cls(*args, **kwargs)
+        return instances[cls]
+    
+    return get_instance

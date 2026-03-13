@@ -43,7 +43,11 @@ To evaluate only correctness of final answers (system responses), you can clone 
 
 1. Prepare an input TSV file with columns `Question`, `Reference answer` and `Actual answer`
 1. Execute `poetry install --with llm`
-1. Execute `OPENAI_API_KEY=<your_api_key> poetry run answer-correctness -i <input_file.tsv> -o <output_file.tsv>`
+1. Execute
+   ```<LLM_ACCESS_VARIABLE>=<your_api_key> poetry run answer-correctness -i <input_file.tsv> -o <output_file.tsv>```
+  replacing `<LLM_ACCESS_VARIABLE>` by the variable used by your LLM provider to specify your LLM use key.
+  Example:
+    ```OPENAI_API_KEY=XXX poetry run answer-correctness -i reference.tsv -o evaluations.tsv```
 
 We plan to improve CLI support in future releases.
 
@@ -55,16 +59,153 @@ To evaluate answers and/or steps:
 1. Format the answers and/or steps you want to evaluate: section [Responses to evaluate](#Responses-to-evaluate)
 1. To evaluate answer relevance:
     1. Include `actual_answer` in the target data to evaluate
-    1. Set environment variable `OPENAI_API_KEY` appropriately
+    1. Set the appropriate environment variable (e.g.,`OPENAI_API_KEY`) with your LLM access key
 1. To evaluate answer correctness:
     1. Include `reference_answer` in the reference dataset and `actual_answer` in the target data to evaluate
-    1. Set environment variable `OPENAI_API_KEY` appropriately
+    1. Set the appropriate environment variable (e.g.,`OPENAI_API_KEY`) with your LLM access key
 1. To evaluate steps:
     1. Include `reference_steps` in the reference data and `actual_steps` in target data to evaluate
+1. If you want to evaluate metrics that require an LLM, write a [configuration file](#configuration).
 1. Call the evaluation function with the reference data and target data: section [Usage Code](#Usage-Code)
 1. Call the aggregation function with the evaluation results: section [Usage Code](#Usage-Code)
 
-Answer evaluation (correctness and relevance) and [custom evaluation](#custom-evaluation-(custom-metrics)) use the LLM `openai/gpt-4o-mini`.
+### LLM use in evaluation
+
+The following metrics use an LLM which must be configured using a [configuration](#configuration) file:
+* answer metrics
+  * `answer_recall`
+  * `answer_precision`
+  * `answer_f1`
+  * `answer_relevance`
+* retrieval context metrics:
+  * `retrieval_answer_recall`
+  * `retrieval_answer_precision`
+  * `retrieval_answer_f1`
+  * `retrieval_context_recall`
+  * `retrieval_context_precision`
+  * `retrieval_context_f1`
+* [custom evaluation](#custom-evaluation-custom-metrics)
+
+Supported LLMs are all those supported by the [`litellm`](https://github.com/BerriAI/litellm) library, including all major LLMs and local models via Ollama.
+
+If no LLM is configured or the `config_file_path` parameter is not provided, these metrics are not evaluated.
+
+### Configuration
+
+The configuration has two sections: `llm` and `custom_evaluation`. Example:
+
+* `llm`: required for [LLM-based metrics](#llm-use-in-evaluation). The following keys are required:
+    * `generation`: required. The following keys are required:
+        * `provider`: (str) name of the organization providing the generation model, as supported by LiteLLM
+        * `model`: (str) name of the generation model
+        * `temperature`: (float in the range [0.0, 2.0]) adversarial temperature for generation
+        * `max_tokens`: (int > 0) maximum number of tokens to generate
+        * Optional keys: parameters to be passed to LiteLLM for generation (for [`answer_correctness`](#output-keys) and [custom evaluation](#custom-evaluation-custom-metrics)). Examples:
+          * `base_url`: (str) base URL for the generation model, alternative to the provider's default URL
+          * `api_key`: (str) API key for the generation model, alternative to setting the environment variable corresponding to the provider (e.g. `OPENAI_API_KEY` for OpenAI)
+    * `embedding`: required for [`answer_relevance`](#output-keys).
+        * `provider`: (str) name of the organiation providing the embedding model
+        * `model`: (str) name of the embedding model
+* `custom_evaluations`: (list of the following maps) required nonempty for [custom evaluation](#custom-evaluation-custom-metrics). Each map has keys:
+    * `name`: (str) name of the evaluation
+    * `inputs`: (list[str]) list of input variables. Any combination of the following:
+        * `question`
+        * `reference_answer`
+        * `reference_steps`
+        * `actual_answer`
+        * `actual_steps`
+    * `steps_keys`: (list[str]; required if `inputs` contains `actual_steps` or `reference_steps`) one or both of:
+        * `args`
+        * `output`
+    * `steps_name`: (str; required if `inputs` contains `actual_steps` or `reference_steps`) the type (name) of steps to include in the evaluation
+    * `instructions`: (str) instructions for the evaluation
+    * `outputs`: (map[str]) output variable names and descriptions
+
+#### Example Configuration File With LLM Configuration
+
+Below is a YAML file that configures the LLM generation (for [metrics that require an LLM](#llm-use-in-evaluation)) and embedding (for [`answer_relevance`](#otuput-keys)). It assumes that the environment variable `OPENAI_API_KEY` is set with your OpenAI API key.
+
+```YAML
+llm:
+  generation:
+    provider: openai
+    model: gpt-4o-mini
+    temperature: 0.0
+    max_tokens: 65536
+  embedding:
+    provider: openai
+    model: text-embedding-3-small
+```
+
+#### Example Configuration File With LLM Configuration and API keys
+
+Below is a YAML file that configures the LLM generation (for [metrics that require an LLM](#llm-use-in-evaluation)) and embedding (for [`answer_relevance`](#otuput-keys)) with different API keys in place of environment variables.
+
+```YAML
+llm:
+  generation:
+    provider: azure
+    model: graphrag-eval-system-tests-gpt-5.2
+    base_url: https://my-generator.openai.azure.com
+    temperature: 0.0
+    max_tokens: 8192
+    api_key: ...
+  embedding:
+    provider: azure
+    model: graphrag-eval-system-tests-text-embedding-3-small
+    api_base: https://my-embedder.openai.azure.com
+    api_key: ...
+```
+
+#### Example Configuration File With Custom Evaluations
+
+Below is a YAML file that defines two custom evaluations:
+1. a simple relevance evaluation
+1. a SPARQL retrieval evaluation using the reference answer
+
+This is an example of the format and may not create accurate evaluations.
+
+```YAML
+llm:
+  generation:
+    provider: openai
+    model: gpt-4o-mini
+    temperature: 0.0
+    max_tokens: 65536
+  embedding:
+    provider: openai
+    model: text-embedding-3-small
+custom_evaluations:
+  -
+    name: my_answer_relevance
+    inputs:
+      - question
+      - actual_answer
+    instructions: |
+      Evaluate how relevant is the answer to the question.
+    outputs:
+      my_answer_relevance: fraction between 0 and 1
+      my_answer_relevance_reason: reason for your evaluation
+  -
+    name: sparql_llm_evaluation
+    inputs:
+      - question
+      - reference_answer
+      - actual_steps
+    steps_keys:
+      - output
+    steps_name: sparql
+    instructions: |
+      Divide the reference answer into claims and try to match each claim to the
+      SPARQL query results. Count the:
+      - reference claims
+      - SPARQL results
+      - matching claims
+    outputs:
+      sparql_recall: Number of matching claims as a fraction of reference claims (fraction 0-1)
+      sparql_precision: Number of matching claims as a fraction of SPARQL results (fraction 0-1)
+      sparql_reason: reason for your evaluation
+```
 
 ### Reference Q&A Data
 
@@ -1094,45 +1235,7 @@ One configuration file can define multiple custom evaluations, each of which
 will be done as a separate query to the LLM. Each evaluation can have multiple 
 outputs. The format is shown in the example sections below.
 
-#### Example Custom Evaluation Configuration File
-
-Below is a YAML file that defines two custom evaluations:
-1. a simple relevance evaluation
-1. a SPARQL retrieval evaluation using the reference answer
-
-This is an example of the format and may not create accurate evaluations.
-
-```YAML
--
-  name: my_answer_relevance
-  inputs:
-    - question
-    - actual_answer
-  instructions: |
-    Evaluate how relevant is the answer to the question.
-  outputs:
-    my_answer_relevance: fraction between 0 and 1
-    my_answer_relevance_reason: reason for your evaluation
--
-  name: sparql_llm_evaluation
-  inputs:
-    - question
-    - reference_answer
-    - actual_steps
-  steps_keys:
-    - output
-  steps_name: sparql
-  instructions: |
-    Divide the reference answer into claims and try to match each claim to the
-    SPARQL query results. Count the:
-    - reference claims
-    - SPARQL results
-    - matching claims
-  outputs:
-    sparql_recall: Number of matching claims as a fraction of reference claims (fraction 0-1)
-    sparql_precision: Number of matching claims as a fraction of SPARQL results (fraction 0-1)
-    sparql_reason: reason for your evaluation
-```
+See [Example Configuration File](#example-configuration-file).
 
 #### Example Call to Evaluate Using Custom Metrics
 

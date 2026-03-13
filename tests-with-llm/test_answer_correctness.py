@@ -1,8 +1,28 @@
 import builtins
 import io
 
+from unittest.mock import MagicMock
+
 from graphrag_eval import answer_correctness
-from graphrag_eval.answer_correctness import extract_response_values
+from graphrag_eval import evaluation
+from graphrag_eval.answer_correctness import (
+    AnswerCorrectnessEvaluator,
+    extract_response_values,
+    llm,
+)
+
+
+def get_llm_config():
+    return evaluation.Config(
+        llm=llm.Config(
+            generation=llm.GenerationConfig(
+                provider="openai",
+                model="gpt-4o-mini",
+                temperature=0.0,
+                max_tokens=1024,
+            )
+        )
+    )
 
 
 def test_extract_response_values_expected_case():
@@ -77,14 +97,17 @@ def test_evaluate_answers(monkeypatch, tmp_path):
 
     monkeypatch.setattr(builtins, "open", mock_open)
 
-    # Mock OpenAI(), call_llm() and tqdm()
-    monkeypatch.setattr(answer_correctness, "OpenAI", lambda: None)
-    eval_class = answer_correctness.AnswerCorrectnessEvaluator
-    monkeypatch.setattr(eval_class, "call_llm", lambda *_: "2\t2\t2\treason")
+    # Mock call_llm() and tqdm()
+    answer_corectness_evaluator = AnswerCorrectnessEvaluator(llm=MagicMock())
+    monkeypatch.setattr(answer_corectness_evaluator, "_generate", lambda *_: "2\t2\t2\treason")
     monkeypatch.setattr(answer_correctness, "tqdm", lambda x: x)
 
     # Run
-    answer_correctness.evaluate_and_write(in_file_path, out_file_path)
+    answer_correctness.evaluate_and_write(
+        in_file_path,
+        out_file_path,
+        config=get_llm_config()
+    )
 
     # Verify output file content
     written = out_file_path.read_text().splitlines()

@@ -1,6 +1,8 @@
 import os
 from unittest.mock import AsyncMock, MagicMock
 
+from ragas.llms.base import InstructorBaseRagasLLM
+
 import pytest
 from pytest import approx
 
@@ -10,25 +12,35 @@ def set_env():
     os.environ["OPENAI_API_KEY"] = "fake-key"
 
 
+def get_ragas_llm() -> InstructorBaseRagasLLM:
+    from openai import AsyncOpenAI
+    from ragas.llms import llm_factory
+
+    return llm_factory("gpt-3.5-turbo", client=AsyncOpenAI())
+
+
+context_1 = {
+    "id": "http://example.com/resource/doc/1",
+    "text": "Oxygen turns the sky blue"
+}
+
+
 @pytest.mark.asyncio
 async def test_get_retrieval_evaluation_dict_success(monkeypatch):
     from graphrag_eval.steps.retrieval_answer import (
         ContextRecall,
         ContextPrecision,
-        get_retrieval_evaluation_dict,
+        Evaluator,
     )
     recall_mock = AsyncMock(return_value=MagicMock(value=0.9))
     monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
     precision_mock = AsyncMock(return_value=MagicMock(value=0.6))
     monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
-
-    eval_result_dict = await get_retrieval_evaluation_dict(
+    evaluator = Evaluator(get_ragas_llm())
+    eval_result_dict = await evaluator.get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
-        actual_contexts=[{
-            "id": "http://example.com/resource/doc/1",
-            "text": "Oxygen turns the sky blue"
-        }],
+        actual_contexts=[context_1],
     )
     assert approx(eval_result_dict) == {
         "retrieval_answer_recall": 0.9,
@@ -42,20 +54,17 @@ async def test_get_retrieval_evaluation_dict_recall_error_precision_success(monk
     from graphrag_eval.steps.retrieval_answer import (
         ContextRecall,
         ContextPrecision,
-        get_retrieval_evaluation_dict,
+        Evaluator,
     )
     recall_mock = AsyncMock(side_effect=Exception("recall error"))
     monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
     precision_mock = AsyncMock(return_value=MagicMock(value=0.6))
     monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
-    
-    eval_result_dict = await get_retrieval_evaluation_dict(
+    evaluator = Evaluator(get_ragas_llm())
+    eval_result_dict = await evaluator.get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
-        actual_contexts=[{
-            "id": "http://example.com/resource/doc/1",
-            "text": "Oxygen turns the sky blue"
-        }],
+        actual_contexts=[context_1],
     )
     assert eval_result_dict == {
         "retrieval_answer_recall_error": "recall error",
@@ -68,24 +77,21 @@ async def test_get_retrieval_evaluation_dict_recall_success_precision_error(monk
     from graphrag_eval.steps.retrieval_answer import (
         ContextRecall,
         ContextPrecision,
-        get_retrieval_evaluation_dict
+        Evaluator,
     )
     context_recall = AsyncMock(return_value= MagicMock(value=0.9))
     monkeypatch.setattr(ContextRecall, 'ascore', context_recall)
     context_precision = AsyncMock(side_effect=Exception("precision error"))
     monkeypatch.setattr(ContextPrecision, 'ascore', context_precision)
-
-    eval_result_dict = await get_retrieval_evaluation_dict(
+    evaluator = Evaluator(get_ragas_llm())
+    eval_result_dict = await evaluator.get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
-        actual_contexts=[{
-            "id": "http://example.com/resource/doc/1",
-            "text": "Oxygen turns the sky blue"
-        }],
+        actual_contexts=[context_1],
     )
     assert eval_result_dict == {
         "retrieval_answer_recall": 0.9,
-        "retrieval_answer_precision_error": "precision error"
+        "retrieval_answer_precision_error": "precision error",
     }
 
 
@@ -94,20 +100,18 @@ async def test_get_retrieval_evaluation_dict_both_errors(monkeypatch):
     from graphrag_eval.steps.retrieval_answer import (
         ContextRecall,
         ContextPrecision,
-        get_retrieval_evaluation_dict,
+        Evaluator,
     )
     recall_mock = AsyncMock(side_effect=Exception("recall error"))
     monkeypatch.setattr(ContextRecall, 'ascore', recall_mock)
     precision_mock = AsyncMock(side_effect=Exception("precision error"))
     monkeypatch.setattr(ContextPrecision, 'ascore', precision_mock)
 
-    eval_result_dict = await get_retrieval_evaluation_dict(
+    evaluator = Evaluator(get_ragas_llm())
+    eval_result_dict = await evaluator.get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_answer="Because of the oxygen in the air",
-        actual_contexts=[{
-            "id": "http://example.com/resource/doc/1",
-            "text": "Oxygen turns the sky blue"
-        }],
+        actual_contexts=[context_1],
     )
     assert eval_result_dict == {
         "retrieval_answer_recall_error": "recall error",

@@ -1,0 +1,56 @@
+import os
+from unittest.mock import AsyncMock, MagicMock
+
+from ragas.llms.base import InstructorBaseRagasLLM
+
+import pytest
+
+
+def get_ragas_llm() -> InstructorBaseRagasLLM:
+    from openai import AsyncOpenAI
+    from ragas.llms import llm_factory
+
+    return llm_factory("gpt-3.5-turbo", client=AsyncOpenAI())
+
+
+def get_ragas_embedder():
+    from openai import AsyncOpenAI
+    from ragas.embeddings.base import embedding_factory    
+    
+    return embedding_factory("openai", client=AsyncOpenAI())
+
+
+@pytest.fixture(scope="session", autouse=True)
+def set_env():
+    os.environ["OPENAI_API_KEY"] = "fake-key"
+
+
+@pytest.mark.asyncio
+async def test_get_relevance_dict_eval_success(monkeypatch):
+    from graphrag_eval.answer_relevance import AnswerRelevancy, Evaluator
+    
+    relevance_mock = AsyncMock(return_value=MagicMock(value=0.9))
+    monkeypatch.setattr(AnswerRelevancy, 'ascore', relevance_mock)
+    evaluator = Evaluator(get_ragas_llm(), get_ragas_embedder())
+    eval_result_dict = await evaluator.get_relevance_dict(
+        "Why is the sky blue?",
+        "Because of the oxygen in the air",
+    )
+    assert eval_result_dict == {
+        "answer_relevance": 0.9
+    }
+
+
+@pytest.mark.asyncio
+async def test_get_relevance_dict_eval_error(monkeypatch):
+    from graphrag_eval.answer_relevance import AnswerRelevancy, Evaluator
+    relevance_mock = AsyncMock(side_effect=Exception("some error"))
+    monkeypatch.setattr(AnswerRelevancy, 'ascore', relevance_mock)
+    evaluator = Evaluator(get_ragas_llm(), get_ragas_embedder())
+    eval_result_dict = await evaluator.get_relevance_dict(
+        "Why is the sky blue?",
+        "Because of the oxygen in the air",
+    )
+    assert eval_result_dict == {
+        "answer_relevance_error": "some error"
+    }

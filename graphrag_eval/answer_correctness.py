@@ -1,19 +1,49 @@
 import csv
 from pathlib import Path
 
-from openai import OpenAI
 from tqdm import tqdm
 
-from graphrag_eval.util import compute_f1
+from graphrag_eval import llm
+from graphrag_eval.evaluation import Config
+from graphrag_eval.util import compute_f1, singleton
 
 
 IN_FILE_PATH = "../data/data-1.tsv"
 PROMPT_FILE_PATH = Path(__file__).parent / "prompts" / "template.md"
 OUT_FILE_PATH = "results/data-1.tsv"
 OUT_FIELDS = ["#Reference", "#PTarget", "#Matching", "Reasoning", "Error"]
+LLM_PROVIDER = "openai"
 LLM_MODEL = "gpt-4o-mini"
 TEMPERATURE = 0.0
+MAX_TOKENS = 1024
 
+
+def parse_args() -> "argparse.Namespace":
+    from argparse import ArgumentParser, ArgumentTypeError
+
+    def float_between_0_0_and_2_0(value):
+        try:
+            f = float(value)
+        except ValueError:
+            raise ArgumentTypeError(f"Invalid float value: {value}")
+        
+        if f <= 0.0 or f >= 2.0:
+            raise ArgumentTypeError(f"Value must be between 0.0 and 2.0, got {f}")
+        return f
+
+    parser = ArgumentParser()    
+    parser.add_argument("-i", "--in-file", type=str, default=IN_FILE_PATH)
+    parser.add_argument("-o", "--out-file", type=str, default=OUT_FILE_PATH)
+    parser.add_argument("-p", "--provider", type=str, default=LLM_PROVIDER)
+    parser.add_argument("-l", "--llm", type=str, default=LLM_MODEL)
+    parser.add_argument("-m", "--max-tokens", type=int, default=MAX_TOKENS)    
+    parser.add_argument(
+        "-t",
+        "--temperature",
+        type=float_between_0_0_and_2_0,
+        default=TEMPERATURE
+    )
+    return parser.parse_args()
 
 
 def compute_recall_precision_f1(
@@ -56,27 +86,20 @@ def extract_response_values(
     return n_ref, n_actual, n_matching, vals[3], ""
 
 
+@singleton
 class AnswerCorrectnessEvaluator:
     def __init__(
         self,
+        llm: "InstructorBaseRagasLLM",
         prompt_file_path: str | Path = PROMPT_FILE_PATH,
-        temperature : float = TEMPERATURE
     ):
         with open(prompt_file_path, encoding="utf-8") as f:
             self.prompt_template = f.read()
-        self.openai_client = OpenAI()
-        self.temperature = temperature
+        self.llm = llm
 
-    def call_llm(self, prompt: str) -> str:
-        try:
-            response = self.openai_client.chat.completions.create(
-                model=LLM_MODEL,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=self.temperature
-            )
-            return response.choices[0].message.content.strip("\n")
-        except Exception as e:
-            return str(e).replace("\n", "    ")
+    def _generate(self, prompt):
+        """Wrapper method for easier testing"""
+        return self.llm.generate(prompt, None).choices[0].message.content
 
     def evaluate_answer(
         self,
@@ -89,7 +112,7 @@ class AnswerCorrectnessEvaluator:
             reference_answer=reference_answer,
             candidate_answer=actual_answer,
         )
-        response_str = self.call_llm(prompt)
+        response_str = self._generate(prompt)
         return extract_response_values(response_str)
 
     def get_correctness_dict(
@@ -128,8 +151,10 @@ class AnswerCorrectnessEvaluator:
 def evaluate_and_write(
     in_file_path: str | Path,
     out_file_path: str | Path,
+    config: "evaluation.Config",
 ) -> None:
-    evaluator = AnswerCorrectnessEvaluator(PROMPT_FILE_PATH)
+    ragas_llm = llm.create_llm(config)
+    evaluator = AnswerCorrectnessEvaluator(llm=ragas_llm)
     with open(in_file_path, encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
         rows = [row for row in reader]
@@ -149,12 +174,19 @@ def evaluate_and_write(
 
 
 def main():
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--in-file", type=str, default=IN_FILE_PATH)
-    parser.add_argument("-o", "--out-file", type=str, default=OUT_FILE_PATH)
-    args = parser.parse_args()
+    args = parse_args()
+    config = Config(
+        llm=llm.Config(
+            generation=llm.GenerationConfig(
+                provider=args.provider,
+                model=args.llm,
+                temperature=args.temperature,
+                max_tokens=args.max_tokens,
+            )
+        )
+    )
     evaluate_and_write(
-        in_file_path=args.in_file,
-        out_file_path=args.out_file,
+        args.in_file,
+        args.out_file,
+        config,
     )

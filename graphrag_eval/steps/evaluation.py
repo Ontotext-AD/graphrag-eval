@@ -8,6 +8,7 @@ from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
 from .timeseries import do_retrieve_time_series_steps_equal, do_retrieve_data_points_steps_equal
 
+
 Match = tuple[int, int, int, float]
 Step = dict[str, Any]
 StepsGroup = Sequence[Step]  # We will index into a group
@@ -114,31 +115,45 @@ def calculate_steps_score(
     return steps_score / len(reference_steps_groups)
 
 
-async def evaluate_steps(reference: dict, actual: dict) -> dict:
+async def evaluate_steps(
+    reference: dict,
+    actual: dict,
+    ragas_llm: "InstructorBaseRagasLLM",
+) -> dict:    
     eval_result = {}
     actual_steps = actual.get("actual_steps", [])
     eval_result["actual_steps"] = actual_steps
-    for actual_step in actual_steps:
-        if actual_step["name"] == "retrieval" and "output" in actual_step and "reference_answer" in reference:
-            from .retrieval_answer import get_retrieval_evaluation_dict
-            result = await get_retrieval_evaluation_dict(
-                question_text=reference["question_text"],
-                reference_answer=reference["reference_answer"],
-                actual_contexts=json.loads(actual_step["output"])
-            )
-            actual_step.update(result)
+    if ragas_llm:
+        for actual_step in actual_steps:
+            if actual_step["name"] == "retrieval" \
+            and "output" in actual_step \
+            and "reference_answer" in reference:
+                from .retrieval_answer import Evaluator
+                retrieval_evaluator_using_answers = Evaluator(ragas_llm)
+                result = await retrieval_evaluator_using_answers\
+                .get_retrieval_evaluation_dict(
+                    question_text=reference["question_text"],
+                    reference_answer=reference["reference_answer"],
+                    actual_contexts=json.loads(actual_step["output"]),
+                )
+                actual_step.update(result)
     if "reference_steps" in reference:
         reference_steps = reference["reference_steps"]
         matches = match_groups(reference_steps, actual_steps)
         eval_result["steps_score"] = calculate_steps_score(reference_steps, actual_steps, matches)
-        for ref_group_idx, ref_match_idx, act_idx, _ in matches:
-            reference_step = reference_steps[ref_group_idx][ref_match_idx]
-            actual_step = actual_steps[act_idx]
-            if reference_step["name"] == "retrieval" and "output" in actual_step:
-                from .retrieval_context_texts import get_retrieval_evaluation_dict
-                actual_step.update(await get_retrieval_evaluation_dict(
-                    question_text=reference["question_text"],
-                    reference_contexts=json.loads(reference_step["output"]),
-                    actual_contexts=json.loads(actual_step["output"]),
-                ))
+        if ragas_llm:
+            for ref_group_idx, ref_match_idx, act_idx, _ in matches:
+                reference_step = reference_steps[ref_group_idx][ref_match_idx]
+                actual_step = actual_steps[act_idx]
+                if reference_step["name"] == "retrieval" and "output" in actual_step:
+                    from .retrieval_context_texts import Evaluator
+                    retrieval_evaluator_using_texts = Evaluator(ragas_llm)
+                    actual_step.update(
+                        await retrieval_evaluator_using_texts\
+                        .get_retrieval_evaluation_dict(
+                            question_text=reference["question_text"],
+                            reference_contexts=json.loads(reference_step["output"]),
+                            actual_contexts=json.loads(actual_step["output"]),
+                        )
+                    )
     return eval_result

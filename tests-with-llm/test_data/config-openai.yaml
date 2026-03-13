@@ -1,0 +1,9 @@
+llm:
+  generation:
+    provider: openai
+    model: gpt-4o-mini
+    temperature: 0.0
+    max_tokens: 8192
+  embedding:
+    provider: openai
+    model: text-embedding-3-small

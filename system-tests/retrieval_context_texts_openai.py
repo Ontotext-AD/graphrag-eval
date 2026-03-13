@@ -1,13 +1,24 @@
 import pytest
+import yaml
 
-from graphrag_eval.steps.retrieval_context_texts import (
-    get_retrieval_evaluation_dict
-)
+from graphrag_eval.evaluation import Config
+from graphrag_eval.steps.retrieval_context_texts import Evaluator
+from graphrag_eval import llm
+
+
+path = "tests-with-llm/test_data/config-openai.yaml"
+with open(path, encoding="utf-8") as f:
+    config_dict = yaml.safe_load(f)
+config = Config(**config_dict)
+ragas_llm = llm.create_llm(config)
+ragas_embedder = llm.create_embedder(config)
 
 
 @pytest.mark.asyncio
 async def test_retrieval_contexts():
-    result = await get_retrieval_evaluation_dict(
+    
+    evaluator = Evaluator(ragas_llm)
+    result = await evaluator.get_retrieval_evaluation_dict(
         question_text="Why is the sky blue?",
         reference_contexts=[
             {
@@ -28,8 +39,11 @@ async def test_retrieval_contexts():
                 "id": "http://example.com/resource/doc/4",
                 "text": "The sun shines onto the atmosphere. The atmosphere contains various gases."
             }
-        ]
+        ],
     )
-
     assert isinstance(result["retrieval_context_recall"], float)
+    assert isinstance(result["retrieval_context_precision"], float)
+    assert isinstance(result["retrieval_context_f1"], float)
     assert 0 <= result["retrieval_context_recall"] <= 1
+    assert 0 <= result["retrieval_context_precision"] <= 1
+    assert 0 <= result["retrieval_context_f1"] <= 1
