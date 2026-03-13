@@ -123,7 +123,7 @@ The configuration has two sections: `llm` and `custom_evaluation`. Example:
 
 #### Example Configuration File With LLM Configuration
 
-Below is a YAML file that configures the LLM generation (for [metrics that require an LLM](#llm-use-in-evaluation)) and embedding (for [`answer_relevance`](#otuput-keys)).
+Below is a YAML file that configures the LLM generation (for [metrics that require an LLM](#llm-use-in-evaluation)) and embedding (for [`answer_relevance`](#otuput-keys)). It assumes that the environment variable `OPENAI_API_KEY` is set with your OpenAI API key.
 
 ```YAML
 llm:
@@ -135,6 +135,26 @@ llm:
   embedding:
     provider: openai
     model: text-embedding-3-small
+```
+
+#### Example Configuration File With LLM Configuration and API keys
+
+Below is a YAML file that configures the LLM generation (for [metrics that require an LLM](#llm-use-in-evaluation)) and embedding (for [`answer_relevance`](#otuput-keys)) with different API keys in place of environment variables.
+
+```YAML
+llm:
+  generation:
+    provider: azure
+    model: graphrag-eval-system-tests-gpt-5.2
+    base_url: https://my-generator.openai.azure.com
+    temperature: 0.0
+    max_tokens: 8192
+    api_key: ...
+  embedding:
+    provider: azure
+    model: graphrag-eval-system-tests-text-embedding-3-small
+    api_base: https://my-embedder.openai.azure.com
+    api_key: ...
 ```
 
 #### Example Configuration File With Custom Evaluations
