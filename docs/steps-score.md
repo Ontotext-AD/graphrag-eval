@@ -30,7 +30,7 @@ indicates a match.
 reference step is "application/sparql-results+json", then we try to match them 
 using the [SPARQL queries comparison algorithm](#sparql-queries-comparison).
 - if both are named "retrieval" and the reference step has "output", then we 
-compute [recall@k](#context-recallk).
+compute [recall@k](retrieval-evaluation-using-chunk-ids.md#recall-k).
 - if both are named "retrieve_time_series", then we check if the arguments of 
 the steps are matching.
 - if both are named "retrieve_data_points", then we check if the arguments of 
