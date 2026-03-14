@@ -26,7 +26,7 @@
 - `answer_f1`: (optional) Harmonic mean of `answer_recall` and `answer_precision`
 - `answer_relevance`: (optional) The value representing how relevant is the
   actual answer to the question, computed using
-  [RAGAS answer relevance](https://docs.ragas.io/en/v0.3.3/concepts/metrics/available_metrics/answer_relevance/)
+  [RAGAS answer relevance](https://docs.ragas.io/en/v0.4.3/concepts/metrics/available_metrics/answer_relevance/)
 - `answer_relevance_error`: (optional) error message if answer relevance
   evaluation failed
 - `actual_steps`: (optional) copy of the steps in the evaluation target, if
