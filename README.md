@@ -14,3 +14,9 @@ For installation and usage instructions, see directory [`docs/`](docs).
 
 Developed and maintained by [Graphwise](https://graphwise.ai/).
 For issues and feature requests, please open [a GitHub issue](https://github.com/Ontotext-AD/graphrag-eval/issues).
+
+## License
+
+Apache-2.0 License. See
+[LICENSE](https://github.com/Ontotext-AD/graphrag-eval/blob/main/LICENSE)
+file for details.
