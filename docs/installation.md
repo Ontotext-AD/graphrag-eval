@@ -9,9 +9,9 @@ or add the following dependency in your `pyproject.toml` file:
 graphrag-eval = "*"
 ```
 
-To evaluate answer relevance and answer correctness (see section
-[Output keys](output-keys.md)) or use a
-[custom evaluation](custom-evaluation.md):
+To evaluate `answer_relevance` and answer correctness metrics (`answer_recall`,
+`answer_precision`, `answer_f1`; see section [Output keys](output-keys.md)) or
+use a [custom evaluation](custom-evaluation.md):
 
 ```bash
 pip install 'graphrag-eval[llm]'
