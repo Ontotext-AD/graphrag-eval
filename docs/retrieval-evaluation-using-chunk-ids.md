@@ -1,6 +1,6 @@
 # Retrieval evaluation using chunk IDs
 
-The following metrics are based on the content of retrieved documents.
+The following metrics are based on the IDs of retrieved document chunks.
 
 ## Context recall@k
 
