@@ -1,12 +1,12 @@
 # Steps score
 
 The steps score is an overall metric of the correctness of the steps the chat
-bot or agent executed in response to the user's query. It can be used to find
-the understand how to improve the agent.
+bot or agent executed in response to the user's query. It can be used to
+understand how to improve the agent.
 
-The steps score is a real number in the interval [0, 1], 
-which indicates how closely the actual steps match to the reference steps.
-A score of 1 indicates a perfect match.
+The steps score is a real number in the interval [0, 1], which indicates how
+closely the actual steps match the reference steps. A score of 1 indicates a
+perfect match.
 
 Going in reverse order of the reference groups and in reverse order of the 
 actual steps, for each reference group we try to match each step in the group 
@@ -32,9 +32,9 @@ using the [SPARQL queries comparison algorithm](#sparql-queries-comparison).
 - if both are named "retrieval" and the reference step has "output", then we 
 compute [recall@k](retrieval-evaluation-using-chunk-ids.md#recall-k).
 - if both are named "retrieve_time_series", then we check if the arguments of 
-the steps are matching.
+the steps match.
 - if both are named "retrieve_data_points", then we check if the arguments of 
-the steps are matching.
+the steps match.
 - if the reference step is named "iri_discovery" and the actual step name is 
 "autocomplete_search", тhen check if the IRI specified as "output" of the 
 "iri_discovery" step is present in the "output" of the "autocomplete_search".
