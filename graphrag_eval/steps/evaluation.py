@@ -1,4 +1,5 @@
 import json
+import logging
 from collections import defaultdict
 from collections.abc import Sequence
 from typing import Any
@@ -8,6 +9,7 @@ from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
 from .timeseries import do_retrieve_time_series_steps_equal, do_retrieve_data_points_steps_equal
 
+logger = logging.getLogger(__name__)
 
 Match = tuple[int, int, int, float]
 Step = dict[str, Any]
@@ -23,9 +25,24 @@ def compare_steps(reference_step: Step, actual_step: Step) -> float:
 
     if reference_step_name == actual_step_name == "sparql_query" \
         and reference_output_media_type == "application/sparql-results+json":
+        try:
+            actual_sparql_result = json.loads(actual_output)
+        except json.decoder.JSONDecodeError as e:
+            # This might happen, when the actual step is a DESCRIBE or CONSTRUCT query
+            # in which case the output is string.
+            # Currently, we don't support comparison of SELECT and ASK queries
+            # with DESCRIBE or CONSTRUCT queries.
+            logger.warning("Failed to parse step output as json", exc_info=e)
+            return False
+        try:
+            reference_sparql_result = json.loads(reference_output)
+        except json.decoder.JSONDecodeError as e:
+            # This is not expected, and might indicate a bug in the Q&A dataset.
+            logger.exception("Failed to parse step output as json", exc_info=e)
+            return False
         return compare_sparql_results(
-            json.loads(reference_output),
-            json.loads(actual_output),
+            reference_sparql_result,
+            actual_sparql_result,
             reference_step["required_columns"],
             reference_step.get("ordered", False),
             reference_step.get("ignore_duplicates", True),
@@ -39,11 +56,16 @@ def compare_steps(reference_step: Step, actual_step: Step) -> float:
         return float(do_retrieve_time_series_steps_equal(reference_step, actual_step))
     elif reference_step_name == actual_step_name == "retrieve_data_points":
         return float(
-            do_retrieve_data_points_steps_equal(reference_step, actual_step, actual_step["execution_timestamp"])
+            do_retrieve_data_points_steps_equal(
+                reference_step,
+                actual_step,
+                actual_step["execution_timestamp"],
+            )
         )
     elif reference_step_name == "iri_discovery":
         return float(do_iri_discovery_steps_equal(reference_step, actual_step))
-    elif reference_step_name == actual_step_name and reference_output_media_type == "application/json":
+    elif reference_step_name == actual_step_name \
+        and reference_output_media_type == "application/json":
         return float(json.loads(reference_output) == json.loads(actual_output))
     return float(reference_output == actual_output)
 
@@ -119,19 +141,19 @@ async def evaluate_steps(
     reference: dict,
     actual: dict,
     ragas_llm: "InstructorBaseRagasLLM",
-) -> dict:    
+) -> dict:
     eval_result = {}
     actual_steps = actual.get("actual_steps", [])
     eval_result["actual_steps"] = actual_steps
     if ragas_llm:
         for actual_step in actual_steps:
             if actual_step["name"] == "retrieval" \
-            and "output" in actual_step \
-            and "reference_answer" in reference:
+                and "output" in actual_step \
+                and "reference_answer" in reference:
                 from .retrieval_answer import Evaluator
                 retrieval_evaluator_using_answers = Evaluator(ragas_llm)
-                result = await retrieval_evaluator_using_answers\
-                .get_retrieval_evaluation_dict(
+                result = await retrieval_evaluator_using_answers \
+                    .get_retrieval_evaluation_dict(
                     question_text=reference["question_text"],
                     reference_answer=reference["reference_answer"],
                     actual_contexts=json.loads(actual_step["output"]),
@@ -149,8 +171,8 @@ async def evaluate_steps(
                     from .retrieval_context_texts import Evaluator
                     retrieval_evaluator_using_texts = Evaluator(ragas_llm)
                     actual_step.update(
-                        await retrieval_evaluator_using_texts\
-                        .get_retrieval_evaluation_dict(
+                        await retrieval_evaluator_using_texts \
+                            .get_retrieval_evaluation_dict(
                             question_text=reference["question_text"],
                             reference_contexts=json.loads(reference_step["output"]),
                             actual_contexts=json.loads(actual_step["output"]),

@@ -1,0 +1,34 @@
+- template_id: template_list_a255b3d21675d130e8227530f937948e
+  questions:
+  - id: question_b0d581731bd2f2eec631149ad66f70c0
+    question_text: Which rotating machine activities are connected to 050cd458 within
+      the grid state alteration set?
+    reference_steps:
+    - - args:
+          query: 050cd458
+        name: iri_discovery
+        output: urn:uuid:050cd458-b999-4c8d-ad24-93c6a3102b53
+        output_media_type: text/uri
+        required_columns:
+        - uri
+    - - args:
+          query: 'SELECT ?rotatingmachineaction WHERE {
+
+            ?rotatingmachineaction a nc:RotatingMachineAction ;
+
+            nc:GridStateAlteration.GridStateAlterationCollection/nc:GridStateAlterationCollection.GridStateAlteration
+            <urn:uuid:050cd458-b999-4c8d-ad24-93c6a3102b53> .
+
+            <urn:uuid:050cd458-b999-4c8d-ad24-93c6a3102b53> a nc:GridStateAlteration
+            ;
+
+            .
+
+            }'
+        name: sparql_query
+        output: '{"head": {"vars": ["rotatingmachineaction"]}, "results": {"bindings":
+          [{"rotatingmachineaction": {"type": "uri", "value": "urn:uuid:417979f7-6af4-460e-8966-c42e671844a3"}},
+          {"rotatingmachineaction": {"type": "uri", "value": "urn:uuid:050cd458-b999-4c8d-ad24-93c6a3102b53"}}]}}'
+        output_media_type: application/sparql-results+json
+        required_columns:
+        - rotatingmachineaction

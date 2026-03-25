@@ -85,8 +85,8 @@ def test_config_invalid_max_tokens():
             generation=GenerationConfig(
                 provider="generation_provider",
                 model="generation_model",
-                temperature=2.1,
-                max_tokens=100
+                temperature=0.5,
+                max_tokens=-5
             ),
             embedding=EmbeddingConfig(
                 provider="embedding_provider",
