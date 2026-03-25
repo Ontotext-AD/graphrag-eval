@@ -6,20 +6,23 @@ To evaluate answers and/or steps:
    [Reference Q&A data](reference-qa-data.md)
 1. Format the answers and/or steps you want to evaluate: section
    [Responses to evaluate](responses-to-evaluate.md)
-1. To evaluate answer relevance:
-    1. Include `actual_answer` in the target data to evaluate
-    1. Set the appropriate environment variable (e.g.,`OPENAI_API_KEY`) with
-       your LLM access key
-1. To evaluate answer correctness:
-    1. Include `reference_answer` in the reference dataset and `actual_answer`
-       in the target data to evaluate
+1. To evaluate metrics that require an LLM:
+    1. Include the relevant reference inputs and target inputs (outputs from 
+       the target system):
+      1. For `answer_relevance`, include `actual_answer` in the reference
+         dataset
+      1. For answer correctness metrics (section
+         [Output keys](output-keys.md)), include `reference_answer` in the 
+         reference dataset and `actual_answer` in the target data to evaluate
+      1. For custom metrics:
+         1. Define the metrics in the [configuration file](configuration.md)
+         1. Include refernce and target inputs used by the metrics
+    1. Configure the LLM in the [configuration file](configuration.md)
     1. Set the appropriate environment variable (e.g.,`OPENAI_API_KEY`) with
        your LLM access key
 1. To evaluate steps:
     1. Include `reference_steps` in the reference data and `actual_steps` in
        target data to evaluate
-1. If you want to evaluate metrics that require an LLM, write a
-   [configuration file](configuration.md).
 1. Call the evaluation function with the reference data and target data:
    section [Usage code](#usage-code)
 1. Call the aggregation function with the evaluation results: sections
@@ -41,9 +44,6 @@ aggregates = compute_aggregates(evaluation_results)
 `evaluation_results` is a list of statistics for each question, as in section
 [Evaluation results](evaluation-results.md). The format is explained in section
 [Output Keys](output-keys.md)
-
-If your chat responses contain actual answers, set your environment variable
-`OPENAI_API_KEY` before running the code above.
 
 # Command Line Use
 
