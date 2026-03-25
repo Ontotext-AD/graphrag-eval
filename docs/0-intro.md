@@ -32,9 +32,9 @@ To evaluate answers and/or steps:
 ```python
 from graphrag_eval import run_evaluation, compute_aggregates
 
-reference_qas: list[dict] = [] # read your reference data
-chat_responses: dict = {} # call your implementation to get the response
-evaluation_results = await run_evaluation(reference_qas, chat_responses)
+reference_data: list[dict] = [] # Read your evaluation questions and reference answers
+chat_responses: dict = {} # call your implementation to get responses to the questions
+evaluation_results = await run_evaluation(reference_data, chat_responses)
 aggregates = compute_aggregates(evaluation_results)
 ```
 
