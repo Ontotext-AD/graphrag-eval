@@ -1,9 +1,4 @@
-# Responses to evaluate
-
-Given a question, if the question-answering system successfully responds, to
-evaluate the response, call `run_evaluation()` with the response formatted as
-in the example below. (On the other hand, if an error occurs while generating
-a response, format it as in [Error responses format](#error-responses-format).)
+# Example responses to evaluate
 
 ```json
 {
@@ -57,19 +52,5 @@ a response, format it as in [Error responses format](#error-responses-format).)
         }
     ],
     "actual_answer": "The substations connected to the substation \"STAVANGER\" via AC or DC lines are:\n\n1. **KRISTIANSAND** via line \"LC 300KRISTIAN-STAVANGE\"\n2. **DAGALI** via line \"LC 420DAGALI-HAGAFOSS\"\n3. **KVILLDAL** via lines:\n   - \"LC 420DAGALI-HAGAFOSS\"\n   - \"LC 420SYSLE-HAGAFOSS\"\n   - \"LC 420AURLAND-HAGAFOSS\"\n   - \"LC 420SYLLING-HAGAFOSS\"\n4. **HAGAFOSS** via lines:\n   - \"LC 420DAGALI-HAGAFOSS\"\n   - \"LC 420SYSLE-HAGAFOSS\"\n   - \"LC 420AURLAND-HAGAFOSS\"\n   - \"LC 420SYLLING-HAGAFOSS\"\n5. **OSLO** via lines:\n   - \"LC 420SYSLE-HAGAFOSS\"\n   - \"LC 420SYLLING-HAGAFOSS\"\n6. **SYSLE** via line \"LC 420SYSLE-HAGAFOSS\"\n7. **AURLAND** via line \"LC 420AURLAND-HAGAFOSS\"\n8. **SIMA** via line \"LC 420AURLAND-HAGAFOSS\"\n9. **SYLLING** via line \"LC 420SYLLING-HAGAFOSS\""
-}
-```
-
-## Error responses format
-
-If an error occurs while the question-answering system is generating a
-response, and you want to tally this error, the input to `run_evaluate()`
-should be like:
-
-```json
-{
-    "question_id": "a8daaf98b84b4f6b0e0052fb942bf6b6",
-    "error": "Error message",
-    "status": "error"
 }
 ```

@@ -1,11 +1,14 @@
 # Output keys
 
+The output is a list of question objects, each with the following keys (some
+of which are optional), which include computed metrics and other data.
+
 - `template_id`: the template id
 - `question_id`: the question id
 - `question_text`: the natural language query
 - `status`: "success" or "error", indicating whether the evaluation succeeded
 - `reference_steps`: (optional) copy of the expected steps in the Q&A dataset, 
-  if specified there. Additional key "matches" is added to those steps, which are 
+  if specified there. Additional key "matches" is added to those steps which are 
   matched.
 - `reference_answer`: (optional) copy of the expected answer in the Q&A
   dataset, if specified there
@@ -24,21 +27,21 @@
   matching claims from the reference answer and the actual answer
 - `answer_eval_error`: (optional) error message if answer evaluation failed
 - `answer_f1`: (optional) Harmonic mean of `answer_recall` and `answer_precision`
-- `answer_relevance`: (optional) The value representing how relevant is the
-  actual answer to the question, computed using
+- `answer_relevance`: (optional) a real number between 0 and 1 representing
+  how relevant to the question is the actual answer, computed using
   [RAGAS answer relevance](https://docs.ragas.io/en/v0.4.3/concepts/metrics/available_metrics/answer_relevance/)
 - `answer_relevance_error`: (optional) error message if answer relevance
   evaluation failed
 - `actual_steps`: (optional) copy of the steps in the evaluation target, if
   specified there
-- `steps_score`: (optional) a real number between 0 and 1, see how step score 
-  is calculated in the section [Steps score](steps-score.md)
+- `steps_score`: (optional) a real number between 0 and 1 (see section
+  [Steps score](steps-score.md))
 - `input_tokens`: (optional) input tokens usage
 - `output_tokens`: (optional) output tokens usage
 - `total_tokens`: (optional) total tokens usage
 - `elapsed_sec`: (optional) elapsed seconds
 
-All `actual_steps` with `name` "retrieval" contain:
+All `actual_steps` with `name` "retrieval" contain the following keys:
 - `retrieval_answer_recall`: (optional) recall of the retrieved context with
   respect to the reference answer, if evaluation succeeds
 - `retrieval_answer_recall_error`: (optional) error message if
@@ -147,3 +150,5 @@ Aggregates are:
   - `retrieval_context_precision`
   - `retrieval_context_f1`
   - `steps_score`
+
+See section [Example aggregagates output](example-aggregates-output.md).
