@@ -1,65 +1,30 @@
-# Use as a Library
+# Metrics
 
-To evaluate answers and/or steps:
-1. Install this package: section [Installation](installation.md)
-1. Format the dataset of questions and reference answers and/or steps: section
-   [Reference Q&A data](reference-qa-data.md)
-1. Format the answers and/or steps you want to evaluate: section
-   [Responses to evaluate](responses-to-evaluate.md)
-1. To evaluate metrics that require an LLM:
-    1. Include the relevant reference inputs and target inputs (outputs from 
-       the target system):
-      1. For `answer_relevance`, include `actual_answer` in the reference
-         dataset
-      1. For answer correctness metrics (section
-         [Output keys](output-keys.md)), include `reference_answer` in the 
-         reference dataset and `actual_answer` in the target data to evaluate
-      1. For custom metrics:
-         1. Define the metrics in the [configuration file](configuration.md)
-         1. Include refernce and target inputs used by the metrics
-    1. Configure the LLM in the [configuration file](configuration.md)
-    1. Set the appropriate environment variable (e.g.,`OPENAI_API_KEY`) with
-       your LLM access key
-1. To evaluate steps:
-    1. Include `reference_steps` in the reference data and `actual_steps` in
-       target data to evaluate
-1. Call the evaluation function with the reference data and target data:
-   section [Usage code](#usage-code)
-1. Call the aggregation function with the evaluation results: sections
-   [Usage code](#usage-code),
-   [Aggregate output keys](output-keys.md#aggregates-keys) and
-   [Example aggregates output](example-aggregates-output.md)
+The library computes metrics for the quality of the answers. The groups of
+possible metrics are:
+1. `answer_relevance`
+1. Metrics of answer correctness
+   1. `answer_recall`
+   1. `answer_precision`
+   1. `answer_f1`
+1. `steps_score`: an overall metric of the correctness of the steps the chat
+bot or agent executed in response to the user's query (see section [Steps score](steps-score.md))
+1. Metrics of vector retrieval quality, computed for reference retrieval steps
+   matched with actual retrieval steps
+    1. Retrieval quality using the reference answer 
+        1. `retrieval_answer_recall`
+        1. `retrieval_answer_precision`
+        1. `retrieval_answer_f1`
+    1. Retrieval quality using a reference context
+        1. `retrieval_context_recall`
+        1. `retrieval_context_precision`
+        1. `retrieval_context_f1`
+1. Aggregates min, max, sum, mean, median of the above metrics (section [Aggregates keys](output-keys.md#aggregate-keys))
 
-## Usage code
+Which of these metrics are output depends on the inputs. Specifically, a metric is computed and output if the types of input required to compute it are provided in the reference dataset and the responses of the system being evaluated.
 
-```python
-from graphrag_eval import run_evaluation, compute_aggregates
+For each question, the output incudes keys for those metrics and other data detailed in section [Output keys](output-keys.md).
 
-reference_data: list[dict] = [] # Read your evaluation questions and reference answers
-chat_responses: dict = {} # call your implementation to get responses to the questions
-evaluation_results = await run_evaluation(reference_data, chat_responses)
-aggregates = compute_aggregates(evaluation_results)
-```
+The user can also define their own custom metrics using the configuration file: see section [Custom evaluation](custom-evaluation.md)
 
-`evaluation_results` is a list of statistics for each question, as in section
-[Evaluation results](evaluation-results.md). The format is explained in section
-[Output Keys](output-keys.md)
-
-# Command Line Use
-
-To evaluate only correctness of final answers (system responses), you can
-clone this repository and run the code on the command line:
-
-1. Prepare an input TSV file with columns `Question`, `Reference answer` and
-   `Actual answer`
-1. Execute `poetry install --with llm`
-1. Execute
-   ```
-   <LLM_ACCESS_VARIABLE>=<your_api_key> poetry run answer-correctness -i <input_file.tsv> -o <output_file.tsv>
-   ```
-   replacing `<LLM_ACCESS_VARIABLE>` by the variable used by your LLM provider
-   to specify your LLM use key.
-   Example:
-   ```
-   OPENAI_API_KEY=XXX poetry run answer-correctness -i reference.tsv -o evaluations.tsv
-   ```
+# Input

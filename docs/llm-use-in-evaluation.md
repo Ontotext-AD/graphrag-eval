@@ -7,7 +7,7 @@ The following metrics use an LLM which must be configured using a
   * `answer_precision`
   * `answer_f1`
   * `answer_relevance`
-* retrieval context metrics:
+* retrieval quality metrics:
   * `retrieval_answer_recall`
   * `retrieval_answer_precision`
   * `retrieval_answer_f1`
