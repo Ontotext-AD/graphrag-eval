@@ -43,13 +43,16 @@ Each step includes:
   whether duplicate binding values in the expected or in the actual results should be
   ignored for the comparison.
 
-An example formatted reference data is in section [Example reference data](examples/reference-data.md).
+### Example
+Here is a minimal but realistic
+[example Q&A dataset reference data](examples/reference-data.yaml), showing
+two templates with associated questions and steps.
 
 ## Target responses to evaluate
 
 To evaluate a successful response by the question-answering system to a
-question, the response should be formatted as in section
-[Example responses to evaluate](examples/target-data.md).
+question, the response should be formatted as in this 
+[sxample](examples/target-data.json).
 
 On the other hand, if an error occurs while the question-answering system is generating a
 response, and you want to tally this error, the input to `run_evaluate()`

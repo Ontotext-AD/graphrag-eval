@@ -1,4 +1,4 @@
-# Output keys
+# Output
 
 The output is a list of objects corresponding to questions from the reference
 Q&A datset. Each output object includes computed metrics and other data. It can
@@ -152,4 +152,4 @@ Aggregates are:
   - `retrieval_context_f1`
   - `steps_score`
 
-See section [Example aggregagates output](examples/aggregates-output.md).
+See the [example aggregagates output](examples/aggregates-output.yaml).
