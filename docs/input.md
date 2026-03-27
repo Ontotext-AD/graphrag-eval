@@ -43,7 +43,7 @@ Each step includes:
   whether duplicate binding values in the expected or in the actual results should be
   ignored for the comparison.
 
-An example formatted reference data is in section [Example reference data](reference-qa-data.md).
+An example formatted reference data is in section [Example reference data](example-reference-data.md).
 
 ## Target responses to evaluate
 
