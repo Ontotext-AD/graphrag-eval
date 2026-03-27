@@ -1,7 +1,8 @@
 # Output keys
 
-The output is a list of question objects, each with the following keys (some
-of which are optional), which include computed metrics and other data.
+The output is a list of objects corresponding to questions from the reference
+Q&A datset. Each output object includes computed metrics and other data. It can
+have the following keys.
 
 - `template_id`: the template id
 - `question_id`: the question id
