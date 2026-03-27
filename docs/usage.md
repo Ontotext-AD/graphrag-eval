@@ -5,7 +5,7 @@ To evaluate answers and/or steps:
 1. Format the dataset of questions and reference answers and/or steps: section
    [Reference Q&A data](example-reference-data.md)
 1. Format the answers and/or steps you want to evaluate: section
-   [Responses to evaluate](responses-to-evaluate.md)
+   [Responses to evaluate](example-target-data.md)
 1. To evaluate metrics that require an LLM:
     1. Include the relevant reference inputs and target inputs (outputs from 
        the target system):

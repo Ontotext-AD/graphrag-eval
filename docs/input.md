@@ -49,7 +49,7 @@ An example formatted reference data is in section [Example reference data](examp
 
 To evaluate a successful response by the question-answering system to a
 question, the response should be formatted as in section
-[Example responses to evaluate](responses-to-evaluate.md).
+[Example responses to evaluate](example-target-data.md).
 
 On the other hand, if an error occurs while the question-answering system is generating a
 response, and you want to tally this error, the input to `run_evaluate()`
