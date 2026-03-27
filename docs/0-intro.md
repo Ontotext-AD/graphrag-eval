@@ -19,11 +19,11 @@ bot or agent executed in response to the user's query (see section [Steps score]
         1. `retrieval_context_recall`
         1. `retrieval_context_precision`
         1. `retrieval_context_f1`
-1. Aggregates min, max, sum, mean, median of the above metrics (section [Aggregates keys](output-keys.md#aggregate-keys))
+1. Aggregates min, max, sum, mean, median of the above metrics (section [Aggregates keys](output.md#aggregate-keys))
 
 Which of these metrics are output depends on the inputs. Specifically, a metric is computed and output if the types of input required to compute it are provided in the reference dataset and the responses of the system being evaluated.
 
-For each question, the output incudes keys for those metrics and other data detailed in section [Output keys](output-keys.md).
+For each question, the output incudes keys for those metrics and other data detailed in section [Output keys](output.md).
 
 The user can also define their own custom metrics using the configuration file: see section [Custom evaluation](custom-evaluation.md)
 

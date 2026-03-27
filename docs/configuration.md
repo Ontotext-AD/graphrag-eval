@@ -12,14 +12,14 @@ The configuration has two sections: `llm` and `custom_evaluation`. Example:
           temperature for generation
         * `max_tokens`: (int > 0) maximum number of tokens to generate
         * Optional keys: parameters to be passed to LiteLLM for generation (for
-          [`answer_correctness`](output-keys.md) and
+          [`answer_correctness`](output.md) and
           [custom evaluation](custom-evaluation.md)). Examples:
           * `base_url`: (str) base URL for the generation model, alternative
             to the provider's default URL
           * `api_key`: (str) API key for the generation model, alternative to
             setting the environment variable corresponding to the provider (e.g.
             `OPENAI_API_KEY` for OpenAI)
-    * `embedding`: required for [`answer_relevance`](output-keys.md).
+    * `embedding`: required for [`answer_relevance`](output.md).
         * `provider`: (str) name of the organiation providing the embedding
           model
         * `model`: (str) name of the embedding model
@@ -46,7 +46,7 @@ The configuration has two sections: `llm` and `custom_evaluation`. Example:
 
 Below is a YAML file that configures the LLM generation (for
 [metrics that require an LLM](llm-use-in-evaluation.md)) and embedding (for
-[`answer_relevance`](output-keys.md)). It assumes that the environment
+[`answer_relevance`](output.md)). It assumes that the environment
 variable `OPENAI_API_KEY` is set with your OpenAI API key.
 
 ```YAML
@@ -65,7 +65,7 @@ llm:
 
 Below is a YAML file that configures the LLM generation (for
 [metrics that require an LLM](#llm-use-in-evaluation)) and embedding (for
-[`answer_relevance`](#otuput-keys)) with different API keys in place of
+[`answer_relevance`](#otuput)) with different API keys in place of
 environment variables.
 
 ```YAML

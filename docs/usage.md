@@ -12,7 +12,7 @@ To evaluate answers and/or steps:
       1. For `answer_relevance`, include `actual_answer` in the reference
          dataset
       1. For answer correctness metrics (section
-         [Output keys](output-keys.md)), include `reference_answer` in the 
+         [Output keys](output.md)), include `reference_answer` in the 
          reference dataset and `actual_answer` in the target data to evaluate
       1. For custom metrics:
          1. Define the metrics in the [configuration file](configuration.md)
@@ -27,7 +27,7 @@ To evaluate answers and/or steps:
    section [Usage code](#usage-code)
 1. Call the aggregation function with the evaluation results: sections
    [Usage code](#usage-code),
-   [Aggregate output keys](output-keys.md#aggregates-keys) and
+   [Aggregate output keys](output.md#aggregates-keys) and
    [Example aggregates output](example-aggregates-output.md)
 
 ## Usage code
@@ -43,7 +43,7 @@ aggregates = compute_aggregates(evaluation_results)
 
 `evaluation_results` is a list of statistics for each question, as in section
 [Evaluation results](evaluation-results.md). The format is explained in section
-[Output Keys](output-keys.md)
+[Output Keys](output.md)
 
 # Command Line Use
 
