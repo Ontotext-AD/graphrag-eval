@@ -1,8 +1,5 @@
 # Evaluation results
 
-The output is a list of statistics for each question from the reference Q&A
-dataset. Here is an example of statistics for one question:
-
 ```yaml
 - template_id: list_all_transformers_within_Substation_SUBSTATION
   question_id: c10bbc8dce98a4b8832d125134a16153
