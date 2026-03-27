@@ -3,7 +3,7 @@
 To evaluate answers and/or steps:
 1. Install this package: section [Installation](installation.md)
 1. Format the dataset of questions and reference answers and/or steps: section
-   [Reference Q&A data](reference-qa-data.md)
+   [Reference Q&A data](example-reference-data.md)
 1. Format the answers and/or steps you want to evaluate: section
    [Responses to evaluate](responses-to-evaluate.md)
 1. To evaluate metrics that require an LLM:
