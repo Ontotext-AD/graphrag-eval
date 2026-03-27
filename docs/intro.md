@@ -19,6 +19,7 @@ bot or agent executed in response to the user's query (see section [Steps score]
         1. `retrieval_context_recall`
         1. `retrieval_context_precision`
         1. `retrieval_context_f1`
+    1. Retrieval quality using chunk IDs (section [Retrieval evaluation using chunk IDs](retrieval-evaluation-using-chunk-ids.md))
 1. Aggregates min, max, sum, mean, median of the above metrics (section [Aggregates keys](output.md#aggregate-keys))
 
 Which of these metrics are output depends on the inputs. Specifically, a metric is computed and output if the types of input required to compute it are provided in the reference dataset and the responses of the system being evaluated.
@@ -27,4 +28,12 @@ For each question, the output incudes keys for those metrics and other data deta
 
 The user can also define their own custom metrics using the configuration file: see section [Custom evaluation](custom-evaluation.md)
 
-# Input
+# Detailed documentation
+
+* [Installation](installation.md)
+* [Usage](usage.md)
+* [Configuration](documentation.md)
+* [LLM use in evaluation](llm-use-in-evaluation.md)
+* [Custom evaluation (custom metrics)](custom-evaluation.md)
+* [Input](input.md)
+* [Output](output.md)
