@@ -1,6 +1,7 @@
 # Inputs
 
-The input to the library consists of two files of data sets with corresponding entries:
+The input to the library consists of two files of data sets with corresponding
+entries:
 1. Reference dataset: a list of questions and their reference answers
 1. Target dataset: the question responses by the system we want to evaluate
 
@@ -15,8 +16,8 @@ A reference dataset is a list of templates, each of which contains:
   - `question_text`: The natural language query passed to the LLM
   - `reference_steps`: (optional) A list of expected steps grouped by expected
     order of execution, where all steps in a group can be executed in any order
-    relative to each other, but after all steps in the previous group and before
-    all steps in the next group.
+    relative to each other, but after all steps in the previous group and
+    before all steps in the next group.
   - `reference_answer`: (optional) The expected answer to the question
 
 This library is agnostic to the question-answering system implementation and
@@ -36,12 +37,13 @@ Each step includes:
   output of a step must be processed
 - `ordered`: (optional, defaults to `false`) For SPARQL query results, whether
   results order matters. `true` means that the actual result rows must be
-  ordered as the reference result; `false` means that result rows are matched as a set.
+  ordered as the reference result; `false` means that result rows are matched
+  as a set.
 - `required_columns`: (optional) - required only for SPARQL query results; list
   of binding names, which are required for SPARQL query results to match
 - `ignore_duplicates`: (optional, defaults to `true`) For SPARQL query results,
-  whether duplicate binding values in the expected or in the actual results should be
-  ignored for the comparison.
+  whether duplicate binding values in the expected or in the actual results
+  should be ignored for the comparison.
 
 ### Example
 Here is a minimal but realistic
@@ -54,9 +56,9 @@ To evaluate a successful response by the question-answering system to a
 question, the response should be formatted as in this 
 [sxample](examples/target-data.json).
 
-On the other hand, if an error occurs while the question-answering system is generating a
-response, and you want to tally this error, the input to `run_evaluate()`
-should be like:
+On the other hand, if an error occurs while the question-answering system is
+generating a response, and you want to tally this error, the input to
+`run_evaluate()` should be like:
 
 ```json
 {
