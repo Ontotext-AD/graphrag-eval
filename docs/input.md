@@ -43,13 +43,13 @@ Each step includes:
   whether duplicate binding values in the expected or in the actual results should be
   ignored for the comparison.
 
-An example formatted reference data is in section [Example reference data](example-reference-data.md).
+An example formatted reference data is in section [Example reference data](examples/reference-data.md).
 
 ## Target responses to evaluate
 
 To evaluate a successful response by the question-answering system to a
 question, the response should be formatted as in section
-[Example responses to evaluate](example-target-data.md).
+[Example responses to evaluate](examples/target-data.md).
 
 On the other hand, if an error occurs while the question-answering system is generating a
 response, and you want to tally this error, the input to `run_evaluate()`

@@ -1,6 +1,6 @@
 # Configuration
 
-The configuration has two sections: `llm` and `custom_evaluation`. Example:
+The configuration has two sections: `llm` and `custom_evaluation`:
 
 * `llm`: required for [LLM-based metrics](llm-use-in-evaluation.md). The
   following keys are required:
