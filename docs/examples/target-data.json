@@ -1,6 +1,3 @@
-# Example responses to evaluate
-
-```json
 {
     "question_id": "f91fc938d606e5f6089912bebfaf114b",
     "input_tokens": 298028,
@@ -53,4 +50,3 @@
     ],
     "actual_answer": "The substations connected to the substation \"STAVANGER\" via AC or DC lines are:\n\n1. **KRISTIANSAND** via line \"LC 300KRISTIAN-STAVANGE\"\n2. **DAGALI** via line \"LC 420DAGALI-HAGAFOSS\"\n3. **KVILLDAL** via lines:\n   - \"LC 420DAGALI-HAGAFOSS\"\n   - \"LC 420SYSLE-HAGAFOSS\"\n   - \"LC 420AURLAND-HAGAFOSS\"\n   - \"LC 420SYLLING-HAGAFOSS\"\n4. **HAGAFOSS** via lines:\n   - \"LC 420DAGALI-HAGAFOSS\"\n   - \"LC 420SYSLE-HAGAFOSS\"\n   - \"LC 420AURLAND-HAGAFOSS\"\n   - \"LC 420SYLLING-HAGAFOSS\"\n5. **OSLO** via lines:\n   - \"LC 420SYSLE-HAGAFOSS\"\n   - \"LC 420SYLLING-HAGAFOSS\"\n6. **SYSLE** via line \"LC 420SYSLE-HAGAFOSS\"\n7. **AURLAND** via line \"LC 420AURLAND-HAGAFOSS\"\n8. **SIMA** via line \"LC 420AURLAND-HAGAFOSS\"\n9. **SYLLING** via line \"LC 420SYLLING-HAGAFOSS\""
 }
-```

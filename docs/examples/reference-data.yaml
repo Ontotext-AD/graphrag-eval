@@ -1,9 +1,3 @@
-## Example reference data
-
-The example data below illustrates a minimal but realistic Q&A dataset, showing
-two templates with associated questions and steps.
-
-```yaml
 - template_id: list_all_transformers_within_Substation_SUBSTATION
   questions:
   - id: c10bbc8dce98a4b8832d125134a16153
@@ -163,4 +157,3 @@ two templates with associated questions and steps.
           - substation
           - substationName
         ordered: false
-```

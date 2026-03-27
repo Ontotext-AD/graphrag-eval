@@ -3,16 +3,16 @@
 To evaluate answers and/or steps:
 1. Install this package: section [Installation](installation.md)
 1. Format the dataset of questions and reference answers and/or steps: section
-   [Reference Q&A data](examples/reference-data.md)
+   [Reference Q&A data](input.md#reference-qa-data)
 1. Format the answers and/or steps you want to evaluate: section
-   [Responses to evaluate](examples/target-data.md)
+   [Target responses to evaluate](input.md#target-responses-to-evaluate)
 1. To evaluate metrics that require an LLM:
     1. Include the relevant reference inputs and target inputs (outputs from 
        the target system):
       1. For `answer_relevance`, include `actual_answer` in the reference
          dataset
       1. For answer correctness metrics (section
-         [Output keys](output.md)), include `reference_answer` in the 
+         [Output](output.md)), include `reference_answer` in the
          reference dataset and `actual_answer` in the target data to evaluate
       1. For custom metrics:
          1. Define the metrics in the [configuration file](configuration.md)
