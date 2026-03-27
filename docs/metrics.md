@@ -27,13 +27,3 @@ Which of these metrics are output depends on the inputs. Specifically, a metric 
 For each question, the output incudes keys for those metrics and other data detailed in section [Output keys](output.md).
 
 The user can also define their own custom metrics using the configuration file: see section [Custom evaluation](custom-evaluation.md)
-
-# Detailed documentation
-
-* [Installation](installation.md)
-* [Usage](usage.md)
-* [Configuration](documentation.md)
-* [LLM use in evaluation](llm-use-in-evaluation.md)
-* [Custom evaluation (custom metrics)](custom-evaluation.md)
-* [Input](input.md)
-* [Output](output.md)
