@@ -3,9 +3,9 @@
 To evaluate answers and/or steps:
 1. Install this package: section [Installation](installation.md)
 1. Format the dataset of questions and reference answers and/or steps: section
-   [Reference Q&A data](example-reference-data.md)
+   [Reference Q&A data](examples/reference-data.md)
 1. Format the answers and/or steps you want to evaluate: section
-   [Responses to evaluate](example-target-data.md)
+   [Responses to evaluate](examples/target-data.md)
 1. To evaluate metrics that require an LLM:
     1. Include the relevant reference inputs and target inputs (outputs from 
        the target system):
@@ -28,7 +28,7 @@ To evaluate answers and/or steps:
 1. Call the aggregation function with the evaluation results: sections
    [Usage code](#usage-code),
    [Aggregate output keys](output.md#aggregates-keys) and
-   [Example aggregates output](example-aggregates-output.md)
+   [Example aggregates output](examples/aggregates-output.md)
 
 ## Usage code
 
@@ -42,7 +42,7 @@ aggregates = compute_aggregates(evaluation_results)
 ```
 
 `evaluation_results` is a list of statistics for each question, as in section
-[Example wvaluation results](example-output.md). The format is explained in section
+[Example wvaluation results](examples/output.md). The format is explained in section
 [Output Keys](output.md)
 
 # Command Line Use

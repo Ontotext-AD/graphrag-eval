@@ -152,4 +152,4 @@ Aggregates are:
   - `retrieval_context_f1`
   - `steps_score`
 
-See section [Example aggregagates output](example-aggregates-output.md).
+See section [Example aggregagates output](examples/aggregates-output.md).
