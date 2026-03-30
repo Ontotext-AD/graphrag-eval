@@ -92,7 +92,7 @@ colum by comparing reference columns in turn (skipping optional columns)
 - Floating-point numbers must match up to a 1e-8 precision
 
 The algorithm has average time complexity of
-$О(nr\*nc_ref!\*binomial(nc_act, nc_ref))$
+$О(\text{nr} \x \text{nc_ref} \! \x \binomial(\text{nc_act|, \text{nc_ref}))$
 
 where:
 
