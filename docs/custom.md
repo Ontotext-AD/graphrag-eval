@@ -11,7 +11,7 @@ will be done as a separate query to the LLM. Each evaluation can have multiple
 outputs. The format is shown in the example sections below.
 
 See section
-[Example configuration file](configuration.md#example-configuration-file-with-custom-evaluations).
+[Example configuration file with custom evaluation](configuration.md#example-configuration-file-with-custom-evaluations).
 
 ## Example call to evaluate using custom metrics
 
