@@ -28,8 +28,8 @@ To evaluate answers and/or steps:
    section [Example code](#example-code)
 1. Call the aggregation function with the evaluation results: sections
    [Example code](#example-code),
-   [Aggregate keys](output.md#aggregates-keys) and
-   [Example aggregates output](examples/aggregates.yaml)
+   [Aggregate metrics](output.md#aggregate-metrics) and
+   [Example aggregate output](examples/aggregates.yaml)
 
 See also:
 - [Example reference dataset](examples/reference.yaml)

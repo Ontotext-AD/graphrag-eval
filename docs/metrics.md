@@ -20,7 +20,7 @@ bot or agent executed in response to the user's query (see section [Steps score]
         1. `retrieval_context_precision`
         1. `retrieval_context_f1`
     1. Retrieval quality using chunk IDs (section [Retrieval evaluation using chunk IDs](retrieval-ids.md))
-1. Aggregates min, max, sum, mean, median of the above metrics (section [Aggregates keys](output.md#aggregates-keys))
+1. Aggregates min, max, sum, mean, median of the above metrics (section [Aggregate metrics](output.md#aggregate-metrics))
 
 Which of these metrics are output depends on the inputs. Specifically, a metric is computed and output if the types of input required to compute it are provided in the reference dataset and the responses of the system being evaluated.
 
