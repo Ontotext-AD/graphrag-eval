@@ -14,9 +14,7 @@ is, it is the sum of reference groups scores divided by the number of groups.
 Each group score is the sum of scores of its matching steps divided by the
 number of steps in the group:
 
-$$
-\text{steps\_score}
-=
+$$ \text{steps\_score} =
 \frac{1}{|G|}
 \sum_{g \in G}
 \left(
