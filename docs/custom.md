@@ -27,7 +27,7 @@ evaluation_results = run_evaluation(
 
 With the 
 [custom SPARQL evaluation](configuration.md#example-configuration-file-with-custom-evaluations),
-the output is as for section [Example evaluation results](example-output.md),
+the output is as for section [Example evaluation results](examples/output.yaml),
 except that it has the following additional keys and example values:
 
 ```yaml

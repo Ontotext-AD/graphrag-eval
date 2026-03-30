@@ -47,14 +47,14 @@ Each step includes:
 
 ### Example
 Here is a minimal but realistic
-[example Q&A dataset reference data](examples/reference-data.yaml), showing
+[example Q&A dataset reference data](examples/reference.yaml), showing
 two templates with associated questions and steps.
 
 ## Target responses to evaluate
 
 To evaluate a successful response by the question-answering system to a
 question, the response should be formatted as in this 
-[sxample](examples/target-data.json).
+[sxample](examples/target.json).
 
 On the other hand, if an error occurs while the question-answering system is
 generating a response, and you want to tally this error, the input to

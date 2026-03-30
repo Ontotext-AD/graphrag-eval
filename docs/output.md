@@ -36,7 +36,7 @@ can have the following keys.
 - `actual_steps`: (optional) copy of the steps in the evaluation target, if
   specified there
 - `steps_score`: (optional) a real number between 0 and 1 (see section
-  [Steps score](steps-score.md))
+  [Steps score](steps.md))
 - `input_tokens`: (optional) input tokens usage
 - `output_tokens`: (optional) output tokens usage
 - `total_tokens`: (optional) total tokens usage
@@ -152,4 +152,4 @@ Aggregates are:
   - `retrieval_context_f1`
   - `steps_score`
 
-See the [example aggregates output](examples/aggregates-output.yaml).
+See the [example aggregates output](examples/aggregates.yaml).

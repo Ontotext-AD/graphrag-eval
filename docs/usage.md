@@ -7,7 +7,7 @@ To evaluate answers and/or steps:
 1. Format the answers and/or steps to evaluate: section
    [Target responses to evaluate](input.md#target-responses-to-evaluate)
 1. To evaluate metrics that require an LLM (section 
-   [LLM use in evaluation](llm-use-in-evaluation.md)):
+   [LLM use in evaluation](llm.md)):
     1. Create a reference dataset and target dataset (output from the target
        system) with the relevant keys (section [Input](input.md)):
       1. For `answer_relevance` (section [Metrics](metrics.md)):
@@ -15,13 +15,13 @@ To evaluate answers and/or steps:
       1. For answer correctness metrics (section [Metrics](metrics.md):
          1. include `reference_answer` in the reference dataset and 
             `actual_answer` in the target data to evaluate
-      1. For custom metrics (section [Custom evaluation](custom-evaluation.md)):
+      1. For custom metrics (section [Custom evaluation](custom.md)):
          1. Define the metrics in the [configuration file](configuration.md)
          1. Include reference and target inputs used by the metrics
     1. Configure the LLM (section [configuration](configuration.md))
     1. Set the environment variable for your LLM provider (e.g.,
        `OPENAI_API_KEY`) to hold your LLM access key
-1. To evaluate steps (section [Steps score](steps-score.md)):
+1. To evaluate steps (section [Steps score](steps.md)):
     1. Include `reference_steps` in the reference data and `actual_steps` in
        target data
 1. Call the evaluation function with the reference data and target data:
@@ -29,11 +29,11 @@ To evaluate answers and/or steps:
 1. Call the aggregation function with the evaluation results: sections
    [Example code](#example-code),
    [Aggregate output keys](output.md#aggregates-keys) and
-   [Example aggregates output](examples/aggregates-output.yaml)
+   [Example aggregates output](examples/aggregates.yaml)
 
 See also:
-- [Example reference dataset](examples/reference-data.yaml)
-- [Example target dataset](examples/target-data.json)
+- [Example reference dataset](examples/reference.yaml)
+- [Example target dataset](examples/target.json)
 
 ## Example code
 

@@ -60,7 +60,7 @@ Matching of a reference step to an actual step works as follows:
 reference step is "application/sparql-results+json", then compare the steps
 using [SPARQL queries comparison](#sparql-queries-comparison).
 - if both steps are named "retrieval" and the reference step has "output", then
-compute [recall@k](retrieval-evaluation-using-chunk-ids.md#recall-k).
+compute [recall@k](retrieval-ids.md#recall-k).
 - if both are named "retrieve_time_series", then check if the arguments of 
 the steps match.
 - if both are named "retrieve_data_points", then check if the arguments of 
