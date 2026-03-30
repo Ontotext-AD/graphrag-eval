@@ -1,16 +1,16 @@
 # Output
 
 The output is a list of objects corresponding to questions from the reference
-Q&A datset. Each output object includes computed metrics and other data. It can
-have the following keys.
+Q&A dataset. Each output object includes computed metrics and other data. It
+can have the following keys.
 
 - `template_id`: the template id
 - `question_id`: the question id
 - `question_text`: the natural language query
 - `status`: "success" or "error", indicating whether the evaluation succeeded
 - `reference_steps`: (optional) copy of the expected steps in the Q&A dataset, 
-  if specified there. Additional key "matches" is added to those steps which are 
-  matched.
+  if specified there. Additional key "matches" is added to those steps which
+  are matched.
 - `reference_answer`: (optional) copy of the expected answer in the Q&A
   dataset, if specified there
 - `actual_answer`: (optional) copy of the response text in the evaluation
