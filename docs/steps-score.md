@@ -94,7 +94,7 @@ colum by comparing reference columns in turn (skipping optional columns)
 The algorithm has average time complexity
 
 $$
-O(\text{nr} \cdot \text{nc}_{\text{ref}}! \cdot \binom{\text{nc}_{\text{act}}}{\text{nc}_{\text{ref}}})
+O\left( |\text{rows}| \cdot |\text{cols}_{\text{ref}}| \cdot \frac{ { |\text{cols}_{\text{act}}| }!}{(|\text{cols}_{\text{act}}| - |\text{cols}_{\text{ref}}|)! \cdot |\text{cols}_{\text{ref}}|!} \right)
 $$
 
 where:
