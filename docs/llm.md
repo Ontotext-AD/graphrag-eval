@@ -14,7 +14,7 @@ The following metrics use an LLM which must be configured using a
   * `retrieval_context_recall`
   * `retrieval_context_precision`
   * `retrieval_context_f1`
-* [custom evaluation](custom-evaluation.md)
+* [custom evaluation](custom.md)
 
 Supported LLMs are all those supported by the
 [`litellm`](https://github.com/BerriAI/litellm) library, including all major
