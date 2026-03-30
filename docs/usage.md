@@ -42,7 +42,7 @@ aggregates = compute_aggregates(evaluation_results)
 ```
 
 `evaluation_results` is a list of statistics for each question, as in section
-[Example wvaluation results](examples/output.md). The format is explained in section
+[Example evaluation results](examples/output.md). The format is explained in section
 [Output Keys](output.md)
 
 # Command Line Use
