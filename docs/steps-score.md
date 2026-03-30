@@ -91,6 +91,8 @@ colum by comparing reference columns in turn (skipping optional columns)
 - Text values and special types such as duration must match exactly
 - Floating-point numbers must match up to a precision of 1e-8
 
+$\text{nc\_ref}$
+
 The algorithm has average time complexity of
 $О(\text{nr} \x \text{nc\_ref} \! \x \binomial(\text{nc\_act|, \text{nc\_ref}))$
 
