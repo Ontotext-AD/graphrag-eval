@@ -86,7 +86,7 @@ For all other queries, we compare their results as follows:
 - If the reference result has $n$ columns, consider all subsets of $n$ columns
 in the actual result
 - For each subset and for each column in it, look for its matching reference
-colum by comparing reference columns in turn (skipping optional columns)
+column by comparing reference columns in turn (skipping optional columns)
 - Two columns match if all rows have matching values
 - Text values and special types such as duration must match exactly
 - Floating-point numbers must match up to a precision of 1e-8
