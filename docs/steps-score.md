@@ -91,13 +91,11 @@ colum by comparing reference columns in turn (skipping optional columns)
 - Text values and special types such as duration must match exactly
 - Floating-point numbers must match up to a precision of 1e-8
 
-$$\text{steps\_score} = \frac{1}{G} \sum_{i=1}^{G} \left( \frac{1}{S_i} \sum_{j=1}^{S_i} x_{i,j} \right)$$
-
 The algorithm has average time complexity of
-$О(\text{nr} \x \text{nc\_ref} \! \x \binomial(\text{nc\_act|, \text{nc\_ref}))$
+$О(|\text{rows}| \x |\text{cols}_\text{ref}| \! \x \binomial(|\text{cols}_\text{act}|, |\text{cols}_\text{ref}|))$
 
 where:
 
-- $nr$ is the number of rows in the actual result
-- $nc_ref$ is the number of columns in the reference result
-- $nc_act$ is the number of columns in the actual result
+- $\text{rows}$ = the set of rows in the actual result
+- $\text{cols}_\text{ref}$ = the set of columns in the reference result
+- $\text{cols}_\text{act}$ = the set of columns in the actual result
