@@ -29,7 +29,7 @@ To evaluate answers and/or steps:
 1. Call the aggregation function with the evaluation results: sections
    [Example code](#example-code),
    [Aggregate output keys](output.md#aggregates-keys) and
-   [Example aggregates output](examples/aggregates-output.md)
+   [Example aggregates output](examples/aggregates-output.yaml)
 
 See also:
 - [Example reference dataset](examples/reference-data.yaml)
@@ -47,7 +47,7 @@ aggregates = compute_aggregates(evaluation_results)
 ```
 
 `evaluation_results` is a list of statistics for each question, as in section
-[Example evaluation results](examples/output.md). The format is explained in section
+[Example evaluation results](examples/output.yaml). The format is explained in section
 [Output Keys](output.md)
 
 # Command-line use
