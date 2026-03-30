@@ -11,7 +11,7 @@ will be done as a separate query to the LLM. Each evaluation can have multiple
 outputs. The format is shown in the example sections below.
 
 See section
-[Example configuration file with custom evaluation](configuration.md#example-configuration-file-with-custom-evaluations).
+[Example configuration file with custom evaluation](config.md#example-configuration-file-with-custom-evaluations).
 
 ## Example call to evaluate using custom metrics
 
@@ -26,7 +26,7 @@ evaluation_results = run_evaluation(
 ## Example output for custom SPARQL evaluation
 
 With the 
-[custom SPARQL evaluation](configuration.md#example-configuration-file-with-custom-evaluations),
+[custom SPARQL evaluation](config.md#example-configuration-file-with-custom-evaluations),
 the output is as for section [Example evaluation results](examples/output.yaml),
 except that it has the following additional keys and example values:
 
