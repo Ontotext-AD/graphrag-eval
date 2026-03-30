@@ -25,7 +25,7 @@ where:
 - $T$ = the sequence of actual steps $ \langle t_1, t_2, ... \ringle $
 - $\text{score}(\langle s, t \rangle)$ = the score of $s \in g$ with actual
 step $t \in T$
-- $\text{matches}(g)$ = $\{ \langle s, t \rangle \mid s \in g, t \in T, \text{score}(\langle s, t \rangle) > 0 \}$
+- $\text{matches}(g)$ = $\\{ \langle s, t \rangle \mid s \in g, t \in T, \text{score}(\langle s, t \rangle) > 0 \\}$
 
 ## Steps matching
 
