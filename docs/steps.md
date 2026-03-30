@@ -1,36 +1,44 @@
-# Steps score
+# Steps evaluation
 
-The steps score is an overall metric of the correctness of the steps the agent
-executed to respond to the user's query. It can be used to understand how to
-improve the agent.
+If a reference answer specifies reference steps and the target answer specifies
+the actual steps taken by the target agent, then the library tries to match
+steps in the two sets and computes match scores. It outputs the matches and an
+overall `steps_score` for the question.
 
-The steps score is a real number in the interval [0, 1] which indicates how
-closely the actual steps match the reference steps. A score of 1 indicates a
-perfect match.
+The matches are also be used to compute quality metrics for "retrieval" steps
+given the necessary input variables. (Section [Metrocs](metrics.md).)
 
-Recalling that reference steps are specified in groups, the steps score is
-computed as the macro mean of scores of individual steps over the groups. That
-is, it is the sum of reference groups scores divided by the number of groups.
-Each group score is the sum of scores of its matching steps divided by the
-number of steps in the group:
+The reference can specify some constraints on step execution order.
+Specifically, reference steps are specified as an ordered list of "groups", 
+while each group is not ordered, as illustrated below:
 
-$$
-\text{steps\\_score} = \frac{1}{|G|} \sum_{g \in G} \left( \frac{1}{|g|} \sum_{m \in \text{matches}(g)} \text{score}(m) \right)
-$$
-
-where:
-
-- $G$ = the set of reference groups
-- $|g|$ = the number of steps in group $g \in G$
-- $T$ = the sequence of actual steps $ \langle t_1, t_2, ... \ringle $
-- $\text{score}(\langle s, t \rangle)$ = the score of $s \in g$ with actual
-step $t \in T$
-- $\text{matches}(g)$ = $\\{ \langle s, t \rangle \mid s \in g, t \in T, \text{score}(\langle s, t \rangle) > 0 \\}$
+```
++-----Reference answer----+
+|        (ordered)        |
+|                         |
+|  +------Group 1------+  |
+|  |    (unordered)    |  |                  +---Actual answer---+
+|  |                   |  |                  |                   |
+|  |  +--> Step A      |  |                  |                   |
+|  |  |                |  |                  |                   |
+|  |  |    Step B <------------matches-------------> Step B      |
+|  |  |                |  |                  |                   |
+|  +--|----------------+  |                  |                   |
+|      \                  |                  |                   |
+|       +--------------------- matches-------------> Step A      |
+|                         |                  |                   |
+|  +------Group 2------+  |                  |                   |
+|  |    (unordered)    |  |                  |                   |
+|  |                   |  |                  |                   |
+|  |       Step C <------------matches-------------> Step C      |
+|  |                   |  |                  |                   |
+|  +-------------------+  |                  +-------------------+
++-------------------------+                  
+```
 
 ## Steps matching
 
-To compute the steps score, we try to match steps in reference groups to actual
-steps, such that:
+The library tries to match steps in reference groups to actual steps, such that:
 
 - Each reference step matches a unique actual step
 - The actual step was successful (i.e., it didn’t result in an error)
@@ -46,6 +54,9 @@ matching actual steps executed before the earliest actual step already matched
 for the current group.
 - If some steps in the group are not matched, then stop matching and compute
 the score from the matches found so far.
+
+The output contains the reference groups where each step that has a matching
+actual step, the actual step's ID is keyed by the additional key `matches`.
 
 ## Match score
 
@@ -104,3 +115,31 @@ where:
 - $\text{rows}$ = the set of rows in the actual result
 - $\text{cols}_\text{ref}$ = the set of columns in the reference result
 - $\text{cols}_\text{act}$ = the set of columns in the actual result
+
+## Steps score
+
+`steps_score` is a metric of the overall correctness of the steps the agent
+executed to respond to the user's query. It can be used to understand how to
+improve the agent.
+
+`steps_score` is a real number in the interval [0, 1] which indicates how
+closely the actual steps match the reference steps. A score of 1 indicates a
+perfect match.
+
+`steps_score` is computed as the macro mean of scores of individual steps over
+the reference steps groups. That is, it is the sum of reference groups scores
+divided by the number of groups. Each group score is the sum of scores of its
+matching steps divided by the number of steps in the group:
+
+$$
+\text{steps\\_score} = \frac{1}{|G|} \sum_{g \in G} \left( \frac{1}{|g|} \sum_{m \in \text{matches}(g)} \text{score}(m) \right)
+$$
+
+where:
+
+- $G$ = the set of reference groups
+- $|g|$ = the number of steps in group $g \in G$
+- $T$ = the sequence of actual steps $ \langle t_1, t_2, ... \ringle $
+- $\text{score}(\langle s, t \rangle)$ = the score of $s \in g$ with actual
+step $t \in T$
+- $\text{matches}(g)$ = $\\{ \langle s, t \rangle \mid s \in g, t \in T, \text{score}(\langle s, t \rangle) > 0 \\}$
