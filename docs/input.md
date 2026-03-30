@@ -46,19 +46,18 @@ Each step includes:
   should be ignored for the comparison.
 
 ### Example
-Here is a minimal but realistic
-[example Q&A dataset reference data](examples/reference.yaml), showing
-two templates with associated questions and steps.
+
+Here is an [example Q&A dataset reference dataset](examples/reference.yaml)
+with two templates and associated questions and steps.
 
 ## Target responses to evaluate
 
-To evaluate a successful response by the question-answering system to a
-question, the response should be formatted as in this 
-[example](examples/target.json).
+To evaluate responses by the target agent against the reference responses,
+format the target responses as in this
+[example target dataset](examples/target.json).
 
-On the other hand, if an error occurs while the question-answering system is
-generating a response, and you want to tally this error, the input to
-`run_evaluate()` should be like:
+On the other hand, to tally a response as an error in generating the response,
+format the target response as in this example:
 
 ```json
 {
