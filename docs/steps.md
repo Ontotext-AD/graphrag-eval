@@ -54,24 +54,26 @@ step. Scores are 0 (no match) or 1 (full match), except for "retrieval" steps,
 where scores range between 0 and 1. A score greater than 0 indicates at least
 a partial match.
 
-Matching of a reference step to an actual step works as follows:
+The match score of a reference step to an actual step is computed by following
+these rules in order:
 
-- if both steps are named "sparql_query" and the "output_media_type" of the 
-reference step is "application/sparql-results+json", then compare the steps
-using [SPARQL queries comparison](#sparql-queries-comparison).
-- if both steps are named "retrieval" and the reference step has "output", then
-compute [recall@k](retrieval-ids.md#recall-k).
-- if both are named "retrieve_time_series", then check if the arguments of 
-the steps match.
-- if both are named "retrieve_data_points", then check if the arguments of 
-the steps match.
-- if the reference step is named "iri_discovery" and the actual step name is 
-"autocomplete_search", then check if the IRI specified as "output" of the 
-"iri_discovery" step is present in the "output" of the "autocomplete_search".
-- if the reference and actual step names are the same and the 
-"output_media_type" of the reference step is "application/json", and the json
-outputs are the same then the steps match.
-- match the outputs of the two steps.
+- if both steps are named `sparql_query` and the reference step's
+`output_media_type` is `application/sparql-results+json`:
+  - `match_score` = [SPARQL queries comparison](#sparql-queries-comparison)
+- if both steps are named `retrieval` and the reference step has key `output`:
+  - `match_score` = [recall@k](retrieval-ids.md#recall-k)
+- if both steps are named `retrieve_time_series`:
+  - `match_score` = 1 if the steps have the same sets of arguments, otherwise 0
+- if both steps are named `retrieve_data_points`:
+  - `match_score` = 1 if the steps have the same sets of arguments, otherwise 0
+- if the reference step name is `iri_discovery` and the actual step name is 
+`autocomplete_search`:
+  - `match_score` = 1 if the reference (`iri_discovery`) `output` (an IRI)
+  is present in the actual (`autocomplete_search`) step `output`, otherwise 0
+- if the step names are the same and the reference step `output_media_type` is
+  `application/json`:
+  - `match_score` = 1 if the json outputs are identical, otherwise 0
+- `match_score` = 1 if the outputs are identical, otherwise 0
 
 ## SPARQL queries comparison
 
