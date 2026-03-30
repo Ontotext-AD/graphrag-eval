@@ -1140,6 +1140,8 @@ indicates a match.
 - if both are named "sparql_query" and the "output_media_type" of the 
 reference step is "application/sparql-results+json", then we try to match them 
 using the [SPARQL queries comparison algorithm](#sparql-queries-comparison).
+The algorithm doesn't handle comparison of DESCRIBE or CONSTRUCT queries output
+with SELECT and ASK queries output.
 - if both are named "retrieval" and the reference step has "output", then we 
 compute [recall@k](#context-recallk).
 - if both are named "retrieve_time_series", then we check if the arguments of 

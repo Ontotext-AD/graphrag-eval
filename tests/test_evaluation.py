@@ -43,7 +43,7 @@ def test_stats_for_series():
         "min": 1,
         "max": 2,
     }
-    assert stats_for_series([i for i in reversed(range(10))]) == {
+    assert stats_for_series(list(reversed(range(10)))) == {
         "sum": 45,
         "mean": 4.5,
         "median": 4.5,
@@ -98,6 +98,19 @@ async def test_run_evaluation_and_compute_aggregates_all_errors():
     assert expected_aggregates == aggregates
 
 
+@pytest.mark.asyncio
+async def test_run_evaluation_with_describe_query_doesnt_throw_exception():
+    reference_data = yaml.safe_load(
+        (DATA_DIR / "reference_5.yaml").read_text(encoding="utf-8")
+    )
+    responses_path = DATA_DIR / "actual_responses_4.jsonl"
+    actual_responses = read_responses(responses_path)
+    evaluation_results = await run_evaluation(reference_data, actual_responses)
+    assert len(evaluation_results) == 1
+    assert "steps_score" in evaluation_results[0]
+    assert 0 == evaluation_results[0]["steps_score"]
+
+
 def test_calculate_steps_score():
     expected_steps = [
         [
@@ -115,7 +128,9 @@ def test_calculate_steps_score():
         {"name": "step_a", "output": "result_a", "status": "success", "id": "4"},
         {"name": "step_b", "error": "error", "status": "error", "id": "5"},
     ]
-    assert calculate_steps_score(expected_steps, actual_steps, match_groups(expected_steps, actual_steps)) == 0
+
+    matches = match_groups(expected_steps, actual_steps)
+    assert calculate_steps_score(expected_steps, actual_steps, matches) == 0
     assert "matches" not in expected_steps[-1][0]
 
     expected_steps = [
@@ -135,7 +150,9 @@ def test_calculate_steps_score():
         {"name": "step_a", "output": "result_a", "status": "success", "id": "5"},
         {"name": "step_b", "output": "result_b_1", "status": "success", "id": "6"},
     ]
-    assert calculate_steps_score(expected_steps, actual_steps, match_groups(expected_steps, actual_steps)) == 1
+
+    matches = match_groups(expected_steps, actual_steps)
+    assert calculate_steps_score(expected_steps, actual_steps, matches) == 1
     assert expected_steps[-1][0]["matches"] == "3"
 
     expected_steps = [
@@ -154,7 +171,9 @@ def test_calculate_steps_score():
         {"name": "step_a", "output": "result_a", "status": "success", "id": "3"},
         {"name": "step_b", "output": "result_b_1", "status": "success", "id": "4"},
     ]
-    assert calculate_steps_score(expected_steps, actual_steps, match_groups(expected_steps, actual_steps)) == 0.5
+
+    matches = match_groups(expected_steps, actual_steps)
+    assert calculate_steps_score(expected_steps, actual_steps, matches) == 0.5
     assert expected_steps[-1][0]["matches"] == "4"
     assert expected_steps[-1][1]["matches"] == "1"
 
@@ -174,7 +193,9 @@ def test_calculate_steps_score():
         {"name": "step_a", "output": "result_a", "status": "success", "id": "3"},
         {"name": "step_b", "output": "result_b_1", "status": "success", "id": "4"},
     ]
-    assert calculate_steps_score(expected_steps, actual_steps, match_groups(expected_steps, actual_steps)) == 0.25
+
+    matches = match_groups(expected_steps, actual_steps)
+    assert calculate_steps_score(expected_steps, actual_steps, matches) == 0.25
     assert expected_steps[-1][0]["matches"] == "4"
     assert "matches" not in expected_steps[-1][1]
 
@@ -190,7 +211,9 @@ def test_calculate_steps_score_expected_select_actual_ask():
             encoding="utf-8"
         )
     )
-    assert calculate_steps_score(expected_steps, actual_steps, match_groups(expected_steps, actual_steps)) == 0
+
+    matches = match_groups(expected_steps, actual_steps)
+    assert calculate_steps_score(expected_steps, actual_steps, matches) == 0
     assert "matches" not in expected_steps[-1][0]
 
     expected_steps = yaml.safe_load(
@@ -203,11 +226,13 @@ def test_calculate_steps_score_expected_select_actual_ask():
             encoding="utf-8"
         )
     )
-    assert calculate_steps_score(expected_steps, actual_steps, match_groups(expected_steps, actual_steps)) == 0
+
+    matches = match_groups(expected_steps, actual_steps)
+    assert calculate_steps_score(expected_steps, actual_steps, matches) == 0
     assert "matches" not in expected_steps[-1][0]
 
 
-def test_calculate_steps_score_expected_select_actual_describe():
+def test_calculate_steps_score_expected_select_actual_describe_quoted_string_output():
     expected_steps = yaml.safe_load(
         (DATA_DIR / "expected_steps_3.yaml").read_text(
             encoding="utf-8"
@@ -218,7 +243,9 @@ def test_calculate_steps_score_expected_select_actual_describe():
             encoding="utf-8"
         )
     )
-    assert calculate_steps_score(expected_steps, actual_steps, match_groups(expected_steps, actual_steps)) == 0
+
+    matches = match_groups(expected_steps, actual_steps)
+    assert calculate_steps_score(expected_steps, actual_steps, matches) == 0
     assert "matches" not in expected_steps[-1][0]
 
 
@@ -233,7 +260,9 @@ def test_calculate_steps_score_expected_select_actual_ask_and_then_select():
             encoding="utf-8"
         )
     )
-    assert calculate_steps_score(expected_steps, actual_steps, match_groups(expected_steps, actual_steps)) == 0.5
+
+    matches = match_groups(expected_steps, actual_steps)
+    assert calculate_steps_score(expected_steps, actual_steps, matches) == 0.5
     assert "matches" in expected_steps[-1][0]
     assert expected_steps[-1][0]["matches"] == "call_3qJK186HZj1twnr6x976slHN"
 
