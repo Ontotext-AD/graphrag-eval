@@ -36,7 +36,7 @@ can have the following keys.
 - `actual_steps`: (optional) copy of the steps in the evaluation target, if
   specified there
 - `steps_score`: (optional) a real number between 0 and 1 (see section
-  [Steps score](steps.md))
+  [Steps score](steps.md#steps-score))
 - `input_tokens`: (optional) input tokens usage
 - `output_tokens`: (optional) output tokens usage
 - `total_tokens`: (optional) total tokens usage
