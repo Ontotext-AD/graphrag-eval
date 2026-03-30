@@ -84,7 +84,7 @@ llm:
     api_key: ...
 ```
 
-#### Example configuration file with custom evaluations
+## Example configuration file with custom evaluations
 
 Below is a YAML file that defines two custom evaluations:
 1. a simple relevance evaluation
