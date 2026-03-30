@@ -20,7 +20,7 @@ The configuration has two sections: `llm` and `custom_evaluation`:
             setting the environment variable corresponding to the provider (e.g.
             `OPENAI_API_KEY` for OpenAI)
     * `embedding`: required for [`answer_relevance`](output.md).
-        * `provider`: (str) name of the organiation providing the embedding
+        * `provider`: (str) name of the organization providing the embedding
           model
         * `model`: (str) name of the embedding model
 * `custom_evaluations`: (list of the following maps) required nonempty for
