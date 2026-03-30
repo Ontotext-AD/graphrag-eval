@@ -1,4 +1,4 @@
-# Use as a Library
+# Use as a library
 
 To evaluate answers and/or steps:
 1. Install this package: section [Installation](installation.md)
@@ -16,7 +16,7 @@ To evaluate answers and/or steps:
          reference dataset and `actual_answer` in the target data to evaluate
       1. For custom metrics:
          1. Define the metrics in the [configuration file](configuration.md)
-         1. Include refernce and target inputs used by the metrics
+         1. Include reference and target inputs used by the metrics
     1. Configure the LLM in the [configuration file](configuration.md)
     1. Set the appropriate environment variable (e.g.,`OPENAI_API_KEY`) with
        your LLM access key
@@ -45,7 +45,7 @@ aggregates = compute_aggregates(evaluation_results)
 [Example evaluation results](examples/output.md). The format is explained in section
 [Output Keys](output.md)
 
-# Command Line Use
+# Command-line use
 
 To evaluate only correctness of final answers (system responses), you can
 clone this repository and run the code on the command line:
