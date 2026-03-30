@@ -56,9 +56,9 @@ There are three types of error:
    configuration. Example: 
    `custom_1_error: "Expected 6 tab-separated values, got: 0.1\tCustom answer reason"`
 
-## Recommendations for custom evaluations
+## Recommendations
 
-To improve LLM accuracy:
+To improve custom evaluation accuracy:
 1. Specify only several outputs in each evaluation
 1. Specify outputs explaining any quantities that the LLM must count or
    estimate. You can request one explanation per quantity or one shared 
