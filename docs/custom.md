@@ -40,12 +40,12 @@ except that it has the following additional keys and example values:
 
 ## Output in case of evaluation error
 
-If there is an error during evaluation, the output will have `null` for all
-custom evaluation specified output keys and will have an additional key 
-explaining the error. The key will be `{name}_error` where `name` is the custom
-evaluation name.
+If there is an error during evaluation:
+- the configured output keys will have value `null`
+- there will be an additional key explaining the error. The key will be
+  `{name}_error` where `name` is the custom evaluation name.
 
-There are three types of errors:
+There are three types of error:
 1. The reference input is missing keys requested in the custom evaluation 
    configuration. Example:
    `custom_1_error: Reference missing key 'reference_steps'`
@@ -58,7 +58,8 @@ There are three types of errors:
 
 ## Recommendations for custom evaluations
 
+To improve LLM accuracy:
 1. Specify only several outputs in each evaluation
-1. Request an explanation output for output quantities you ask the LLM to count
-   or estimate. You can ask for one explanation per quantity or one shared 
-   explanation for 2-3 quantities
+1. Specify outputs explaining any quantities that the LLM must count or
+   estimate. You can request one explanation per quantity or one shared 
+   explanation for several quantities.
