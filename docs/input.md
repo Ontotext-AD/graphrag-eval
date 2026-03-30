@@ -54,7 +54,7 @@ two templates with associated questions and steps.
 
 To evaluate a successful response by the question-answering system to a
 question, the response should be formatted as in this 
-[sxample](examples/target.json).
+[example](examples/target.json).
 
 On the other hand, if an error occurs while the question-answering system is
 generating a response, and you want to tally this error, the input to
