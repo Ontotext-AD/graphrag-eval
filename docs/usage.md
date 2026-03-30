@@ -28,7 +28,7 @@ To evaluate answers and/or steps:
    section [Example code](#example-code)
 1. Call the aggregation function with the evaluation results: sections
    [Example code](#example-code),
-   [Aggregate output keys](output.md#aggregates-keys) and
+   [Aggregate keys](output.md#aggregates-keys) and
    [Example aggregates output](examples/aggregates.yaml)
 
 See also:
@@ -46,9 +46,8 @@ evaluation_results = await run_evaluation(reference_data, chat_responses)
 aggregates = compute_aggregates(evaluation_results)
 ```
 
-`evaluation_results` is a list of statistics for each question, as in section
-[Example evaluation results](examples/output.yaml). The format is explained in section
-[Output Keys](output.md)
+`evaluation_results` is a list of objects, one for each question (Section
+[Output](output.md)) as shown in this [Example output](examples/output.yaml).
 
 # Command-line use
 
