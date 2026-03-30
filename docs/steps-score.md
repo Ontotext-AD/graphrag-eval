@@ -15,7 +15,7 @@ Each group score is the sum of scores of its matching steps divided by the
 number of steps in the group:
 
 $$
-\text{steps\_score} = \frac{1}{|G|} \sum_{g \in G} \left( \frac{1}{|g|} \sum_{s \in \text{match}(g)} \text{score}(s) \right)
+\mathrm{steps\_score} = \frac{1}{|G|} \sum_{g \in G} \left( \frac{1}{|g|} \sum_{s \in \mathrm{match}(g)} \mathrm{score}(s) \right)
 $$
 
 where:
@@ -90,7 +90,7 @@ colum by comparing reference columns in turn (skipping optional columns)
 - Floating-point numbers must match up to a 1e-8 precision
 
 The algorithm has average time complexity of
-О(nr\*nc_ref!\*binomial(nc_act, nc_ref)),
+$О(nr\*nc_ref!\*binomial(nc_act, nc_ref))$
 
 where:
 
