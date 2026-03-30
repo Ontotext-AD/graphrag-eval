@@ -92,7 +92,7 @@ colum by comparing reference columns in turn (skipping optional columns)
 - Floating-point numbers must match up to a precision of 1e-8
 
 The algorithm has average time complexity of
-$О(| \text{rows} | \dot | \text{cols}_\text{ref} | \! \dot \binomial(| \text{cols}_\text{act} |, | \text{cols}_\text{ref} |))$
+$O(|\text{rows}| \cdot |\text{cols}_{\text{ref}}| \cdot \binom{|\text{cols}_{\text{act}}|}{|\text{cols}_{\text{ref}}|})$
 
 where:
 
