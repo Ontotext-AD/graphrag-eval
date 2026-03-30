@@ -152,4 +152,4 @@ Aggregates are:
   - `retrieval_context_f1`
   - `steps_score`
 
-See the [example aggregagates output](examples/aggregates-output.yaml).
+See the [example aggregates output](examples/aggregates-output.yaml).
