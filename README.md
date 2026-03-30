@@ -9,7 +9,7 @@ This is a Python module for assessing the quality of question-answering systems 
 ## Documentation
 
 * [Metrics](docs/metrics.md)
-* [Installation](docs/installation.md)
+* [Installation](docs/install.md)
 * [Usage](docs/usage.md)
 * [Configuration](docs/configuratation.md)
 * [LLM use in evaluation](docs/llm.md)

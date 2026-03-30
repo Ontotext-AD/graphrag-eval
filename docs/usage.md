@@ -1,7 +1,7 @@
 # Use as a library
 
 To evaluate answers and/or steps:
-1. Install this package: section [Installation](installation.md)
+1. Install this package: section [Installation](install.md)
 1. Format the dataset of questions and reference answers and/or steps: section
    [Reference Q&A data](input.md#reference-qa-data)
 1. Format the answers and/or steps to evaluate: section
