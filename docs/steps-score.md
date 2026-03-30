@@ -14,22 +14,18 @@ is, it is the sum of reference groups scores divided by the number of groups.
 Each group score is the sum of scores of its matching steps divided by the
 number of steps in the group:
 
-$$ \text{steps\_score} =
-\frac{1}{|G|}
-\sum_{g \in G}
-\left(
-\frac{1}{|g|}
-\sum_{s \in \mathrm{match}(g)}
-\mathrm{score}(s)
-\right)
+$$
+\text{steps\\_score} = \frac{1}{|G|} \sum_{g \in G} \left( \frac{1}{|g|} \sum_{match \in \operatorname{matches}(g)} \operatorname{score}(match) \right)
 $$
 
 where:
 
-- $G$ = set of reference groups
-- $|g|$ = number of steps in group $g$
-- $\text{match}(g)$ = set of actual steps matched to group $g$
-- $\text{score}(s)$ = score of a matched step $s$
+- $G$ = the set of reference groups
+- $|g|$ = the number of steps in group $g \in G$
+- $T$ = the sequence of actual steps $ \langle t_1, t_2, ... \ringle $
+- $\text{score}($\langle s, t \rangle$)$ = the score of $s \in g$ with actual
+step $t \in T$
+- $\text{matches}(g)$ = $\{ \langle s, t \rangle$ \mid s \in g, t \in T, \text{score}(\langle s, t \rangle) > 0$
 
 ## Steps matching
 
