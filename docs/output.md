@@ -66,15 +66,17 @@ All `actual_steps` with `name` "retrieval" contain the following keys:
   respect to the reference answer, if `retrieval_context_recall` and
   `retrieval_context_precision` succeed
 
-## Aggregates keys
+## Aggregate metrics
 
-The `aggregates` object provides aggregated evaluation metrics. These
-aggregates support analysis of agent (answering system) quality, token
-efficiency, and execution performance. Aggregates are computed:
+The output of `compute_aggregates()` outputs aggregated evaluation metrics.
+These metrics allow comparison of analysis of agent (answering system) quality,
+variability, token efficiency and execution performance.
+
+Aggregate metrics are computed:
 1. per question template, and
 1. over all questions in the dataset, using micro and macro averaging
 
-Aggregates are:
+The aggregate metrics are:
 - `per_template`: a dictionary mapping a template identifier to the following
 - statistics:
   - `number_of_error_samples`: number of questions for this template, which
@@ -152,4 +154,4 @@ Aggregates are:
   - `retrieval_context_f1`
   - `steps_score`
 
-See [example aggregate metrics output](examples/aggregates.yaml).
+See [example aggregate output](examples/aggregates.yaml).
