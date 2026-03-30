@@ -24,6 +24,6 @@ bot or agent executed in response to the user's query (see section [Steps score]
 
 Which of these metrics are output depends on the inputs. Specifically, a metric is computed and output if the types of input required to compute it are provided in the reference dataset and the responses of the system being evaluated.
 
-For each question, the output includes keys for those metrics and other data detailed in section [Output keys](output.md).
+For each question, the output includes keys for those metrics and other data detailed in section [Output](output.md).
 
 The user can also define their own custom metrics using the configuration file: see section [Custom evaluation](custom.md)
