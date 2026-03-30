@@ -1,7 +1,7 @@
 # LLM use in evaluation
 
 The following metrics use an LLM which must be configured using a
-[configuration](configuration.md) file:
+[configuration](config.md) file:
 * answer metrics
   * `answer_recall`
   * `answer_precision`
