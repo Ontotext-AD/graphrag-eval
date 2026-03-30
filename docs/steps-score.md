@@ -91,7 +91,7 @@ colum by comparing reference columns in turn (skipping optional columns)
 - Text values and special types such as duration must match exactly
 - Floating-point numbers must match up to a precision of 1e-8
 
-$$\text{nc\_ref}$$
+$$\text{steps\_score} = \frac{1}{G} \sum_{i=1}^{G} \left( \frac{1}{S_i} \sum_{j=1}^{S_i} x_{i,j} \right)$$
 
 The algorithm has average time complexity of
 $О(\text{nr} \x \text{nc\_ref} \! \x \binomial(\text{nc\_act|, \text{nc\_ref}))$
