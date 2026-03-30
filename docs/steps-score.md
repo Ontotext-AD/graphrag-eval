@@ -91,8 +91,9 @@ colum by comparing reference columns in turn (skipping optional columns)
 - Text values and special types such as duration must match exactly
 - Floating-point numbers must match up to a precision of 1e-8
 
-The algorithm has average time complexity of
-$O(|\text{rows}| \cdot |\text{cols}_{\text{ref}}| \cdot \binom{|\text{cols}_{\text{act}}|}{|\text{cols}_{\text{ref}}|})$
+The algorithm has average time complexity
+
+$$O(|\text{rows}| \cdot |\text{cols}_{\text{ref}}| \cdot \binom{|\text{cols}_{\text{act}}|}{|\text{cols}_{\text{ref}}|})$$
 
 where:
 
