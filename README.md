@@ -8,14 +8,14 @@ This is a Python module for assessing the quality of question-answering systems 
 
 ## Documentation
 
-* [Metrics](metrics.md)
-* [Installation](installation.md)
-* [Usage](usage.md)
-* [Configuration](documentation.md)
-* [LLM use in evaluation](llm-use-in-evaluation.md)
-* [Custom evaluation (custom metrics)](custom-evaluation.md)
-* [Input](input.md)
-* [Output](output.md)
+* [Metrics](docs/metrics.md)
+* [Installation](docs/installation.md)
+* [Usage](docs/usage.md)
+* [Configuration](docs/documentation.md)
+* [LLM use in evaluation](docs/llm-use-in-evaluation.md)
+* [Custom evaluation (custom metrics)](docs/custom-evaluation.md)
+* [Input](docs/input.md)
+* [Output](docs/output.md)
 
 ## Maintainers
 
