@@ -15,7 +15,7 @@ Each group score is the sum of scores of its matching steps divided by the
 number of steps in the group:
 
 $$
-\text{steps\_score} = \frac{1}{|G|} \sum_{g \in G} \left( \frac{1}{|g|} \sum_{s \in \operatorname{match}(g)} \operatorname{score}(s) \right)
+\mathrm{steps\_score} = \frac{1}{|G|} \sum_{g \in G} \left( \frac{1}{|g|} \sum_{s \in \mathrm{match}(g)} \mathrm{score}(s) \right)
 $$
 
 where:
