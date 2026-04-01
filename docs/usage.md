@@ -1,4 +1,6 @@
-# Use as a library
+# Usage
+
+## Use as a library
 
 To evaluate answers and/or steps:
 1. Install this package: section [Installation](install.md)
@@ -35,7 +37,7 @@ See also:
 - [Example reference dataset](examples/reference.yaml)
 - [Example target dataset](examples/target.json)
 
-## Example code
+### Example code
 
 ```python
 from graphrag_eval import run_evaluation, compute_aggregates
@@ -49,7 +51,7 @@ aggregates = compute_aggregates(evaluation_results)
 `evaluation_results` is a list of objects, one for each question (Section
 [Output](output.md)) as shown in this [Example output](examples/output.yaml).
 
-# Command-line use
+#$ Command-line use
 
 To evaluate only correctness of final answers (system responses), you can
 clone this repository and run the code on the command line:
