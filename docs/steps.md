@@ -62,9 +62,9 @@ actual step, the actual step's ID is keyed by the additional key `matches`.
 ## Match score
 
 The match score quantifies how well a reference step aligns with an actual
-step. Scores are 0 (no match) or 1 (full match), except for "retrieval" steps,
-where scores range between 0 and 1. A score greater than 0 indicates at least
-a partial match.
+step, and is used in computing the overall `steps_score`. Scores are 0 (no
+match) or 1 (full match), except for "retrieval" steps, where scores range 
+between 0 and 1. A score greater than 0 indicates at least a partial match.
 
 The match score of a reference step to an actual step is computed by following
 these rules in order:
@@ -127,10 +127,10 @@ improve the agent.
 closely the actual steps match the reference steps. A score of 1 indicates a
 perfect match.
 
-`steps_score` is computed as the macro mean of scores of individual steps over
-the reference steps groups. That is, it is the sum of reference groups scores
-divided by the number of groups. Each group score is the sum of scores of its
-matching steps divided by the number of steps in the group:
+`steps_score` is computed as the macro mean of [match scores](#match-score)
+taken over the reference groups. That is, it is the sum of reference groups
+scores divided by the number of groups; each group score is the sum of scores
+of its matching steps divided by the number of steps in the group:
 
 $$
 \text{steps\\_score} = \frac{1}{|G|} \sum_{g \in G} \left( \frac{1}{|g|} \sum_{m \in \text{matches}(g)} \text{score}(m) \right)
@@ -141,6 +141,6 @@ where:
 - $G$ = the set of reference groups
 - $|g|$ = the number of steps in group $g \in G$
 - $T$ = the sequence of actual steps $\langle t_1, t_2, ... \rangle$
-- $\text{score}(\langle s, t \rangle)$ = the score of $s \in g$ with actual
-step $t \in T$
+- $\text{score}(\langle s, t \rangle)$ = the `match_score` of $s \in g$ with
+actual step $t \in T$
 - $\text{matches}(g)$ = $\\{ \langle s, t \rangle \mid s \in g, t \in T, \text{score}(\langle s, t \rangle) > 0 \\}$
