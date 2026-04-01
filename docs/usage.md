@@ -3,9 +3,9 @@
 ## Use as a library
 
 To evaluate answers and/or steps:
-1. Install this package: section [Installation](install.md)
-1. Format the dataset of questions and reference answers and/or steps: section
-   [Reference Q&A data](input.md#reference-qa-data)
+1. Install this package (section [Installation](install.md))
+1. Format the dataset of questions and reference answers and/or steps (section
+   [Reference Q&A data](input.md#reference-qa-data))
 1. Format the answers and/or steps to evaluate: section
    [Target responses to evaluate](input.md#target-responses-to-evaluate)
 1. To evaluate metrics that require an LLM (section 
@@ -48,7 +48,7 @@ evaluation_results = await run_evaluation(reference_data, chat_responses)
 aggregates = compute_aggregates(evaluation_results)
 ```
 
-`evaluation_results` is a list of objects, one for each question (Section
+`evaluation_results` is a list of objects, one for each question (section
 [Output](output.md)) as shown in this [Example output](examples/output.yaml).
 
 #$ Command-line use
