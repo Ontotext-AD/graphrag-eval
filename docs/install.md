@@ -10,7 +10,7 @@ graphrag-eval = "*"
 ```
 
 To evaluate `answer_relevance` and answer correctness metrics (`answer_recall`,
-`answer_precision`, `answer_f1`; see section [Output](output.md)) or
+`answer_precision`, `answer_f1`; see section [Metrics](metrics.md)) or
 use a [custom evaluation](custom.md):
 
 ```bash
