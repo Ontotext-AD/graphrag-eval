@@ -20,7 +20,7 @@ To evaluate answers and/or steps:
       1. For custom metrics (section [Custom evaluation](custom.md)):
          1. Define the metrics (section [Configuration](config.md))
          1. Include reference and target inputs used by the metrics
-    1. Configure the LLM (section [configuration](config.md))
+    1. Configure the LLM (section [Configuration](config.md))
     1. Set the environment variable for your LLM provider (e.g.,
        `OPENAI_API_KEY`) to hold your LLM access key
 1. To evaluate steps (section [Steps score](steps.md)):
