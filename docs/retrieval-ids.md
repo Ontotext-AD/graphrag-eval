@@ -4,9 +4,7 @@ The following metrics are based on the IDs of retrieved document chunks.
 
 ## Context recall@k
 
-The fraction of relevant items among the top *k* recommendations. It answers
-the question: "Of all items the user cares about, how many did we include in
-the first k spots?"
+The fraction of relevant items among the top *k* recommendations. It answers the question: "Of all items the user cares about, how many did we include in the first k spots?"
 * **Formula**:
     $`
     \frac{\text{Number of relevant items in top k}}{\text{Number of relevant items}}
@@ -26,11 +24,7 @@ recall_at_k(
 
 ## Context precision@k
 
-Evaluates a ranked list of recommendations by looking at the precision at the
-position of each correctly retrieved item. It rewards systems for placing
-relevant items higher up in the list. It's more sophisticated than just
-looking at precision at a single cutoff because it considers the entire
-ranking.
+Evaluates a ranked list of recommendations by looking at the precision at the position of each correctly retrieved item. It rewards systems for placing relevant items higher up in the list. It's more sophisticated than just looking at precision at a single cutoff because it considers the entire ranking.
 * **Formula**:
     $`
     \frac{\sum_{k=1}^{n} (P(k) \times \text{rel}(k))}{\text{Number of relevant items}}
