@@ -2,7 +2,7 @@
 
 The configuration has two sections: `llm` and `custom_evaluation`:
 
-* `llm`: required for [LLM-based metrics](llm.md). The
+* `llm`: required for [LLM-based metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/llm.md). The
   following keys are required:
     * `generation`: required. The following keys are required:
         * `provider`: (str) name of the organization providing the generation
@@ -12,19 +12,19 @@ The configuration has two sections: `llm` and `custom_evaluation`:
           temperature for generation
         * `max_tokens`: (int > 0) maximum number of tokens to generate
         * Optional keys: parameters to be passed to LiteLLM for generation (for
-          [`answer_correctness`](output.md) and
-          [custom evaluation](custom.md)). Examples:
+          [`answer_correctness`](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md) and
+          [custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md)). Examples:
           * `base_url`: (str) base URL for the generation model, alternative
             to the provider's default URL
           * `api_key`: (str) API key for the generation model, alternative to
             setting the environment variable corresponding to the provider (e.g.
             `OPENAI_API_KEY` for OpenAI)
-    * `embedding`: required for [`answer_relevance`](output.md).
+    * `embedding`: required for [`answer_relevance`](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md).
         * `provider`: (str) name of the organization providing the embedding
           model
         * `model`: (str) name of the embedding model
 * `custom_evaluations`: (list of the following maps) required nonempty for
-[custom evaluation](custom.md). Each map has keys:
+[custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md). Each map has keys:
     * `name`: (str) name of the evaluation
     * `inputs`: (list[str]) list of input variables. Any combination of the
       following:
@@ -45,8 +45,8 @@ The configuration has two sections: `llm` and `custom_evaluation`:
 ## Example configuration file with LLM configuration
 
 Below is a YAML file that configures the LLM generation (for
-[metrics that require an LLM](llm.md)) and embedding (for
-[`answer_relevance`](output.md)). It assumes that the environment
+[metrics that require an LLM](https://github.com/Ontotext-AD/graphrag-eval/docs/llm.md)) and embedding (for
+[`answer_relevance`](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md)). It assumes that the environment
 variable `OPENAI_API_KEY` is set with your OpenAI API key.
 
 ```YAML
@@ -64,8 +64,8 @@ llm:
 ## Example configuration file with LLM configuration and API keys
 
 Below is a YAML file that configures the LLM generation (for
-[metrics that require an LLM](llm.md)) and embedding (for
-[`answer_relevance`](metrics.md)) with different API keys in place of
+[metrics that require an LLM](https://github.com/Ontotext-AD/graphrag-eval/docs/llm.md)) and embedding (for
+[`answer_relevance`](https://github.com/Ontotext-AD/graphrag-eval/docs/metrics.md)) with different API keys in place of
 environment variables.
 
 ```YAML
