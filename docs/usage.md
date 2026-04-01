@@ -51,7 +51,7 @@ aggregates = compute_aggregates(evaluation_results)
 `evaluation_results` is a list of objects, one for each question (section
 [Output](output.md)) as shown in this [Example output](examples/output.yaml).
 
-#$ Command-line use
+## Command-line use
 
 To evaluate only correctness of final answers (system responses), you can
 clone this repository and run the code on the command line:
