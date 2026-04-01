@@ -9,7 +9,7 @@ possible metrics are:
    1. `answer_f1`
 1. `steps_score`: an overall metric of the correctness of the steps the agent
    executed in response to the user's query (see section
-   [Steps score](steps.md#steps-score))
+   [Steps score](https://github.com/Ontotext-AD/graphrag-eval/docs/steps.md#steps-score))
 1. Metrics of vector retrieval quality, computed for reference retrieval steps
    matched with actual retrieval steps
     1. Retrieval quality using the reference answer 
@@ -21,9 +21,9 @@ possible metrics are:
         1. `retrieval_context_precision`
         1. `retrieval_context_f1`
     1. Retrieval quality using chunk IDs (section
-    [Retrieval evaluation using chunk IDs](retrieval-ids.md))
+    [Retrieval evaluation using chunk IDs](https://github.com/Ontotext-AD/graphrag-eval/docs/retrieval-ids.md))
 1. Aggregates min, max, sum, mean, median of the above metrics (section
-   [Aggregate metrics](output.md#aggregate-metrics))
+   [Aggregate metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md#aggregate-metrics))
 
 Which of these metrics are output depends on the inputs. Specifically, a metric
 is computed and output if the types of input required to compute it are
@@ -31,7 +31,7 @@ provided in the reference dataset and the responses of the system being
 evaluated.
 
 For each question, the output includes keys for those metrics and other data
-detailed in section [Output](output.md).
+detailed in section [Output](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md).
 
 The user can also define their own custom metrics using the configuration file:
-see section [Custom evaluation](custom.md)
+see section [Custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md)

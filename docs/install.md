@@ -10,8 +10,8 @@ graphrag-eval = "*"
 ```
 
 To evaluate `answer_relevance` and answer correctness metrics (`answer_recall`,
-`answer_precision`, `answer_f1`) (see section [Metrics](metrics.md)) or
-use a [custom evaluation](custom.md):
+`answer_precision`, `answer_f1`) (see section [Metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/metrics.md)) or
+use a [custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md):
 
 ```bash
 pip install 'graphrag-eval[llm]'

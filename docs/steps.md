@@ -7,7 +7,7 @@ steps in the two sets and computes match scores (Section
 `steps_score` for the question (section [Steps score](#steps-score)).
 
 The matches are also used to compute quality metrics for "retrieval" steps
-if the necessary input variables are supplied. (section [Metrics](metrics.md).)
+if the necessary input variables are supplied. (section [Metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/metrics.md).)
 
 The reference can specify some constraints on step execution order.
 Specifically, reference steps are specified as an ordered list of "groups", 
@@ -72,7 +72,7 @@ The match score is determined by these rules (the first rule that applies):
 `output_media_type` is `application/sparql-results+json`:
   - match score = [SPARQL queries comparison](#sparql-queries-comparison)
 - If both steps are named `retrieval` and the reference step has key `output`:
-  - match score = [recall@k](retrieval-ids.md#context-recallk)
+  - match score = [recall@k](https://github.com/Ontotext-AD/graphrag-eval/docs/retrieval-ids.md#context-recallk)
 - If both steps are named `retrieve_time_series`:
   - match score = 1 if the steps have the same sets of arguments, otherwise 0
 - If both steps are named `retrieve_data_points`:

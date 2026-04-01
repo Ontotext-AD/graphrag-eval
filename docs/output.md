@@ -36,7 +36,7 @@ can have the following keys.
 - `actual_steps`: (optional) copy of the steps in the evaluation target, if
   specified there
 - `steps_score`: (optional) a real number between 0 and 1 (see section
-  [Steps score](steps.md#steps-score))
+  [Steps score](https://github.com/Ontotext-AD/graphrag-eval/docs/steps.md#steps-score))
 - `input_tokens`: (optional) input tokens usage
 - `output_tokens`: (optional) output tokens usage
 - `total_tokens`: (optional) total tokens usage
@@ -155,4 +155,4 @@ The aggregate metrics are:
   - `retrieval_context_f1`
   - `steps_score`
 
-See [example aggregate output](examples/aggregates.yaml).
+See [example aggregate output](https://github.com/Ontotext-AD/graphrag-eval/docs/examples/aggregates.yaml).
