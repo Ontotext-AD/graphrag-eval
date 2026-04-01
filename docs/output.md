@@ -55,11 +55,11 @@ All `actual_steps` with `name` "retrieval" contain the following keys:
   respect to the reference answer, if `retrieval_answer_recall` and
   `retrieval_answer_precision` succeed
 - `retrieval_context_recall`: (optional) recall of the retrieved context with
-  respect to the reference answer, if evaluation succeeds
+  respect to the reference context, if evaluation succeeds
 - `retrieval_context_recall_error`: (optional) error message if
   `retrieval_context_recall` evaluation fails
 - `retrieval_context_precision`: (optional) precision of the retrieved context
-  with respect to the reference answer, if evaluation succeeds
+  with respect to the reference context, if evaluation succeeds
 - `retrieval_context_precision_error`: (optional) error message if
   `retrieval_context_precision` evaluation fails
 - `retrieval_context_f1`: (optional) F1 score of the retrieved context with
