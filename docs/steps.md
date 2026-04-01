@@ -44,8 +44,8 @@ The library tries to match steps in reference groups to actual steps, such that:
 - Each reference step matches a unique actual step
 - The actual step was successful (i.e., it didn’t result in an error)
 - The actual step occurred before all steps matching later groups
-- (Within a reference group, actual steps can be matched regardless of the
-order in which they were executed)
+  - Within a reference group, actual steps can be matched regardless of the
+  order in which they were executed.
  
 The matching algorithm is as follows:
 
