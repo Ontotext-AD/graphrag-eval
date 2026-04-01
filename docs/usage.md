@@ -14,7 +14,7 @@ To evaluate answers and/or steps:
        system) with the relevant keys (section [Input](input.md)):
       1. For `answer_relevance` (section [Metrics](metrics.md)):
          1. include `actual_answer` in the reference dataset
-      1. For answer correctness metrics (section [Metrics](metrics.md):
+      1. For answer correctness metrics (section [Metrics](metrics.md)):
          1. include `reference_answer` in the reference dataset and 
             `actual_answer` in the target data to evaluate
       1. For custom metrics (section [Custom evaluation](custom.md)):
