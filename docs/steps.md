@@ -69,23 +69,23 @@ a partial match.
 The match score of a reference step to an actual step is computed by following
 these rules in order:
 
-- if both steps are named `sparql_query` and the reference step's
+- If both steps are named `sparql_query` and the reference step's
 `output_media_type` is `application/sparql-results+json`:
   - match score = [SPARQL queries comparison](#sparql-queries-comparison)
-- if both steps are named `retrieval` and the reference step has key `output`:
+- If both steps are named `retrieval` and the reference step has key `output`:
   - match score = [recall@k](retrieval-ids.md#context-recallk)
-- if both steps are named `retrieve_time_series`:
+- If both steps are named `retrieve_time_series`:
   - match score = 1 if the steps have the same sets of arguments, otherwise 0
-- if both steps are named `retrieve_data_points`:
+- If both steps are named `retrieve_data_points`:
   - match score = 1 if the steps have the same sets of arguments, otherwise 0
-- if the reference step name is `iri_discovery` and the actual step name is 
+- If the reference step name is `iri_discovery` and the actual step name is 
 `autocomplete_search`:
   - match score = 1 if the reference (`iri_discovery`) `output` (an IRI)
   is present in the actual (`autocomplete_search`) step `output`, otherwise 0
-- if the step names are the same and the reference step `output_media_type` is
+- If the step names are the same and the reference step `output_media_type` is
   `application/json`:
-  - match score = 1 if the json outputs are identical, otherwise 0
-- match score = 1 if the outputs are identical, otherwise 0
+  - match score = 1 if the JSON outputs are identical, otherwise 0
+- Match score = 1 if the outputs are identical, otherwise 0
 
 ## SPARQL queries comparison
 
