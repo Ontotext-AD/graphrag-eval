@@ -6,8 +6,8 @@ steps in the two sets and computes match scores (Section
 [Steps matching](#steps-matching)). It outputs the matches and an overall
 `steps_score` for the question (Section [Steps score](#steps-score)).
 
-The matches are also be used to compute quality metrics for "retrieval" steps
-given the necessary input variables. (Section [Metrics](metrics.md).)
+The matches are also used to compute quality metrics for "retrieval" steps
+if the necessary input variables are supplied. (Section [Metrics](metrics.md).)
 
 The reference can specify some constraints on step execution order.
 Specifically, reference steps are specified as an ordered list of "groups", 
