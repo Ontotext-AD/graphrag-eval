@@ -2,33 +2,33 @@
 
 `run_evaluation()` and `compute_aggregates()` are configured using a YAML file file whose path is passed as a parameter. The configuration has the following structure:
 
-* `llm`: required for [LLM-based metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/llm.md). Keys:
-  * `generation`: required. The following keys are required:
-    * `provider`: (`str`) name of the organization providing the generation model, as supported by LiteLLM
-    * `model`: (`str`) name of the generation model
-    * `temperature`: (`float` in the range [0.0, 2.0]) adversarial temperature for generation
-    * `max_tokens`: (`int` > 0) maximum number of tokens to generate
-    * Optional keys: parameters to be passed to LiteLLM for generation (for [`answer_correctness`](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md) and [custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md)). Examples:
-      * `base_url`: (`str`) base URL for the generation model, alternative to the provider's default URL
-      * `api_key`: (`str`) API key for the generation model, alternative to setting the environment variable corresponding to the provider (e.g. `OPENAI_API_KEY` for OpenAI. `AZURE_OPENAI_API_KEY` for Azure etc.)
-  * `embedding`: required for [`answer_relevance`](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md).
-      * `provider`: (`str`) name of the organization providing the embedding model
-      * `model`: (`str`) name of the embedding model
-* `custom_evaluations`: (list of the following maps) required nonempty for
+- `llm`: required for [LLM-based metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/llm.md). Keys:
+  - `generation`: required. The following keys are required:
+    - `provider`: (`str`) name of the organization providing the generation model, as supported by LiteLLM
+    - `model`: (`str`) name of the generation model
+    - `temperature`: (`float` in the range [0.0, 2.0]) adversarial temperature for generation
+    - `max_tokens`: (`int` > 0) maximum number of tokens to generate
+    - Optional keys: parameters to be passed to LiteLLM for generation (for [`answer_correctness`](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md) and [custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md)). Examples:
+      - `base_url`: (`str`) base URL for the generation model, alternative to the provider's default URL
+      - `api_key`: (`str`) API key for the generation model, alternative to setting the environment variable corresponding to the provider (e.g. `OPENAI_API_KEY` for OpenAI. `AZURE_OPENAI_API_KEY` for Azure etc.)
+  - `embedding`: required for [`answer_relevance`](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md).
+      - `provider`: (`str`) name of the organization providing the embedding model
+      - `model`: (`str`) name of the embedding model
+- `custom_evaluations`: (list of the following maps) required nonempty for
 [custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md). Each map has keys:
-    * `name`: (`str`) name of the evaluation
-    * `inputs`: (`list[str]`) list of input variables. Any combination of:
-        * `question`
-        * `reference_answer`
-        * `reference_steps`
-        * `actual_answer`
-        * `actual_steps`
-    * `steps_keys`: (`list[str]`; required if `inputs` contains `actual_steps` or `reference_steps`) one or both of:
-        * `args`
-        * `output`
-    * `steps_name`: (`str`; required if `inputs` contains `actual_steps` or `reference_steps`) the type (name) of steps to include in the evaluation
-    * `instructions`: (`str`) instructions for the evaluation
-    * `outputs`: (`map[str,str]`) output variable names and descriptions
+    - `name`: (`str`) name of the evaluation
+    - `inputs`: (`list[str]`) list of input variables. Any combination of:
+        - `question`
+        - `reference_answer`
+        - `reference_steps`
+        - `actual_answer`
+        - `actual_steps`
+    - `steps_keys`: (`list[str]`; required if `inputs` contains `actual_steps` or `reference_steps`) one or both of:
+        - `args`
+        - `output`
+    - `steps_name`: (`str`; required if `inputs` contains `actual_steps` or `reference_steps`) the type (name) of steps to include in the evaluation
+    - `instructions`: (`str`) instructions for the evaluation
+    - `outputs`: (`map[str,str]`) output variable names and descriptions
 
 ## Example configuration file with LLM configuration
 
