@@ -66,8 +66,7 @@ step, and is used in computing the overall `steps_score`. Scores are 0 (no
 match) or 1 (full match), except for "retrieval" steps, where scores range 
 between 0 and 1. A score greater than 0 indicates at least a partial match.
 
-The match score of a reference step to an actual step is computed by following
-these rules in order:
+The match score is determined by these rules (the first rule that applies):
 
 - If both steps are named `sparql_query` and the reference step's
 `output_media_type` is `application/sparql-results+json`:
