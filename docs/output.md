@@ -68,9 +68,10 @@ All `actual_steps` with `name` "retrieval" contain the following keys:
 
 ## Aggregate metrics
 
-The output of `compute_aggregates()` outputs aggregated evaluation metrics.
-These metrics allow comparison of analysis of agent (answering system) quality,
-variability, token efficiency and execution performance.
+Function `compute_aggregates()` takes in the computed evaluation metrics and
+aggregates them. These aggregate metrics allow comparison of analysis of agent
+(answering system) quality, variability, token efficiency and execution
+performance.
 
 Aggregate metrics are computed:
 1. per question template, and
