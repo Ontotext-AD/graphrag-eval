@@ -89,11 +89,11 @@ these rules in order:
 
 ## SPARQL queries comparison
 
-To check whether an actual SPARQL query matches a reference SPARQL query, we
-compare their results. This does not work for certain types of queries:
+Checking whether an actual SPARQL query matches a reference SPARQL query
+is done as follows.
 
-- If one query is SELECT or ASK and the other is a DESCRIBE or CONSTRUCT, they
-do not match (the score is 0).
+- If one query is `SELECT` or `ASK` and the other is `DESCRIBE` or `CONSTRUCT`:
+  - the score = 0 (they do not match)
 
 For all other queries, we compare their results as follows:
 
@@ -103,7 +103,7 @@ in the actual result
 column by comparing each reference column listed under `required_columns`
 - Two columns match if all rows have matching values
 - Text values and special types such as duration must match exactly
-- Floating-point numbers must match up to a precision of 1e-8
+- Floating-point numbers must match up to 8 decimal points
 
 The algorithm has average time complexity
 
