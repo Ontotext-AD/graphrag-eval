@@ -31,8 +31,8 @@ With the [custom SPARQL evaluation](https://github.com/Ontotext-AD/graphrag-eval
 ## Output in case of evaluation error
 
 If there is an error during evaluation:
-- the configured output keys will have value `null`
-- there will be an additional key explaining the error. The key will be `{name}_error` where `name` is the custom evaluation name.
+- The configured output keys will have value `null`
+- There will be an additional key explaining the error. The key will be `{name}_error` where `name` is the custom evaluation name.
 
 There are three types of error:
 1. The reference input is missing keys requested in the custom evaluation configuration.

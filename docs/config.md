@@ -71,7 +71,7 @@ llm:
 
 Below is a YAML file that defines two custom evaluations:
 1. a simple relevance evaluation
-1. a SPARQL retrieval evaluation using the reference answer
+1. SPARQL retrieval evaluation using the reference answer
 
 This is an example of the format and may not create accurate evaluations.
 
