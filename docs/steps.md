@@ -73,7 +73,7 @@ these rules in order:
 `output_media_type` is `application/sparql-results+json`:
   - match score = [SPARQL queries comparison](#sparql-queries-comparison)
 - if both steps are named `retrieval` and the reference step has key `output`:
-  - match score = [recall@k](retrieval-ids.md#context-recall-k)
+  - match score = [recall@k](retrieval-ids.md#context-recallk)
 - if both steps are named `retrieve_time_series`:
   - match score = 1 if the steps have the same sets of arguments, otherwise 0
 - if both steps are named `retrieve_data_points`:
