@@ -18,7 +18,7 @@ To evaluate answers and/or steps:
          1. include `reference_answer` in the reference dataset and 
             `actual_answer` in the target data to evaluate
       1. For custom metrics (section [Custom evaluation](custom.md)):
-         1. Define the metrics in the [configuration file](config.md)
+         1. Define the metrics (section [Configuration](config.md))
          1. Include reference and target inputs used by the metrics
     1. Configure the LLM (section [configuration](config.md))
     1. Set the environment variable for your LLM provider (e.g.,
