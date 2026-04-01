@@ -11,7 +11,7 @@ To evaluate answers and/or steps:
 1. To evaluate metrics that require an LLM (section 
    [LLM use in evaluation](llm.md)):
     1. Create a reference dataset and target dataset (output from the target
-       system) with the relevant keys (section [Input](input.md)):
+       system) with the relevant keys (section [Inputs](input.md)):
       1. For `answer_relevance` (section [Metrics](metrics.md)):
          1. include `actual_answer` in the reference dataset
       1. For answer correctness metrics (section [Metrics](metrics.md)):
