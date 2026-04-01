@@ -7,8 +7,9 @@ possible metrics are:
    1. `answer_recall`
    1. `answer_precision`
    1. `answer_f1`
-1. `steps_score`: an overall metric of the correctness of the steps the chat
-bot or agent executed in response to the user's query (see section [Steps score](steps.md#steps-score))
+1. `steps_score`: an overall metric of the correctness of the steps the agent
+executed in response to the user's query (see section
+[Steps score](steps.md#steps-score))
 1. Metrics of vector retrieval quality, computed for reference retrieval steps
    matched with actual retrieval steps
     1. Retrieval quality using the reference answer 
