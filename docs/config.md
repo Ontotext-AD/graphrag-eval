@@ -65,7 +65,7 @@ llm:
 
 Below is a YAML file that configures the LLM generation (for
 [metrics that require an LLM](llm.md)) and embedding (for
-[`answer_relevance`](otuput.md)) with different API keys in place of
+[`answer_relevance`](metrics.md)) with different API keys in place of
 environment variables.
 
 ```YAML
