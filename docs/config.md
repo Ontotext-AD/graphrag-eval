@@ -18,14 +18,14 @@
 [custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md). Each map has keys:
     - `name`: (`str`) name of the evaluation
     - `inputs`: (`list[str]`) list of input variables. Any combination of:
-        - `question`
-        - `reference_answer`
-        - `reference_steps`
-        - `actual_answer`
-        - `actual_steps`
+      - `question`
+      - `reference_answer`
+      - `reference_steps`
+      - `actual_answer`
+      - `actual_steps`
     - `steps_keys`: (`list[str]`; required if `inputs` contains `actual_steps` or `reference_steps`) one or both of:
-        - `args`
-        - `output`
+      - `args`
+      - `output`
     - `steps_name`: (`str`; required if `inputs` contains `actual_steps` or `reference_steps`) the type (name) of steps to include in the evaluation
     - `instructions`: (`str`) instructions for the evaluation
     - `outputs`: (`map[str,str]`) output variable names and descriptions

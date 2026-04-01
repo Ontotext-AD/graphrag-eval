@@ -7,18 +7,18 @@ To evaluate answers and/or steps:
 1. Format the dataset of questions and reference answers and/or steps (section [Reference Q&A data](https://github.com/Ontotext-AD/graphrag-eval/docs/input.md#reference-qa-data))
 1. Format the answers and/or steps to evaluate: section [Target responses to evaluate](https://github.com/Ontotext-AD/graphrag-eval/docs/input.md#target-responses-to-evaluate)
 1. To evaluate metrics that require an LLM (section [LLM use in evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/llm.md)):
-    1. Create a reference dataset and target dataset (output from the target system) with the relevant keys (section [Inputs](https://github.com/Ontotext-AD/graphrag-eval/docs/input.md)):
-      1. For `answer_relevance` (section [Metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/metrics.md)):
-         1. include `actual_answer` in the reference dataset
-      1. For answer correctness metrics (section [Metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/metrics.md)):
-         1. include `reference_answer` in the reference dataset and `actual_answer` in the target data to evaluate
-      1. For custom metrics (section [Custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md)):
-         1. Define the metrics (section [Configuration](https://github.com/Ontotext-AD/graphrag-eval/docs/config.md))
-         1. Include reference and target inputs used by the metrics
-    1. Configure the LLM (section [Configuration](https://github.com/Ontotext-AD/graphrag-eval/docs/config.md))
-    1. Set the environment variable for your LLM provider (e.g., `OPENAI_API_KEY`) to hold your LLM access key
+  1. Create a reference dataset and target dataset (output from the target system) with the relevant keys (section [Inputs](https://github.com/Ontotext-AD/graphrag-eval/docs/input.md)):
+    1. For `answer_relevance` (section [Metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/metrics.md)):
+      1. include `actual_answer` in the reference dataset
+    1. For answer correctness metrics (section [Metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/metrics.md)):
+      1. include `reference_answer` in the reference dataset and `actual_answer` in the target data to evaluate
+    1. For custom metrics (section [Custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md)):
+      1. Define the metrics (section [Configuration](https://github.com/Ontotext-AD/graphrag-eval/docs/config.md))
+      1. Include reference and target inputs used by the metrics
+  1. Configure the LLM (section [Configuration](https://github.com/Ontotext-AD/graphrag-eval/docs/config.md))
+  1. Set the environment variable for your LLM provider (e.g., `OPENAI_API_KEY`) to hold your LLM access key
 1. To evaluate steps (section [Steps score](https://github.com/Ontotext-AD/graphrag-eval/docs/steps.md)):
-    1. Include `reference_steps` in the reference data and `actual_steps` in target data
+  1. Include `reference_steps` in the reference data and `actual_steps` in target data
 1. Call the evaluation function with the reference data and target data: section [Example code](#example-code)
 1. Call the aggregation function with the evaluation results: sections [Example code](#example-code), [Aggregate metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md#aggregate-metrics) and [Example aggregate output](https://github.com/Ontotext-AD/graphrag-eval/docs/examples/aggregates.yaml)
 
