@@ -1,6 +1,6 @@
 # LLM use in evaluation
 
-The following metrics use an LLM which must be configured using a [configuration](https://github.com/Ontotext-AD/graphrag-eval/docs/config.md) file:
+The following metrics use an LLM which must be configured using a [configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md) file:
 - answer metrics
   - `answer_recall`
   - `answer_precision`
@@ -13,7 +13,7 @@ The following metrics use an LLM which must be configured using a [configuration
   - `retrieval_context_recall`
   - `retrieval_context_precision`
   - `retrieval_context_f1`
-- [custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md)
+- [custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/custom.md)
 
 Supported LLMs are all those supported by the [`litellm`](https://github.com/BerriAI/litellm) library, including all major LLMs and local models via Ollama.
 

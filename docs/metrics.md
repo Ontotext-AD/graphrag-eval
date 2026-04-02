@@ -6,7 +6,7 @@ The library computes metrics for the quality of the answers. The groups of possi
    1. `answer_recall`
    1. `answer_precision`
    1. `answer_f1`
-1. `steps_score`: an overall metric of the correctness of the steps the agent executed in response to the user's query (see section [Steps score](https://github.com/Ontotext-AD/graphrag-eval/docs/steps.md#steps-score))
+1. `steps_score`: an overall metric of the correctness of the steps the agent executed in response to the user's query (see section [Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
 1. Metrics of vector retrieval quality, computed for reference retrieval steps matched with actual retrieval steps
     1. Retrieval quality using the reference answer 
         1. `retrieval_answer_recall`
@@ -16,11 +16,11 @@ The library computes metrics for the quality of the answers. The groups of possi
         1. `retrieval_context_recall`
         1. `retrieval_context_precision`
         1. `retrieval_context_f1`
-    1. Retrieval quality using chunk IDs (section [Retrieval evaluation using chunk IDs](https://github.com/Ontotext-AD/graphrag-eval/docs/retrieval-ids.md))
-1. Aggregates min, max, sum, mean, median of the above metrics (section [Aggregate metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md#aggregate-metrics))
+    1. Retrieval quality using chunk IDs (section [Retrieval evaluation using chunk IDs](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/retrieval-ids.md))
+1. Aggregates min, max, sum, mean, median of the above metrics (section [Aggregate metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md#aggregate-metrics))
 
 Which of these metrics are output depends on the inputs. Specifically, a metric is computed and output if the types of input required to compute it are provided in the reference dataset and the responses of the system being evaluated.
 
-For each question, the output includes keys for those metrics and other data detailed in section [Output](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md).
+For each question, the output includes keys for those metrics and other data detailed in section [Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md).
 
-The user can also define their own custom metrics using the configuration file: see section [Custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md)
+The user can also define their own custom metrics using the configuration file: see section [Custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/custom.md)

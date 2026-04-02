@@ -8,14 +8,14 @@ This is a Python module for assessing the quality of question-answering systems 
 
 ## Documentation
 
-- [Metrics](https://github.com/Ontotext-AD/graphrag-eval/docs/metrics.md)
-- [Installation](https://github.com/Ontotext-AD/graphrag-eval/docs/install.md)
-- [Usage](https://github.com/Ontotext-AD/graphrag-eval/docs/usage.md)
-- [Configuration](https://github.com/Ontotext-AD/graphrag-eval/docs/config.md)
-- [LLM use in evaluation](https://github.com/Ontotext-AD/graphrag-eval/docs/llm.md)
-- [Custom evaluation (custom metrics)](https://github.com/Ontotext-AD/graphrag-eval/docs/custom.md)
-- [Input](https://github.com/Ontotext-AD/graphrag-eval/docs/input.md)
-- [Output](https://github.com/Ontotext-AD/graphrag-eval/docs/output.md)
+- [Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)
+- [Installation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/install.md)
+- [Usage](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/usage.md)
+- [Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md)
+- [LLM use in evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/llm.md)
+- [Custom evaluation (custom metrics)](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/custom.md)
+- [Input](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/input.md)
+- [Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md)
 
 ## Maintainers
 
