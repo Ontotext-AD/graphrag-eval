@@ -31,11 +31,11 @@ Each step includes:
 
 ### Example
 
-Here is an [example Q&A dataset reference dataset](https://github.com/Ontotext-AD/graphrag-eval/docs/examples/reference.yaml) with two templates and associated questions and steps.
+Here is an [example Q&A dataset reference dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/reference.yaml) with two templates and associated questions and steps.
 
 ## Target responses to evaluate
 
-To evaluate responses by the target agent against the reference responses, format the target responses as in this [example target dataset](https://github.com/Ontotext-AD/graphrag-eval/docs/examples/target.json).
+To evaluate responses by the target agent against the reference responses, format the target responses as in this [example target dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/target.json).
 
 On the other hand, to tally a response as an error in generating the response, format the target response as in this example:
 
