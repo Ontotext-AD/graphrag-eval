@@ -17,10 +17,10 @@ The output is a list of objects corresponding to questions from the reference Q&
 - `answer_correctness_reason`: (optional) LLM reasoning in extracting and matching claims from the reference answer and the actual answer
 - `answer_eval_error`: (optional) error message if answer evaluation failed
 - `answer_f1`: (optional) Harmonic mean of `answer_recall` and `answer_precision`
-- `answer_relevance`: (optional) a real number between 0 and 1 representing how relevant to the question is the actual answer, computed using [RAGAS answer relevance](https://docs.ragas.io/en/v0.4.3/concepts/metrics/available_metrics/answer_relevance/)
+- `answer_relevance`: (optional `float` in [0, 1]) indication of how relevant to the question is the actual answer, computed using [RAGAS answer relevance](https://docs.ragas.io/en/v0.4.3/concepts/metrics/available_metrics/answer_relevance/)
 - `answer_relevance_error`: (optional) error message if answer relevance evaluation failed
 - `actual_steps`: (optional) copy of the steps in the evaluation target, if specified there
-- `steps_score`: (optional) a real number between 0 and 1 (see section [Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
+- `steps_score`: (optional `float` in [0, 1]) the overall correctness of the agent's steps for answering the question (section [Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
 - `input_tokens`: (optional) input tokens usage
 - `output_tokens`: (optional) output tokens usage
 - `total_tokens`: (optional) total tokens usage
