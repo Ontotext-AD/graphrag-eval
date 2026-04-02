@@ -1,6 +1,6 @@
 # Configuration
 
-`run_evaluation()` and `compute_aggregates()` are configured using a YAML file file whose path is passed as a parameter. The configuration has the following structure:
+`run_evaluation()` and `compute_aggregates()` are configured using a YAML file whose path is passed as a parameter. The configuration has the following structure:
 
 - `llm`: required for [LLM-based metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/llm.md). Keys:
   - `generation`: required. The following keys are required:
