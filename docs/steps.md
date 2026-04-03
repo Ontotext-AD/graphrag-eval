@@ -51,7 +51,7 @@ The output contains the reference groups where each step that has a matching act
 
 The match score quantifies how well a reference step aligns with an actual step, and is used in computing the overall `steps_score`. Scores are 0 (no match) or 1 (full match), except for "retrieval" steps, where scores range between 0 and 1. A score greater than 0 indicates at least a partial match.
 
-The match score is determined by these rules (the first rule that applies):
+The match score is determined by the first rule that applies:
 
 - If both steps are named `sparql_query` and the reference step's `output_media_type` is `application/sparql-results+json`:
   - match score = [SPARQL queries comparison](#sparql-queries-comparison)
