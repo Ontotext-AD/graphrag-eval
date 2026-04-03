@@ -9,9 +9,9 @@ To evaluate answers and/or steps:
 1. To evaluate metrics that require an LLM (section [LLM use in evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/llm.md)):
   1. Create a reference dataset and target dataset (output from the target system) with the relevant keys (section [Inputs](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/input.md)):
     1. For `answer_relevance` (section [Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)):
-      1. include `actual_answer` in the reference dataset
+      1. Include `actual_answer` in the reference dataset
     1. For answer correctness metrics (section [Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)):
-      1. include `reference_answer` in the reference dataset and `actual_answer` in the target data to evaluate
+      1. Include `reference_answer` in the reference dataset and `actual_answer` in the target data to evaluate
     1. For custom metrics (section [Custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/custom.md)):
       1. Define the metrics (section [Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md))
       1. Include reference and target inputs used by the metrics
