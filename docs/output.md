@@ -42,12 +42,7 @@ All `actual_steps` with `name` "retrieval" contain the following keys:
 
 Function `compute_aggregates()` takes in the computed evaluation metrics and aggregates them. The resulting aggregate metrics allow comparisons between agents with respect to quality, speed and token efficiency.
 
-Aggregation is done:
-- per question template
-- over the whole dataset
-- as a macro-average across templates
-
-The aggregate metrics are:
+The aggregate metrics are organized as follows:
 - `per_template`: a dictionary mapping a question template identifier to the following statistics:
   - `number_of_error_samples`: number of questions of this template which resulted in an error response
   - `number_of_success_samples`: number of questions of this template which resulted in a successful response
