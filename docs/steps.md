@@ -6,29 +6,9 @@ The matches are also used to compute quality metrics for "retrieval" steps if th
 
 The reference can specify some constraints on step execution order. Specifically, reference steps are specified as an ordered list of "groups", while each group is not ordered, as illustrated below:
 
-```
-+-----Reference answer----+
-|        (ordered)        |
-|                         |
-|  +------Group 1------+  |
-|  |    (unordered)    |  |                  +---Actual answer---+
-|  |                   |  |                  |                   |
-|  |  +--> Step A      |  |                  |                   |
-|  |  |                |  |                  |                   |
-|  |  |    Step B <------------matches-------------> Step B      |
-|  |  |                |  |                  |                   |
-|  +--|----------------+  |                  |                   |
-|      \                  |                  |                   |
-|       +--------------------- matches-------------> Step A      |
-|                         |                  |                   |
-|  +------Group 2------+  |                  |                   |
-|  |    (unordered)    |  |                  |                   |
-|  |                   |  |                  |                   |
-|  |       Step C <------------matches-------------> Step C      |
-|  |                   |  |                  |                   |
-|  +-------------------+  |                  +-------------------+
-+-------------------------+                  
-```
+<p align="center">
+<img alt="Steps matching" src="images/steps-matching.png" width="400">
+</p>
 
 ## Steps matching
 
