@@ -10,17 +10,17 @@ The output is a list of objects corresponding to questions from the reference Q&
 - `reference_answer`: (optional) copy of the expected answer text, if supplied in the reference data
 - `actual_answer`: (optional) copy of the response text, if supplied in the target data
 - `answer_reference_claims_count`: (optional) number of claims extracted from the reference answer, if a reference answer and actual answer are supplied
-- `answer_actual_claims_count`: (optional) number of claims extracted from the answer being evaluated, if a reference answer and actual answer are supplied
+- `answer_actual_claims_count`: (optional) number of claims extracted from the actual answer, if a reference answer and actual answer are supplied
 - `answer_matching_claims_count`: (optional) number of matching claims between the reference answer and the actual answer, if a reference answer and actual answer are supplied
 - `answer_recall`: (optional) `answer_matching_claims_count / answer_reference_claims_count`
 - `answer_precision`: (optional) `answer_matching_claims_count / answer_actual_claims_count`
 - `answer_correctness_reason`: (optional) LLM reasoning in extracting and matching claims from the reference answer text and the actual answer text
 - `answer_eval_error`: (optional) error message if answer evaluation failed
 - `answer_f1`: (optional) Harmonic mean of `answer_recall` and `answer_precision`
-- `answer_relevance`: (optional `float` in [0, 1]) indication of how relevant to the question is the actual answer, computed using [RAGAS answer relevance](https://docs.ragas.io/en/v0.4.3/concepts/metrics/available_metrics/answer_relevance/)
+- `answer_relevance`: (optional `float` in [0, 1]) answer relevance score
 - `answer_relevance_error`: (optional) error message if answer relevance evaluation failed
 - `actual_steps`: (optional) copy of the actual steps, if specified the target data
-- `steps_score`: (optional `float` in [0, 1]) the overall correctness of the agent's steps for answering the question (section [Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
+- `steps_score`: (optional `float` in [0, 1]) steps score (section [Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
 - `input_tokens`: (optional) input tokens usage
 - `output_tokens`: (optional) output tokens usage
 - `total_tokens`: (optional) total tokens usage
