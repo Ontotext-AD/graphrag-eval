@@ -4,7 +4,7 @@ You (the user) can define your own metrics of system outputs to be evaluated usi
 
 One configuration file can define multiple custom evaluations, each of which will be done as a separate query to the LLM. Each evaluation can have multiple outputs. The format is shown in the example sections below.
 
-See section [Example configuration file with custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md#example-configuration-file-with-custom-evaluations).
+See [§ Example configuration file with custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md#example-configuration-file-with-custom-evaluations).
 
 ## Example call to evaluate using custom metrics
 
@@ -18,7 +18,7 @@ evaluation_results = run_evaluation(
 
 ## Example output for custom SPARQL evaluation
 
-With the [custom SPARQL evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md#example-configuration-file-with-custom-evaluations), the output is as for section [Example evaluation results](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/output.yaml), except that it has the following additional keys and example values:
+With the [custom SPARQL evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md#example-configuration-file-with-custom-evaluations), the output is as for [§ Example evaluation results](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/output.yaml), except that it has the following additional keys and example values:
 
 ```yaml
   my_answer_relevance: 0.9
