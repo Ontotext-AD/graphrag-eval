@@ -72,17 +72,17 @@ The match score is determined by the first rule that applies:
 ## SPARQL queries comparison
 
 Checking whether an actual SPARQL query matches a reference SPARQL query is done as follows.
-
-- If one query is `SELECT` or `ASK` and the other is `DESCRIBE` or `CONSTRUCT`:
-  - the score = 0 (they do not match)
-
-For all other queries, we compare their results as follows:
-
-- If the reference result has $n$ columns, consider all subsets of $n$ columns in the actual result
-- For each subset and for each column in it, look for its matching reference column by comparing each reference column listed under `required_columns`
-- Two columns match if all rows have matching values
-- Text values and special types such as duration must match exactly
-- Floating-point numbers must match up to 8 decimal points
+- If both queries are `SELECT`, then compare their outputs as sets:
+  - If the reference output has $n$ columns, consider all subsets of $n$ columns in the actual output
+  - For each subset and for each column in it, look for its matching reference column by comparing each reference column listed under `required_columns`
+    - Two columns match if all rows have matching values
+      - Floating-point numbers must match up to 8 decimal points
+      - Text values and special types such as duration must match exactly
+- If both queries are `ASK`:
+  - If the reference `output_media_type` is `application/sparql-results+json` and the outputs can be parsed as JSON:
+    - the output boolean values must equal
+- In all other cases (e.g., `DESCRIBE` queries, `output_media_type` is not `application/sparql-results+json`, actual output cannot be parsed as JSON):
+    - output strings must be identical
 
 The algorithm has average time complexity
 
