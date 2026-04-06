@@ -20,7 +20,7 @@ The output is a list of objects corresponding to questions from the reference Q&
 - `answer_relevance`: (optional `float` in [0, 1]) answer relevance score
 - `answer_relevance_error`: (optional) error message if answer relevance evaluation failed
 - `actual_steps`: (optional) copy of the actual steps, if specified the target data
-- `steps_score`: (optional `float` in [0, 1]) steps score (section [Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
+- `steps_score`: (optional `float` in [0, 1]) steps score ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
 - `input_tokens`: (optional) input tokens usage
 - `output_tokens`: (optional) output tokens usage
 - `total_tokens`: (optional) total tokens usage
