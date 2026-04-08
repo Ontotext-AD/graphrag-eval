@@ -1,0 +1,159 @@
+- template_id: list_all_transformers_within_Substation_SUBSTATION
+  questions:
+  - id: c10bbc8dce98a4b8832d125134a16153
+    question_text: List all transformers within Substation OSLO
+    reference_answer: OSLO T1, OSLO T2
+    reference_steps:
+    - - name: retrieval
+        args:
+          query: transformers Substation OSLO
+          k: 2
+        output: |-
+          [
+            {
+              "id": "http://example.com/resource/doc/1",
+              "text": "Transformer OSLO T1 is in Substation Oslo."
+            },
+            {
+              "id": "http://example.com/resource/doc/2",
+              "text": "Transformer OSLO T2 is in Substation Oslo."
+            }
+          ]
+      - name: sparql_query
+        args:
+          query: |2
+
+            PREFIX cimex: <https://rawgit2.com/statnett/Talk2PowerSystem/main/demo1/cimex/>
+            PREFIX cim: <https://cim.ucaiug.io/ns#>
+            PREFIX rank: <http://www.ontotext.com/owlim/RDFRank#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            select distinct ?transformer ?transformerName
+            where {
+                bind(<urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f> as ?substation)
+
+                ?transformer a cim:PowerTransformer ;
+                  cim:Equipment.EquipmentContainer ?substation ;
+                  cim:IdentifiedObject.name ?transformerName .
+            }
+        output: '{"head": {"vars": ["transformer", "transformerName"]}, "results":
+          {"bindings": [{"transformer": {"type": "uri", "value": "urn:uuid:f1769de8-9aeb-11e5-91da-b8763fd99c5f"},
+          "transformerName": {"type": "literal", "value": "OSLO    T2"}}, {"transformer":
+          {"type": "uri", "value": "urn:uuid:f1769dd6-9aeb-11e5-91da-b8763fd99c5f"},
+          "transformerName": {"type": "literal", "value": "OSLO    T1"}}]}}'
+        output_media_type: application/sparql-results+json
+        required_columns:
+          - transformer
+          - transformerName
+  - id: 8bbea9a10876a04ad77a82fd2aedee40
+    question_text: List all transformers within Substation STAVANGER
+    reference_answer: STAVANGET1
+    reference_steps:
+    - - name: sparql_query
+        args:
+          query: |2
+
+            PREFIX cimex: <https://rawgit2.com/statnett/Talk2PowerSystem/main/demo1/cimex/>
+            PREFIX cim: <https://cim.ucaiug.io/ns#>
+            PREFIX rank: <http://www.ontotext.com/owlim/RDFRank#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            select distinct ?transformer ?transformerName
+            where {
+                bind(<urn:uuid:f1769664-9aeb-11e5-91da-b8763fd99c5f> as ?substation)
+
+                ?transformer a cim:PowerTransformer ;
+                  cim:Equipment.EquipmentContainer ?substation ;
+                  cim:IdentifiedObject.name ?transformerName .
+            }
+        output: '{"head": {"vars": ["transformer", "transformerName"]}, "results":
+          {"bindings": [{"transformer": {"type": "uri", "value": "urn:uuid:f1769e0c-9aeb-11e5-91da-b8763fd99c5f"},
+          "transformerName": {"type": "literal", "value": "STAVANGET1"}}]}}'
+        output_media_type: application/sparql-results+json
+        required_columns:
+          - transformer
+          - transformerName
+- template_id: list_all_substations_within_bidding_zone_REGION
+  questions:
+  - id: d566b1e9da418ac83e520a66cc7af4d7
+    question_text: List all substations within bidding zone NO2 SGR
+    reference_answer: ARENDAL, BLAFALLI, STAVANGER, KRISTIA_HVDC, KVILLDAL, SANDEFJORD, KRISTIANSAND, FEDA_HVDC
+    reference_steps:
+    - - name: sparql_query
+        args:
+          query: |2
+
+            PREFIX cimex: <https://rawgit2.com/statnett/Talk2PowerSystem/main/demo1/cimex/>
+            PREFIX cim: <https://cim.ucaiug.io/ns#>
+            PREFIX rank: <http://www.ontotext.com/owlim/RDFRank#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            select distinct ?substation ?substationName
+            where {
+                bind(<urn:uuid:f176965f-9aeb-11e5-91da-b8763fd99c5f> as ?region)
+
+                ?substation a cim:Substation ;
+                  cim:Substation.Region ?region ;
+                  cim:IdentifiedObject.name ?substationName .
+            }
+        output: '{"head": {"vars": ["substation", "substationName"]}, "results": {"bindings":
+          [{"substation": {"type": "uri", "value": "urn:uuid:f1769670-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "ARENDAL"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f176968e-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "BLAFALLI"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f1769664-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "STAVANGER"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f1769676-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "KRISTIA_HVDC"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f1769682-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "KVILLDAL"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f176966a-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "SANDEFJORD"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f176965a-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "KRISTIANSAND"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f176967c-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "FEDA_HVDC"}}]}}'
+        output_media_type: application/sparql-results+json
+        required_columns:
+          - substation
+          - substationName
+        ordered: false
+  - id: 03d4283773b4387114342518176b128b
+    question_text: List all substations within bidding zone NO1 SGR
+    reference_answer: HALDEN, KONGSBERG, SYLLING, OSLO, ASKER, SYSLE, SKIEN, TRETTEN
+    reference_steps:
+    - - name: sparql_query
+        args:
+          query: |2
+
+            PREFIX cimex: <https://rawgit2.com/statnett/Talk2PowerSystem/main/demo1/cimex/>
+            PREFIX cim: <https://cim.ucaiug.io/ns#>
+            PREFIX rank: <http://www.ontotext.com/owlim/RDFRank#>
+            PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+            select distinct ?substation ?substationName
+            where {
+                bind(<urn:uuid:f1769609-9aeb-11e5-91da-b8763fd99c5f> as ?region)
+
+                ?substation a cim:Substation ;
+                  cim:Substation.Region ?region ;
+                  cim:IdentifiedObject.name ?substationName .
+            }
+        output: '{"head": {"vars": ["substation", "substationName"]}, "results": {"bindings":
+          [{"substation": {"type": "uri", "value": "urn:uuid:f176960e-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "HALDEN"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f176961e-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "KONGSBERG"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f1769642-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "SYLLING"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f176963c-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "OSLO"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f176964e-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "ASKER"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f1769648-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "SYSLE"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f1769654-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "SKIEN"}}, {"substation":
+          {"type": "uri", "value": "urn:uuid:f1769604-9aeb-11e5-91da-b8763fd99c5f"},
+          "substationName": {"type": "literal", "value": "TRETTEN"}}]}}'
+        output_media_type: application/sparql-results+json
+        required_columns:
+          - substation
+          - substationName
+        ordered: false
