@@ -5,22 +5,22 @@
 To evaluate answers and/or steps:
 1. Install this package ([§ Installation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/install.md))
 1. Format the dataset of questions and reference answers and/or steps ([§ Reference Q&A data](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/input.md#reference-qa-data))
-1. Format the answers and/or steps to evaluate: [§ Target responses to evaluate](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/input.md#target-responses-to-evaluate)
+1. Format the answers and/or steps to evaluate ([§ Target responses to evaluate](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/input.md#target-responses-to-evaluate))
 1. To evaluate metrics that require an LLM ([§ LLM use in evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/llm.md)):
-  1. Create a reference dataset and target dataset (output from the target system) with the relevant keys ([§ Inputs](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/input.md)):
-    1. For `answer_relevance` ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)):
-      1. Include `actual_answer` in the reference dataset
-    1. For answer correctness metrics ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)):
-      1. Include `reference_answer` in the reference dataset and `actual_answer` in the target data to evaluate
-    1. For custom metrics ([§ Custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/custom.md)):
-      1. Define the metrics ([§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md))
-      1. Include reference and target inputs used by the metrics
-  1. Configure the LLM ([§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md))
-  1. Set the environment variable for your LLM provider (e.g., `OPENAI_API_KEY`) to hold your LLM access key
+    1. Include the relevant keys for all questions ([§ Inputs](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/input.md)):
+        1. For `answer_relevance` ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)):
+            1. Include `actual_answer` in reference data
+        1. For answer correctness metrics ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)):
+            1. Include `reference_answer` in reference data and `actual_answer` in target data to evaluate
+        1. For custom metrics ([§ Custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/custom.md)):
+            1. Define the metrics ([§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md))
+            1. Include reference and target inputs specified in the definitions
+     1. Configure the LLM ([§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md))
+     1. Set the environment variable for your LLM provider (e.g., `OPENAI_API_KEY`) to hold your LLM access key
 1. To evaluate steps ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md)):
-  1. Include `reference_steps` in the reference data and `actual_steps` in target data
-1. Call the evaluation function with the reference data and target data: [§ Example code](#example-code)
-1. Call the aggregation function with the evaluation results: sections [Example code](#example-code), [Aggregate metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md#aggregate-metrics) and [Example aggregate output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/aggregates.yaml)
+  1. Include `reference_steps` in reference data and `actual_steps` in target data
+1. Call function `run_evaluation()`, passing to it the reference data and target data: [§ Example code](#example-code)
+1. Call function `compute_aggregates()`, passing the evaluation results ([§ Example code](#example-code), [§ Aggregate metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md#aggregate-metrics), [§ Example aggregate output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/aggregates.yaml)
 
 See also:
 - [Example reference dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/reference.yaml)
