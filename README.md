@@ -1289,4 +1289,3 @@ configuration. Example:
 1. Request an explanation output for output quantities you ask the LLM to count
 or estimate. You can ask for one explanation per quantity or one shared 
 explanation for 2-3 quantities
-
