@@ -9,10 +9,14 @@ See [§ Example configuration file with custom evaluation](https://github.com/On
 ## Example call to evaluate using custom metrics
 
 ```python
-evaluation_results = run_evaluation(
+evaluation_results = await run_evaluation(
     reference_qa_dataset, 
     chat_responses, 
-    "my_project/custom_eval.yaml"
+    "my_project/eval_config_defining_custom_eval.yaml"
+)
+aggregates = compute_aggregates(
+    evaluation_results,
+    "my_project/eval_config_defining_custom_eval.yaml"
 )
 ```
 

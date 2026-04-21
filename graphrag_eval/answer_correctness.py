@@ -26,17 +26,17 @@ def parse_args() -> "argparse.Namespace":
             f = float(value)
         except ValueError:
             raise ArgumentTypeError(f"Invalid float value: {value}")
-        
+
         if f <= 0.0 or f >= 2.0:
             raise ArgumentTypeError(f"Value must be between 0.0 and 2.0, got {f}")
         return f
 
-    parser = ArgumentParser()    
+    parser = ArgumentParser()
     parser.add_argument("-i", "--in-file", type=str, default=IN_FILE_PATH)
     parser.add_argument("-o", "--out-file", type=str, default=OUT_FILE_PATH)
     parser.add_argument("-p", "--provider", type=str, default=LLM_PROVIDER)
     parser.add_argument("-l", "--llm", type=str, default=LLM_MODEL)
-    parser.add_argument("-m", "--max-tokens", type=int, default=MAX_TOKENS)    
+    parser.add_argument("-m", "--max-tokens", type=int, default=MAX_TOKENS)
     parser.add_argument(
         "-t",
         "--temperature",
