@@ -1,6 +1,6 @@
 # Steps evaluation
 
-If a reference answer specifies reference steps and the target answer specifies the actual steps taken by the target agent, then the library tries to match steps in the two sets and computes match scores ([§ Steps matching](#steps-matching)). It outputs the matches and an overall `steps_score` for the question ([§ Steps score](#steps-score)).
+If a reference answer specifies reference steps and the actual answer specifies the actual steps taken by the target agent, then the library tries to match steps in the two sets and computes match scores ([§ Steps matching](#steps-matching)). It outputs the matches and an overall `steps_score` for the question ([§ Steps score](#steps-score)).
 
 The matches are also used to compute quality metrics for "retrieval" steps if the necessary input variables are supplied ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)).
 

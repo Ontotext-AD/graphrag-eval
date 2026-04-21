@@ -8,7 +8,7 @@ The output is a list of objects corresponding to questions from the reference Q&
 - `status`: "success" or "error", indicating whether the evaluation succeeded
 - `reference_steps`: (optional) copy of the expected steps in the Q&A dataset, if specified there. Additional key "matches" is added to those steps which are matched.
 - `reference_answer`: (optional) copy of the expected answer text, if supplied in the reference data
-- `actual_answer`: (optional) copy of the response text, if supplied in the target data
+- `actual_answer`: (optional) copy of the response text, if supplied in the actual data
 - `answer_reference_claims_count`: (optional) number of claims extracted from the reference answer, if a reference answer and actual answer are supplied
 - `answer_actual_claims_count`: (optional) number of claims extracted from the actual answer, if a reference answer and actual answer are supplied
 - `answer_matching_claims_count`: (optional) number of matching claims between the reference answer and the actual answer, if a reference answer and actual answer are supplied
@@ -19,7 +19,7 @@ The output is a list of objects corresponding to questions from the reference Q&
 - `answer_f1`: (optional) Harmonic mean of `answer_recall` and `answer_precision`
 - `answer_relevance`: (optional `float` in [0, 1]) answer relevance score
 - `answer_relevance_error`: (optional) error message if answer relevance evaluation failed
-- `actual_steps`: (optional) copy of the actual steps, if specified in the target data
+- `actual_steps`: (optional) copy of the actual steps, if specified in the actual data
 - `steps_score`: (optional `float` in [0, 1]) steps score ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
 - `input_tokens`: (optional) input tokens usage
 - `output_tokens`: (optional) output tokens usage

@@ -2,7 +2,7 @@
 
 The input to the evaluator consists of two datasets of corresponding entries:
 1. Reference dataset: questions and their reference answers
-1. Target reponses: the agent's answers and optionally executed steps
+1. Actual dataset: the agent's answers and optionally executed steps
 
 ## Reference Q&A data
 
@@ -28,9 +28,9 @@ A reference dataset is a list of question "template" dicts, each of which contai
 
 [Example reference dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/reference.yaml) with two templates and associated questions and steps.
 
-## Target responses to evaluate
+## Actual data
 
-The target data is a dict of `question_id` to a response dict. Each response dict contains:
+The actual data is a dict of `question_id` to a response dict. Each response dict contains:
 - `question_id`: (required) Must equal `id` from the reference question; copied to the output
 - `actual_answer` (optional) Enables `answer_relevance` and, if `reference_answer` exists and LLM is configured, answer correctness metrics
 - `actual_steps` (optional list of dicts): Enables `steps_score` and retrieval step metrics if present ([§ Steps](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md)). Each actual step has:
@@ -48,7 +48,7 @@ The target data is a dict of `question_id` to a response dict. Each response dic
   - `error` (optional): Marks an agent internal error for this question. 
   - `input_tokens`, `output_tokens`, `total_tokens`, `elapsed_sec` (numbers, optional): copied to the output and included in aggregates compyted by function `aggregate_metrics()` ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/output.md)). Useful for analyzing your agent.
 
-[Example actual answers dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/target.json).
+[Example actual answers dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/actual.json).
 
 ## Keys by step type
 

@@ -11,4 +11,4 @@ The library computes metrics for the quality of the answers. The groups of possi
 1. **Aggregates**: min, max, sum, mean, median of the above metrics ([§ Aggregate metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md#aggregate-metrics))
 1. *Custom metrics* defined by the user ([§ Custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/custom.md))
 
-Each metric has required reference and target data types; it is computed if those data are among the supplied reference answer data and the actual answer data. The output for each question includes keys for metrics and other data, listed in [§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md).
+Each metric has required types for reference and  data; it is computed if those data are among the supplied reference answer data and the actual answer data. The output for each question includes keys for metrics and other data, listed in [§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md).
