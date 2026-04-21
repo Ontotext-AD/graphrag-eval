@@ -1,6 +1,6 @@
 # Custom evaluation (custom metrics)
 
-You (the user) can define your own metrics of system outputs to be evaluated using an LLM. To do this, specify its name, inputs, outputs and instructions in a YAML file and pass the file path as a parameter to `run_evaluation()`. This will return your output metrics alongside the standard metrics described in previous sections.
+You (the user) can define your own metrics of agent outputs to be evaluated using an LLM. To do this, specify its name, inputs, outputs and instructions in a YAML file and pass the file path as a parameter to `run_evaluation()`. This will return your output metrics alongside the standard metrics described in previous sections.
 
 One configuration file can define multiple custom evaluations, each of which will be done as a separate query to the LLM. Each evaluation can have multiple outputs. The format is shown in the example sections below.
 

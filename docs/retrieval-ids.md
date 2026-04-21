@@ -18,7 +18,7 @@ Count the number of relevant items in the top $k$ retrieved results; divide that
 
 ### Example
 
-Suppose there are 4 relevant documents for a given query. Suppose our system retrieves 3 of them in the top 5 results (`k=5`). Then `recall@5` is `3 / 4 = 0.75`.
+Suppose there are 4 relevant documents for a given query. Suppose we retrieve 3 of them in the top 5 results (`k=5`). Then `recall@5` is `3 / 4 = 0.75`.
 
 ```python
 recall_at_k(
@@ -30,7 +30,7 @@ recall_at_k(
 
 ## Average context precision
 
-Evaluates a ranked list of recommendations by looking at the precision at the position of each correctly retrieved item. It rewards systems for placing relevant items higher up in the list. It's more sophisticated than just looking at precision at a single cutoff because it considers the entire ranking.
+Evaluates a ranked list of recommendations by looking at the precision at the position of each correctly retrieved item. It rewards the retrieval for placing relevant items higher up in the list. It's more sophisticated than just looking at precision at a single cutoff because it considers the entire ranking.
 
 ### Formula
 
