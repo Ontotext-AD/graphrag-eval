@@ -38,9 +38,9 @@ The match score is determined by the first rule that applies:
 - If both steps are named `retrieval` and the reference step has key `output`:
   - match score = [recall@k](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/retrieval-ids.md#context-recallk)
 - If both steps are named `retrieve_time_series`:
-  - match score = 1 if the steps have the same sets of arguments, otherwise 0
+  - match score = 1 if the compared arguments match; otherwise 0 (see [Timeseries and datapoints comparison](#timeseries-and-datapoints-comparison))
 - If both steps are named `retrieve_data_points`:
-  - match score = 1 if the steps have the same sets of arguments, otherwise 0
+  - match score = 1 if the compared arguments match; otherwise 0 (see [Timeseries and datapoints comparison](#timeseries-and-datapoints-comparison))
 - If the reference step name is `iri_discovery` and the actual step name is 
 `autocomplete_search`:
   - match score = 1 if the reference (`iri_discovery`) `output` (an IRI) is present in the actual (`autocomplete_search`) step `output`, otherwise 0
@@ -75,6 +75,27 @@ where:
 - $\text{rows}$ = the set of rows in the actual result
 - $\text{cols}_\text{ref}$ = the set of columns in the reference result
 - $\text{cols}_\text{act}$ = the set of columns in the actual result
+
+## Timeseries and datapoints comparison
+
+- `retrieve_time_series`:
+  - Compares only `args.mrid` and `args.limit`.
+  - `mrid` may be a string or a list; both sides are normalized to sorted lists before comparison.
+  - No time arguments are compared for this step type.
+
+- `retrieve_data_points`:
+  - Compares `args.external_id`, `args.granularity`, `args.aggregates`, and `args.limit` using exact match after normalization:
+    - `external_id` and `aggregates` can be string or list; both are normalized to sorted lists.
+    - `granularity` is unit-normalized (e.g., `15m` equals `15minutes`; `s/m/h/d/w/mo/q/y` and their long forms map to canonical names).
+  - Compares `args.start` and `args.end` using the actual step’s `execution_timestamp` as the anchor time:
+    - If the reference time is relative (e.g., `now`, `Xs-ago`, `Xm-ago`, `Xh-ago`, `Xd-ago`, `Xw-ago`, or the `-ahead` variants) and the actual time is absolute, resolve the reference against `execution_timestamp` and accept if within 60 seconds.
+    - If both reference and actual are absolute, they must be exactly equal after converting to UTC.
+    - If the reference is absolute and the actual is relative, they do not match.
+  - Timezone handling:
+    - Naive datetimes are treated as UTC.
+    - Timezone-aware datetimes are converted to UTC before comparison.
+
+
 
 ## Steps score
 
