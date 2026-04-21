@@ -43,12 +43,29 @@ The target data is a dict of `question_id` to a response dict. Each response dic
   - `output` (string): The actual output from the step
     - Retrieval: a JSON array of context objects. Each object should contain an `id` (required for ID-based recall@k). If you want text-based retrieval metrics (LLM-backed) to run, include the context text as well (e.g., `{"id": "...", "text": "..."}`).
     - SPARQL: a JSON object in SPARQL Results JSON format for `SELECT` or `ASK`.
-  - `execution_timestamp`: Required by `retrieve_data_points` step comparison. 
+  - `execution_timestamp` (`datetime`, timezone-aware preferred): Required for matching and evaluating `retrieve_data_points` steps. Used as an anchor for resolving relative times in the reference (e.g. `5m-ago`) to an absolute time for comaprison.
   - `status` (optional): Required value `"success"` for matching and evaluating the step.
   - `error` (optional): Marks an agent internal error for this question. 
   - `input_tokens`, `output_tokens`, `total_tokens`, `elapsed_sec` (numbers, optional): copied to the output and included in aggregates compyted by function `aggregate_metrics()` ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/output.md)). Useful for analyzing your agent.
 
 [Example actual answers dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/target.json).
+
+## Keys by step type
+
+- SPARQL (`sparql_query`):
+  - Reference: `output_media_type == "application/sparql-results+json"`, `output` is SPARQL JSON results; `required_columns` (required for this comparison), `ordered` (optional), `ignore_duplicates` (optional).
+  - Actual: `output` is SPARQL JSON results (as a JSON string).
+- Retrieval (`retrieval`):
+  - For steps_score (ID-based): compares reference vs actual context IDs using recall@k, where `k` is taken from the actual step’s `args.k`.
+  - For LLM-backed retrieval metrics:
+    - vs reference answer: runs when `reference_answer` exists and an LLM is configured; uses the actual step `output` (parsed JSON).
+    - vs reference contexts: runs for matched retrieval steps when `reference_steps` include a retrieval step and an LLM is configured.
+- Time series (`retrieve_time_series`):
+  - Compares argument sets (`mrid`, `limit`), with normalization for multi-valued fields.
+- Data points (`retrieve_data_points`):
+  - Compares `external_id`, `granularity`, `aggregates`, `start`, `end`, `limit`; time bounds are compared using `execution_timestamp` as the anchor as described above.
+- IRI discovery (`iri_discovery`):
+  - Specialized comparator verifies discovery correctness (actual step tool may differ).
 
 ## Notes and tips
 
