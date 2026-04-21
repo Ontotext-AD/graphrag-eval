@@ -9,7 +9,7 @@ The fraction of relevant items among the top $k$ recommendations. It answers the
 ### Formula
 
 $$
-\frac{\text{Number of relevant items in top k}}{\text{Number of relevant items}}
+\frac{\text{Number of relevant items in top k}}{\min(k, \text{Number of relevant items})}
 $$
 
 ## Computation
@@ -28,7 +28,7 @@ recall_at_k(
 )  # => 0.75
 ```
 
-## Context precision@k
+## Average context precision
 
 Evaluates a ranked list of recommendations by looking at the precision at the position of each correctly retrieved item. It rewards systems for placing relevant items higher up in the list. It's more sophisticated than just looking at precision at a single cutoff because it considers the entire ranking.
 
@@ -46,8 +46,8 @@ where:
 
 1. For each retrieved item, if it is relevant, record the precision at
     that index (i.e., `number of hits / current rank`).
-2. Average all of these precision scores.
-3. Divide that average by the total number of relevant items.
+2. Summ all of these precision scores.
+3. Divide the sum by the total number of relevant items.
 
 ### Example
 
@@ -65,5 +65,5 @@ Computation:
 average_precision(
     relevant_docs={1, 3, 5, 6},
     retrieved_docs=[1, 4, 3, 5, 7]
-) # ~=> 0.8056
+) # ~=> 0.60416
 ```
