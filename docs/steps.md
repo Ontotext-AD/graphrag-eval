@@ -12,7 +12,7 @@ The reference can specify some constraints on step execution order. Specifically
 
 ## Steps matching
 
-The library tries to match steps in reference groups to actual steps, such that:
+Matching considers only actual steps with `status == "success"`. The library tries to match steps in reference groups to actual steps, such that:
 
 - Each reference step matches a unique actual step
 - The actual step was successful (i.e., it didn’t result in an error)
@@ -25,7 +25,7 @@ The matching algorithm is as follows:
 - If all steps in the group are matched, then proceed to the previous group, matching actual steps executed before the earliest actual step already matched for the current group.
 - If some steps in the group are not matched, then stop matching and compute the score from the matches found so far.
 
-The output contains the reference groups. Each step that matched an actual step includes the additional key `matches` containing the ID of the matching actual step.
+The output contains section `reference_steps` structured as the input `reference_steps`. Each matched reference step includes the additional key `matches` (string) containing `<actual_step.id>` of the matching actual step.
 
 ## Match score
 
