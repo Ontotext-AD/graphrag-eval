@@ -59,7 +59,7 @@ Computation:
 * Item at index 1 (item 1) is relevant. Precision@1 = 1/1
 * Item at index 3 (item 2) is relevant. Precision@3 = 2/3
 * Item at index 4 (item 5) is relevant. Precision@4 = 3/4
-* AP = (1.0 + 2/3 + 3/4) / 3 = 0.8055...
+* AP = (1.0 + 2/3 + 3/4) / 4 = 0.60416...
 
 ```python
 average_precision(

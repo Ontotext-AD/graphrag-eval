@@ -25,7 +25,7 @@ The matching algorithm is as follows:
 - If all steps in the group are matched, then proceed to the previous group, matching actual steps executed before the earliest actual step already matched for the current group.
 - If some steps in the group are not matched, then stop matching and compute the score from the matches found so far.
 
-The output contains the reference groups where each step that has a matching actual step, the actual step's ID is keyed by the additional key `matches`.
+The output contains the reference groups. Each step that matched an actual step includes the additional key `matches` containing the ID of the matching actual step.
 
 ## Match score
 

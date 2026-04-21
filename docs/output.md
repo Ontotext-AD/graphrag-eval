@@ -19,7 +19,7 @@ The output is a list of objects corresponding to questions from the reference Q&
 - `answer_f1`: (optional) Harmonic mean of `answer_recall` and `answer_precision`
 - `answer_relevance`: (optional `float` in [0, 1]) answer relevance score
 - `answer_relevance_error`: (optional) error message if answer relevance evaluation failed
-- `actual_steps`: (optional) copy of the actual steps, if specified the target data
+- `actual_steps`: (optional) copy of the actual steps, if specified in the target data
 - `steps_score`: (optional `float` in [0, 1]) steps score ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
 - `input_tokens`: (optional) input tokens usage
 - `output_tokens`: (optional) output tokens usage
@@ -36,7 +36,7 @@ All `actual_steps` with `name` "retrieval" contain the following keys:
 - `retrieval_context_recall_error`: (optional) error message if `retrieval_context_recall` evaluation fails
 - `retrieval_context_precision`: (optional) precision of the retrieved context with respect to the reference context, if evaluation succeeds
 - `retrieval_context_precision_error`: (optional) error message if `retrieval_context_precision` evaluation fails
-- `retrieval_context_f1`: (optional) F1 score of the retrieved context with respect to the reference answer, if `retrieval_context_recall` and `retrieval_context_precision` succeed
+- `retrieval_context_f1`: (optional) F1 score of the retrieved context with respect to the reference context, if `retrieval_context_recall` and `retrieval_context_precision` succeed
 
 ## Aggregate metrics
 
@@ -66,7 +66,7 @@ The aggregate metrics are organized as follows:
       - `total`: a map of step type to the number of times it was executed
       - `once_per_sample`: a map of step type to the number of questions for which it was executed
       - `empty_results`: a map of step type to the number of times the step was executed and returned empty results
-      - `errors`: a map of step type to the number times the step was executed and resulted in error
+      - `errors`: a map of step type to the number of times the step was executed and resulted in error
 - `micro`: statistics across questions, regardless of template. It includes:
   - `number_of_error_samples`: number of questions which resulted in error response
   - `number_of_success_samples`: number of questions which resulted in successful response
@@ -74,7 +74,7 @@ The aggregate metrics are organized as follows:
       - `total`: a map of step type to the number of times it was executed
       - `once_per_sample`: a map of step type to the number of questions for which it was executed
       - `empty_results`: a map of step type to the number of times the step was executed and returned empty results
-      - `errors`: a map of step type to the number times the step was executed and resulted in error
+      - `errors`: a map of step type to the number of times the step was executed and resulted in error
   - `sum`, `mean`, `median`, `min` and `max` statistics of the following metrics (across questions where they exist):
     - `input_tokens`
     - `output_tokens`
