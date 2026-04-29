@@ -1149,8 +1149,9 @@ the steps are matching.
 - if both are named "retrieve_data_points", then we check if the arguments of 
 the steps are matching.
 - if the reference step is named "iri_discovery" and the actual step name is 
-"autocomplete_search", тhen check if the IRI specified as "output" of the 
-"iri_discovery" step is present in the "output" of the "autocomplete_search".
+"autocomplete_search" or "sparql_query", then check if the IRI specified as 
+"output" of the "iri_discovery" step is present in the "output" of the 
+  actual step.
 - if the reference and actual step names are the same and the 
 "output_media_type" of the reference step is "application/json", then the steps 
 match, if the json outputs are the same. 
