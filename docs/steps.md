@@ -42,7 +42,7 @@ The match score is determined by the first rule that applies:
 - If both steps are named `retrieve_data_points`:
   - match score = 1 if the steps have the same sets of arguments, otherwise 0
 - If the reference step name is `iri_discovery` and the actual step name is 
-`autocomplete_search`:
+`autocomplete_search` or `sparql_query`:
   - match score = 1 if the reference (`iri_discovery`) `output` (an IRI) is present in the actual (`autocomplete_search`) step `output`, otherwise 0
 - If the step names are the same and the reference step `output_media_type` is
   `application/json`:
