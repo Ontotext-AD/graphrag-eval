@@ -4,7 +4,7 @@ import yaml
 from pydantic import BaseModel, Field, model_validator
 
 from . import custom_evaluation
-from .llm import Config as LLMConfig, create_llm, create_embedder
+from .llm_factory import Config as LLMConfig, create_llm, create_embedder
 from .steps.evaluation import evaluate_steps
 
 
@@ -19,7 +19,7 @@ class Config(BaseModel):
             msg = "llm config is required if custom_evaluations are provided"
             raise ValueError(msg)
         return self
-    
+
     @classmethod
     def parse(cls, config_file_path: str | Path | None) -> "Config":
         if config_file_path:
@@ -78,7 +78,7 @@ async def run_evaluation(
                         llm=ragas_llm
                     )
                     eval_result.update(
-                        answer_correctness_evaluator.get_correctness_dict(
+                        await answer_correctness_evaluator.get_correctness_dict(
                             question,
                             actual_result,
                         )
@@ -90,8 +90,8 @@ async def run_evaluation(
                     ragas_llm,
                 )
             )
-            for relevance_evaluator in custom_evaluators:
-                custom_metrics = relevance_evaluator.evaluate(question, actual_result)
+            for custom_evaluator in custom_evaluators:
+                custom_metrics = await custom_evaluator.evaluate(question, actual_result)
                 eval_result.update(**custom_metrics)
             for key in "input_tokens", "output_tokens", "total_tokens", "elapsed_sec":
                 if key in actual_result:

@@ -1,21 +1,21 @@
 import builtins
 import io
-
 from unittest.mock import MagicMock
 
-from graphrag_eval import answer_correctness
-from graphrag_eval import evaluation
+import pytest
+
+from graphrag_eval import answer_correctness, evaluation
 from graphrag_eval.answer_correctness import (
     AnswerCorrectnessEvaluator,
     extract_response_values,
-    llm,
 )
+from graphrag_eval.llm_factory import Config, GenerationConfig
 
 
 def get_llm_config():
     return evaluation.Config(
-        llm=llm.Config(
-            generation=llm.GenerationConfig(
+        llm=Config(
+            generation=GenerationConfig(
                 provider="openai",
                 model="gpt-4o-mini",
                 temperature=0.0,
@@ -77,7 +77,8 @@ def test_extract_response_values_too_many_values():
     assert result == (2, 2, 2, "reason", "")
 
 
-def test_evaluate_answers(monkeypatch, tmp_path):
+@pytest.mark.asyncio
+async def test_evaluate_answers(monkeypatch, tmp_path):
     mock_prompt_content = "Prompt with {question} {reference_answer} {candidate_answer}"
     mock_input_content = "Question\tReference answer\tActual answer\nQ1\tRef\tAns\n"
 
@@ -89,21 +90,28 @@ def test_evaluate_answers(monkeypatch, tmp_path):
     real_open = builtins.open
 
     def mock_open(path, *args, **kwargs):
-        if path == prompt_file_path:
+        str_path = str(path)
+        if str_path == prompt_file_path:
             return io.StringIO(mock_prompt_content)
-        elif path == in_file_path:
+        elif str_path == in_file_path:
             return io.StringIO(mock_input_content)
         return real_open(path, *args, **kwargs)
 
     monkeypatch.setattr(builtins, "open", mock_open)
+    answer_correctness_evaluator = AnswerCorrectnessEvaluator(llm=MagicMock()).__class__
 
-    # Mock call_llm() and tqdm()
-    answer_corectness_evaluator = AnswerCorrectnessEvaluator(llm=MagicMock())
-    monkeypatch.setattr(answer_corectness_evaluator, "_generate", lambda *_: "2\t2\t2\treason")
+    async def mock_agenerate(self, prompt):
+        return "2\t2\t2\treason"
+
+    monkeypatch.setattr(
+        answer_correctness_evaluator,
+        "_agenerate",
+        mock_agenerate
+    )
     monkeypatch.setattr(answer_correctness, "tqdm", lambda x: x)
 
     # Run
-    answer_correctness.evaluate_and_write(
+    await answer_correctness.evaluate_and_write(
         in_file_path,
         out_file_path,
         config=get_llm_config()

@@ -1,5 +1,6 @@
-from graphrag_eval import evaluation, llm
-from graphrag_eval.llm import (
+from graphrag_eval import evaluation
+from graphrag_eval.llm_factory import (
+    Config,
     GenerationConfig,
     EmbeddingConfig,
     create_llm,
@@ -7,7 +8,7 @@ from graphrag_eval.llm import (
 )
 
 
-def test_create_llm_and_embeddings_no_llm_config():    
+def test_create_llm_and_embeddings_no_llm_config():
     llm = create_llm(evaluation.Config())
     embedder = create_embedder(evaluation.Config())
     assert llm is None
@@ -16,7 +17,7 @@ def test_create_llm_and_embeddings_no_llm_config():
 
 def test_create_llm_and_embeddings_llm_config_no_embedding_config():
     config = evaluation.Config(
-        llm=llm.Config(
+        llm=Config(
             generation=GenerationConfig(
                 provider="openai",
                 model="gpt-3.5-turbo",
@@ -25,16 +26,16 @@ def test_create_llm_and_embeddings_llm_config_no_embedding_config():
             )
         )
     )
-    llm_ = create_llm(config)
+    llm = create_llm(config)
     embedder = create_embedder(config)
-    assert llm_ is not None
-    assert llm_.model == "openai/gpt-3.5-turbo"
+    assert llm is not None
+    assert llm.model == "openai/gpt-3.5-turbo"
     assert embedder is None
 
 
 def test_create_llm_and_embeddings_llm_config_embedding_config():
     config = evaluation.Config(
-        llm=llm.Config(
+        llm=Config(
             generation=GenerationConfig(
                 provider="openai",
                 model="gpt-3.5-turbo",
@@ -47,9 +48,9 @@ def test_create_llm_and_embeddings_llm_config_embedding_config():
             ),
         ),
     )
-    llm_ = create_llm(config)
+    llm = create_llm(config)
     embedder = create_embedder(config)
-    assert llm_ is not None
-    assert llm_.model == "openai/gpt-3.5-turbo"
+    assert llm is not None
+    assert llm.model == "openai/gpt-3.5-turbo"
     assert embedder is not None
     assert embedder.model == "openai/text-embedding-ada-002"

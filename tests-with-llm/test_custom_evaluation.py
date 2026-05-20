@@ -13,18 +13,21 @@ from graphrag_eval import (
 from graphrag_eval.custom_evaluation import CustomEvaluator
 from tests.util import read_responses
 
-
 DATA_DIR = Path(__file__).parent / "test_data"
 CONFIG_FILE_PATH = DATA_DIR / "config-openai-and-custom-evaluations.yaml"
 
 
 def mock_answer_correctness_evaluator(monkeypatch):
     from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+
+    async def mock_agenerate_correctness(self):
+        return "2\t2\t2\tanswer correctness reason"
+
     evaluator_instance = AnswerCorrectnessEvaluator(llm=MagicMock())
     monkeypatch.setattr(
-        evaluator_instance, 
-        "_generate", 
-        lambda prompt: "2\t2\t2\tanswer correctness reason"
+        evaluator_instance,
+        "_agenerate",
+        mock_agenerate_correctness
     )
 
 
@@ -56,20 +59,23 @@ async def test_run_custom_evaluation_ok(monkeypatch):
     _mock_common_calls(monkeypatch)
     captured_prompts = []
     i = 0
-    def mock_generate(self, prompt):
+
+    async def mock_agenerate(self, prompt):
         captured_prompts.append(prompt)
         nonlocal i
         i += 1
         if i == 1:
-            return "0.9\tThe answer contains relevant information except for "\
-                "the sentence about total revenue"
+            return "0.9\tThe answer contains relevant information except for " \
+                   "the sentence about total revenue"
         if i == 2:
-            return "0.5\t0.67\tThere are 4 reference claims and 3 actual "\
-                "claims; 2 claims match"
+            return "0.5\t0.67\tThere are 4 reference claims and 3 actual " \
+                   "claims; 2 claims match"
         if i == 3:
-            return "0.75\t0.6\tThe reference answer has 4 claims; there are 5 "\
-                "SPARQL results; 3 claims match"
-    monkeypatch.setattr(CustomEvaluator, "_generate", mock_generate)
+            return "0.75\t0.6\tThe reference answer has 4 claims; there are 5 " \
+                   "SPARQL results; 3 claims match"
+        return "0.0\tDefault mock fallback response"
+
+    monkeypatch.setattr(CustomEvaluator, "_agenerate", mock_agenerate)
     evaluation_results = await run_evaluation(
         reference_data,
         actual_responses,
@@ -100,7 +106,7 @@ async def test_run_custom_evaluation_config_error(monkeypatch):
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     with open(CONFIG_FILE_PATH, encoding="utf-8") as f:
         correct_config = yaml.safe_load(f)
-    
+
     error_configs = []
 
     error_config = deepcopy(correct_config)
@@ -116,11 +122,11 @@ async def test_run_custom_evaluation_config_error(monkeypatch):
         error_config = deepcopy(correct_config)
         del error_config["custom_evaluations"][0][key]
         error_configs.append(error_config)
-    
+
     error_config = deepcopy(correct_config)
     error_config["custom_evaluations"][0]["extra"] = "invalid"
     error_configs.append(error_config)
-    
+
     for k1 in "steps_name", "steps_keys":
         # custom_evaluations[1] has "reference_steps" and "actual_steps"
         for k2 in "reference_steps", "actual_steps":
@@ -129,7 +135,7 @@ async def test_run_custom_evaluation_config_error(monkeypatch):
             del c[k1]
             del c["inputs"][c["inputs"].index(k2)]
             error_configs.append(error_config)
-    
+
     error_config = deepcopy(correct_config)
     c = error_config["custom_evaluations"][1]
     c["steps_keys"].append("invalid")
@@ -165,7 +171,14 @@ async def test_run_custom_evaluation_llm_output_error(monkeypatch):
     )
     actual_responses = read_responses(DATA_DIR / "actual_responses_1.jsonl")
     _mock_common_calls(monkeypatch)
-    monkeypatch.setattr(CustomEvaluator, "_generate", lambda *_: "hello")
+    async def mock_agenerate(self, prompt):
+        return "hello"
+    monkeypatch.setattr(
+        CustomEvaluator,
+        "_agenerate",
+        mock_agenerate
+    )
+
     evaluation_results = await run_evaluation(
         reference_data,
         actual_responses,
@@ -183,7 +196,7 @@ async def test_run_custom_evaluation_llm_output_error(monkeypatch):
         (DATA_DIR / "evaluation_summary_1.yaml").read_text(encoding="utf-8")
     )
     assert expected_aggregates == aggregates
-    
+
 
 @pytest.mark.asyncio
 async def test_run_custom_evaluation_missing_input_fields(monkeypatch):

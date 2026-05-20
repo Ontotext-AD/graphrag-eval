@@ -1,12 +1,12 @@
+import asyncio
 import csv
 from pathlib import Path
 
 from tqdm import tqdm
 
-from graphrag_eval import llm
+from graphrag_eval import llm_factory
 from graphrag_eval.evaluation import Config
 from graphrag_eval.util import compute_f1, singleton
-
 
 IN_FILE_PATH = "../data/data-1.tsv"
 PROMPT_FILE_PATH = Path(__file__).parent / "prompts" / "template.md"
@@ -26,17 +26,17 @@ def parse_args() -> "argparse.Namespace":
             f = float(value)
         except ValueError:
             raise ArgumentTypeError(f"Invalid float value: {value}")
-        
+
         if f <= 0.0 or f >= 2.0:
             raise ArgumentTypeError(f"Value must be between 0.0 and 2.0, got {f}")
         return f
 
-    parser = ArgumentParser()    
+    parser = ArgumentParser()
     parser.add_argument("-i", "--in-file", type=str, default=IN_FILE_PATH)
     parser.add_argument("-o", "--out-file", type=str, default=OUT_FILE_PATH)
     parser.add_argument("-p", "--provider", type=str, default=LLM_PROVIDER)
     parser.add_argument("-l", "--llm", type=str, default=LLM_MODEL)
-    parser.add_argument("-m", "--max-tokens", type=int, default=MAX_TOKENS)    
+    parser.add_argument("-m", "--max-tokens", type=int, default=MAX_TOKENS)
     parser.add_argument(
         "-t",
         "--temperature",
@@ -97,11 +97,11 @@ class AnswerCorrectnessEvaluator:
             self.prompt_template = f.read()
         self.llm = llm
 
-    def _generate(self, prompt):
+    async def _agenerate(self, prompt):
         """Wrapper method for easier testing"""
-        return self.llm.generate(prompt, None).choices[0].message.content
+        return (await self.llm.agenerate(prompt, None)).choices[0].message.content
 
-    def evaluate_answer(
+    async def evaluate_answer(
         self,
         question: str,
         reference_answer: str,
@@ -112,21 +112,21 @@ class AnswerCorrectnessEvaluator:
             reference_answer=reference_answer,
             candidate_answer=actual_answer,
         )
-        response_str = self._generate(prompt)
+        response_str = await self._agenerate(prompt)
         return extract_response_values(response_str)
 
-    def get_correctness_dict(
+    async def get_correctness_dict(
         self,
         reference: dict,
         actual: dict,
     ):
         result = {"reference_answer": reference["reference_answer"]}
         num_ref_claims, num_actual_claims, num_matching_claims, reason, error = \
-        self.evaluate_answer(
-            reference["question_text"],
-            reference["reference_answer"],
-            actual["actual_answer"],
-        )
+            await self.evaluate_answer(
+                reference["question_text"],
+                reference["reference_answer"],
+                actual["actual_answer"],
+            )
         if error:
             result["answer_eval_error"] = error
         else:
@@ -148,12 +148,12 @@ class AnswerCorrectnessEvaluator:
         return result
 
 
-def evaluate_and_write(
+async def evaluate_and_write(
     in_file_path: str | Path,
     out_file_path: str | Path,
     config: "evaluation.Config",
 ) -> None:
-    ragas_llm = llm.create_llm(config)
+    ragas_llm = llm_factory.create_llm(config)
     evaluator = AnswerCorrectnessEvaluator(llm=ragas_llm)
     with open(in_file_path, encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
@@ -164,7 +164,7 @@ def evaluate_and_write(
         writer = csv.writer(f, delimiter="\t")
         writer.writerow(OUT_FIELDS)
         for row in tqdm(rows):
-            vals = evaluator.evaluate_answer(
+            vals = await evaluator.evaluate_answer(
                 row["Question"],
                 row["Reference answer"],
                 row["Actual answer"]
@@ -176,8 +176,8 @@ def evaluate_and_write(
 def main():
     args = parse_args()
     config = Config(
-        llm=llm.Config(
-            generation=llm.GenerationConfig(
+        llm=llm_factory.Config(
+            generation=llm_factory.GenerationConfig(
                 provider=args.provider,
                 model=args.llm,
                 temperature=args.temperature,
@@ -185,8 +185,8 @@ def main():
             )
         )
     )
-    evaluate_and_write(
+    asyncio.run(evaluate_and_write(
         args.in_file,
         args.out_file,
         config,
-    )
+    ))

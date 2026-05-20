@@ -42,5 +42,8 @@ poetry run pytest --cov=graphrag_eval --cov-report=term-missing tests/
 poetry install --with llm
 poetry run pytest --cov=graphrag_eval --cov-report=term-missing tests-with-llm/
 export OPENAI_API_KEY=***
-poetry run pytest system-tests/*.py
+export AZURE_OPENAI_GENERATION_KEY=***
+export AZURE_OPENAI_API_KEY=***
+export AZURE_OPENAI_EMBEDDING_KEY=***
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 poetry run pytest -p asyncio system-tests/
 ```

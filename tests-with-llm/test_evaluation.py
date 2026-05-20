@@ -11,18 +11,21 @@ from graphrag_eval import (
 )
 from tests.util import read_responses
 
-
 DATA_DIR = Path(__file__).parent / "test_data"
 CONFIG_FILE_PATH = DATA_DIR / "config-openai.yaml"
 
 
 def mock_answer_correctness_evaluator(monkeypatch):
     from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+
+    async def mock_agenerate_correctness(self):
+        return "2\t2\t2\tanswer correctness reason"
+
     evaluator_instance = AnswerCorrectnessEvaluator(llm=MagicMock())
     monkeypatch.setattr(
-        evaluator_instance, 
-        "_generate", 
-        lambda prompt: "2\t2\t2\tanswer correctness reason"
+        evaluator_instance,
+        "_agenerate",
+        mock_agenerate_correctness
     )
 
 
@@ -99,7 +102,7 @@ async def test_run_evaluation_and_compute_aggregates_all_errors():
     )
     actual_responses = read_responses(DATA_DIR / "actual_responses_2.jsonl")
     evaluation_results = await run_evaluation(
-        reference_data, 
+        reference_data,
         actual_responses,
         CONFIG_FILE_PATH
     )
