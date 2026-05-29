@@ -3,6 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from graphrag_eval.llm_factory import create_llm
 
 RESERVED_KEYS = {
     "template_id",
@@ -30,7 +31,6 @@ RESERVED_KEYS = {
     "total_tokens",
     "elapsed_sec",
 }
-
 
 Inputs = Literal[
     "question",
@@ -84,8 +84,8 @@ def create_prompt_template(config: Config, output_variables: list[str]) -> str:
     
     output_variables specifies the order of the outputs.
     """
-    output_instructions = "Output the following values separated by tabs:"\
-        + "".join(f"\n- {k}: {config.outputs[k]}" for k in output_variables)
+    output_instructions = "Output the following values separated by tabs:" \
+                          + "".join(f"\n- {k}: {config.outputs[k]}" for k in output_variables)
     inputs_template = "\n\n".join(
         create_input_template(k) for k in config.inputs
     )
@@ -98,9 +98,9 @@ def create_prompt_template(config: Config, output_variables: list[str]) -> str:
 
 class CustomEvaluator:
     def __init__(
-        self, 
+        self,
         config: Config,
-        llm: "InstructorBaseRagasLLM",
+        eval_config: "evaluation.Config",
     ):
         self.name = config.name
         self.input_variables = config.inputs
@@ -111,11 +111,11 @@ class CustomEvaluator:
             config,
             self.output_variables
         )
-        self.llm = llm
+        self.llm = create_llm(eval_config)
 
-    def _generate(self, prompt: str) -> str:
+    async def _agenerate(self, prompt: str) -> str:
         """Wrapper method for easier testing"""
-        return self.llm.generate(prompt, None).choices[0].message.content
+        return (await self.llm.agenerate(prompt, None)).choices[0].message.content
 
     def format_steps(self, steps: list) -> str:
         steps_formatted = []
@@ -134,9 +134,9 @@ class CustomEvaluator:
                         step_out[k] = val
                 else:
                     step_out[k] = val
-            steps_formatted.append(step_out)        
+            steps_formatted.append(step_out)
         return json.dumps(steps_formatted, indent=2)
-    
+
     def error(self, msg: str) -> dict:
         result = {k: None for k in self.output_variables}
         result[self.name + '_error'] = msg
@@ -157,7 +157,7 @@ class CustomEvaluator:
             return result
         return self.error(f"Expected {n_exp} tab-separated values, got: {response}")
 
-    def evaluate(self, reference: dict, actual: dict) -> dict[str, str | None]:
+    async def evaluate(self, reference: dict, actual: dict) -> dict[str, str | None]:
         inputs = {}
         if "question" in self.input_variables:
             if "question_text" not in reference:
@@ -176,7 +176,7 @@ class CustomEvaluator:
                 return self.error("Reference missing key 'reference_steps'")
             try:
                 formatted_steps_lists = [
-                    self.format_steps(group) 
+                    self.format_steps(group)
                     for group in reference["reference_steps"]
                 ]
             except json.JSONDecodeError:
@@ -191,14 +191,14 @@ class CustomEvaluator:
                 return self.error("Malformed actual step JSON")
             inputs["actual_steps"] = formatted_steps_lists
         prompt = self.prompt_template.format(**inputs)
-        response = self._generate(prompt)
+        response = await self._agenerate(prompt)
         return self.parse_outputs(response)
 
 
 def create_evaluators(config: "evaluation.Config") -> list[CustomEvaluator]:
     if config.custom_evaluations and config.llm:
         return [
-            CustomEvaluator(c, config.llm.generation)
-            for c in config.custom_evaluations
+            CustomEvaluator(custom_evaluation_config, config)
+            for custom_evaluation_config in config.custom_evaluations
         ]
     return []

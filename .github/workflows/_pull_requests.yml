@@ -54,4 +54,4 @@ jobs:
           AZURE_OPENAI_EMBEDDING_KEY: ${{ secrets.AZURE_OPENAI_EMBEDDING_KEY }}
         run: |
           conda activate graphrag-eval
-          poetry run pytest -vv -s system-tests/*.py
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 poetry run pytest -p asyncio system-tests/

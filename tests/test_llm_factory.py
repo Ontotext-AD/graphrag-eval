@@ -1,11 +1,10 @@
 from pytest import raises
 
-from graphrag_eval import llm
-from graphrag_eval.llm import GenerationConfig, EmbeddingConfig
+from graphrag_eval.llm_factory import Config, GenerationConfig, EmbeddingConfig
 
 
 def test_config_ok():
-    c = llm.Config(
+    c = Config(
         generation=GenerationConfig(
             provider="generation_provider",
             model="generation_model",
@@ -26,8 +25,8 @@ def test_config_ok():
 
 
 def test_config_optional():
-    c = llm.Config(
-        generation=llm.GenerationConfig(
+    c = Config(
+        generation=GenerationConfig(
             provider="generation_provider",
             model="generation_model",
             temperature=0.5,
@@ -52,7 +51,7 @@ def test_config_optional():
 
 def test_config_invalid_temperature():
     with raises(ValueError):
-        llm.Config(
+        Config(
             generation=GenerationConfig(
                 provider="generation_provider",
                 model="generation_model",
@@ -65,7 +64,7 @@ def test_config_invalid_temperature():
             )
         )
     with raises(ValueError):
-        llm.Config(
+        Config(
             generation=GenerationConfig(
                 provider="generation_provider",
                 model="generation_model",
@@ -81,7 +80,7 @@ def test_config_invalid_temperature():
 
 def test_config_invalid_max_tokens():
     with raises(ValueError):
-        llm.Config(
+        Config(
             generation=GenerationConfig(
                 provider="generation_provider",
                 model="generation_model",
@@ -95,7 +94,7 @@ def test_config_invalid_max_tokens():
         )
 
     with raises(ValueError):
-        llm.Config(
+        Config(
             generation=GenerationConfig(
                 provider="generation_provider",
                 model="generation_model",

@@ -1,6 +1,6 @@
 [project]
 name = "graphrag-eval"
-version = "6.1.1a0"
+version = "6.2.0"
 description = "For assessing question answering systems' final answers and intermediate steps, against a given set of questions, reference answers and steps."
 authors = [
     { name = "Philip Ganchev", email = "philip.ganchev@graphwise.ai" },
@@ -24,7 +24,7 @@ llm = ["ragas", "litellm", "pyyaml"]
 
 [tool.poetry.group.llm.dependencies]
 ragas = "0.4.3"
-litellm = "1.83.14"
+litellm = "1.85.1"
 pyyaml = "6.0.3"
 
 [tool.poetry.group.llm]

@@ -37,6 +37,7 @@ def create_llm(config: "evaluation.Config") -> Optional["InstructorBaseRagasLLM"
         )
         ragas_llm.is_async = True
         return ragas_llm
+    return None
 
 
 def create_embedder(config: "evaluation.Config") -> Optional["BaseRagasEmbedding"]:
@@ -53,3 +54,4 @@ def create_embedder(config: "evaluation.Config") -> Optional["BaseRagasEmbedding
             **params,
         )
         return ragas_embedder
+    return None

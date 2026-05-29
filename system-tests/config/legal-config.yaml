@@ -1,0 +1,51 @@
+llm:
+  generation:
+    provider: openai
+    model: gpt-5.4-2026-03-05
+    temperature: 0.0
+    max_tokens: 4096
+custom_evaluations:
+  - name: legal_evaluation
+    inputs:
+      - question
+      - reference_answer
+      - actual_answer
+    instructions: |
+      Below are a legal query, a reference response and a candidate response to it.
+      The context is German/Austrian law, including criminal law (Strafrecht), drug law (BtMG, SMG),
+      civil law (BGB), and professional regulations.
+      1. Extract all legal claims from each response. A legal claim is any of:
+         - A legal conclusion or ruling (e.g. "strafbar nach § 29 BtMG")
+         - A referenced law, paragraph, or article (e.g. "§ 11 BtMG", "Art. 3 EMRK")
+         - A named legal concept or term (e.g. "Tatbestand", "Vorsatz", "Strafmilderung")
+         - A condition, exception, or threshold that changes the legal outcome
+         - A named court ruling or legal precedent
+      2. Find matching claims between responses. Claims match if they convey the same
+         legal meaning — allow for paraphrasing but NOT for different paragraph numbers,
+         different legal conclusions, or different conditions. A wrong paragraph number
+         (e.g. § 29 vs § 30) is NOT a match even if the surrounding text is similar.
+      3. Output the values listed below (all and only those).
+      # Query
+      {question}
+      # Reference response
+      {reference_answer}
+      # Candidate response
+      {actual_answer}
+      # Output values
+      * v1: Count of reference response legal claims
+      * v2: Count of candidate response legal claims
+      * v3: Count of matching legal claims
+      * v4: Explanation of v1-v3 in English, specifically noting:
+            - Which laws/paragraphs from the reference are missing in the candidate
+            - Which laws/paragraphs in the candidate are incorrect or not in the reference
+            - Whether the overall legal conclusion matches
+      # Value checks
+      * 1 <= v1, v2
+      * 0 <= v3 <= v1, v2
+      # Output format
+      <v1><tab><v2><tab><v3><tab><v4>
+    outputs:
+      legal_recall: fraction 0-1 of reference legal claims covered
+      legal_precision: fraction 0-1 of candidate legal claims that are correct
+      legal_f1: harmonic mean of legal_recall and legal_precision
+      legal_reason: explanation of missing or incorrect legal references
