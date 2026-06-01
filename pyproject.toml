@@ -18,6 +18,9 @@ repository = "https://github.com/Ontotext-AD/graphrag-eval"
 python-dateutil = "2.9.0.post0"
 ragas = { version = "0.4.3", optional = true }
 pydantic = "2.12.5"
+# installed by ragas, 0.4.2 removes required
+# langchain_community.chat_models.vertexai
+langchain-community = "0.4.1"
 
 [tool.poetry.extras]
 llm = ["ragas", "litellm", "pyyaml"]
