@@ -41,7 +41,7 @@ pyyaml = "6.0.3"
 optional = true
 
 [project.scripts]
-answer-correctness = "graphrag_eval.answer_correctness:main"
+answer-correctness = "graphrag_eval.cli.answer_correctness:main"
 
 [build-system]
 requires = ["poetry-core>=2.0.0"]

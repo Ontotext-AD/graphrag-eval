@@ -1,89 +1,17 @@
-import asyncio
-import csv
 from pathlib import Path
 
-from tqdm import tqdm
+from pydantic import BaseModel, Field
 
-from graphrag_eval import llm_factory
-from graphrag_eval.evaluation import Config
 from graphrag_eval.util import compute_f1, singleton
 
-IN_FILE_PATH = "../data/data-1.tsv"
-PROMPT_FILE_PATH = Path(__file__).parent / "prompts" / "template.md"
-OUT_FILE_PATH = "results/data-1.tsv"
-OUT_FIELDS = ["#Reference", "#PTarget", "#Matching", "Reasoning", "Error"]
-LLM_PROVIDER = "openai"
-LLM_MODEL = "gpt-4o-mini"
-TEMPERATURE = 0.0
-MAX_TOKENS = 1024
+
+def load_default_prompt() -> str:
+    with open(Path(__file__).parent / "prompts" / "template.md", "r", encoding="utf-8") as f:
+        return f.read()
 
 
-def parse_args() -> "argparse.Namespace":
-    from argparse import ArgumentParser, ArgumentTypeError
-
-    def float_between_0_0_and_2_0(value):
-        try:
-            f = float(value)
-        except ValueError:
-            raise ArgumentTypeError(f"Invalid float value: {value}")
-
-        if f <= 0.0 or f >= 2.0:
-            raise ArgumentTypeError(f"Value must be between 0.0 and 2.0, got {f}")
-        return f
-
-    parser = ArgumentParser()
-    parser.add_argument("-i", "--in-file", type=str, default=IN_FILE_PATH)
-    parser.add_argument("-o", "--out-file", type=str, default=OUT_FILE_PATH)
-    parser.add_argument("-p", "--provider", type=str, default=LLM_PROVIDER)
-    parser.add_argument("-l", "--llm", type=str, default=LLM_MODEL)
-    parser.add_argument("-m", "--max-tokens", type=int, default=MAX_TOKENS)
-    parser.add_argument(
-        "-t",
-        "--temperature",
-        type=float_between_0_0_and_2_0,
-        default=TEMPERATURE
-    )
-    return parser.parse_args()
-
-
-def compute_recall_precision_f1(
-    n_pos: int | None,
-    n_pred_pos: int | None,
-    n_true_pos: int | None,
-) -> tuple[float | None, float | None, float | None]:
-    recall = None
-    precision = None
-    if n_true_pos is not None and n_pos:
-        recall = n_true_pos / n_pos
-    if n_true_pos is not None and n_pred_pos:
-        precision = n_true_pos / n_pred_pos
-    return recall, precision, compute_f1(recall, precision)
-
-
-def extract_response_values(
-    response: str
-) -> tuple[int | None, int | None, int | None, str, str]:
-    vals = response.split("\t")
-    n = len(vals)
-    if n < 4:
-        msg = f"Expected 4 tab-separated values: {response}"
-        return None, None, None, "", msg
-    vals = vals[:4]
-    try:
-        n_ref, n_actual, n_matching = map(int, vals[:3])
-    except ValueError:
-        msg = f"Claims counts should be ints: {vals}"
-        return None, None, None, vals[3], msg
-    if any([
-        n_ref < 1,
-        n_actual < 1,
-        n_matching < 0,
-        n_matching > n_ref,
-        n_matching > n_actual
-    ]):
-        msg = f"Invalid claims counts combination: {n_ref}\t{n_actual}\t{n_matching}"
-        return None, None, None, vals[3], msg
-    return n_ref, n_actual, n_matching, vals[3], ""
+class AnswerCorrectnessConfig(BaseModel):
+    prompt: str = Field(default_factory=load_default_prompt)
 
 
 @singleton
@@ -91,10 +19,10 @@ class AnswerCorrectnessEvaluator:
     def __init__(
         self,
         llm: "InstructorBaseRagasLLM",
-        prompt_file_path: str | Path = PROMPT_FILE_PATH,
+        config: AnswerCorrectnessConfig | None = None,
     ):
-        with open(prompt_file_path, encoding="utf-8") as f:
-            self.prompt_template = f.read()
+        self.config = config or AnswerCorrectnessConfig()
+        self.prompt_template = self.config.prompt
         self.llm = llm
 
     async def _agenerate(self, prompt):
@@ -106,14 +34,17 @@ class AnswerCorrectnessEvaluator:
         question: str,
         reference_answer: str,
         actual_answer: str
-    ):
+    ) -> tuple[int, int, int, str]:
+        if any(not s.strip() for s in [question, reference_answer, actual_answer]):
+            raise ValueError("The question of the reference or the actual answer is a blank "
+                             "string!")
         prompt = self.prompt_template.format(
             question=question,
             reference_answer=reference_answer,
-            candidate_answer=actual_answer,
+            actual_answer=actual_answer,
         )
         response_str = await self._agenerate(prompt)
-        return extract_response_values(response_str)
+        return self.extract_response_values(response_str)
 
     async def get_correctness_dict(
         self,
@@ -121,22 +52,20 @@ class AnswerCorrectnessEvaluator:
         actual: dict,
     ):
         result = {"reference_answer": reference["reference_answer"]}
-        num_ref_claims, num_actual_claims, num_matching_claims, reason, error = \
-            await self.evaluate_answer(
-                reference["question_text"],
-                reference["reference_answer"],
-                actual["actual_answer"],
-            )
-        if error:
-            result["answer_eval_error"] = error
-        else:
+        try:
+            num_ref_claims, num_actual_claims, num_matching_claims, reason = \
+                await self.evaluate_answer(
+                    reference["question_text"],
+                    reference["reference_answer"],
+                    actual["actual_answer"],
+                )
             result.update({
                 "answer_reference_claims_count": num_ref_claims,
                 "answer_actual_claims_count": num_actual_claims,
                 "answer_matching_claims_count": num_matching_claims,
                 "answer_correctness_reason": reason,
             })
-            recall, precision, f1 = compute_recall_precision_f1(
+            recall, precision, f1 = self.compute_recall_precision_f1(
                 num_ref_claims, num_actual_claims, num_matching_claims
             )
             if recall is not None:
@@ -145,48 +74,45 @@ class AnswerCorrectnessEvaluator:
                 result["answer_precision"] = precision
             if f1 is not None:
                 result["answer_f1"] = f1
+        except Exception as exc:
+            result["answer_eval_error"] = str(exc)
         return result
 
+    @staticmethod
+    def compute_recall_precision_f1(
+        n_pos: int,
+        n_pred_pos: int,
+        n_true_pos: int,
+    ) -> tuple[float | None, float | None, float | None]:
+        recall = None
+        precision = None
+        if n_pos:
+            recall = n_true_pos / n_pos
+        if n_pred_pos:
+            precision = n_true_pos / n_pred_pos
+        return recall, precision, compute_f1(recall, precision)
 
-async def evaluate_and_write(
-    in_file_path: str | Path,
-    out_file_path: str | Path,
-    config: "evaluation.Config",
-) -> None:
-    ragas_llm = llm_factory.create_llm(config)
-    evaluator = AnswerCorrectnessEvaluator(llm=ragas_llm)
-    with open(in_file_path, encoding="utf-8") as f:
-        reader = csv.DictReader(f, delimiter="\t")
-        rows = [row for row in reader]
-    print(f"Writing results to {out_file_path}")
-    Path(out_file_path).parent.mkdir(parents=True, exist_ok=True)
-    with open(out_file_path, "w", encoding="utf-8") as f:
-        writer = csv.writer(f, delimiter="\t")
-        writer.writerow(OUT_FIELDS)
-        for row in tqdm(rows):
-            vals = await evaluator.evaluate_answer(
-                row["Question"],
-                row["Reference answer"],
-                row["Actual answer"]
+    @staticmethod
+    def extract_response_values(
+        response: str
+    ) -> tuple[int, int, int, str]:
+        vals = response.split("\t")
+        n = len(vals)
+        if n < 4:
+            raise ValueError(f"Expected 4 tab-separated values: {response}")
+        vals = vals[:4]
+        try:
+            n_ref, n_actual, n_matching = map(int, vals[:3])
+        except ValueError:
+            raise ValueError(f"Claims counts should be ints: {vals}")
+        if any([
+            n_ref < 1,
+            n_actual < 1,
+            n_matching < 0,
+            n_matching > n_ref,
+            n_matching > n_actual
+        ]):
+            raise ValueError(
+                f"Invalid claims counts combination: {n_ref}\t{n_actual}\t{n_matching}"
             )
-            writer.writerow(vals)
-            f.flush()
-
-
-def main():
-    args = parse_args()
-    config = Config(
-        llm=llm_factory.Config(
-            generation=llm_factory.GenerationConfig(
-                provider=args.provider,
-                model=args.llm,
-                temperature=args.temperature,
-                max_tokens=args.max_tokens,
-            )
-        )
-    )
-    asyncio.run(evaluate_and_write(
-        args.in_file,
-        args.out_file,
-        config,
-    ))
+        return n_ref, n_actual, n_matching, vals[3]

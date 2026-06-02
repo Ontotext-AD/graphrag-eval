@@ -4,6 +4,7 @@ import yaml
 from pydantic import BaseModel, Field, model_validator
 
 from . import custom_evaluation
+from .answer_correctness import AnswerCorrectnessConfig
 from .llm_factory import Config as LLMConfig, create_llm, create_embedder
 from .steps.evaluation import evaluate_steps
 
@@ -12,6 +13,7 @@ class Config(BaseModel):
     llm: LLMConfig | None = None
     custom_evaluations: list[custom_evaluation.Config] | None \
         = Field(default=None, min_length=1)
+    answer_correctness: AnswerCorrectnessConfig | None = None
 
     @model_validator(mode="after")
     def validate_config(self) -> "Config":
@@ -75,7 +77,8 @@ async def run_evaluation(
                 if "reference_answer" in question and ragas_llm:
                     from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
                     answer_correctness_evaluator = AnswerCorrectnessEvaluator(
-                        llm=ragas_llm
+                        llm=ragas_llm,
+                        config=config.answer_correctness,
                     )
                     eval_result.update(
                         await answer_correctness_evaluator.get_correctness_dict(

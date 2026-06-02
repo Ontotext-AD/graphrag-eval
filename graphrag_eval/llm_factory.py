@@ -6,8 +6,8 @@ from pydantic import BaseModel, ConfigDict, Field
 class GenerationConfig(BaseModel):
     provider: str
     model: str
-    temperature: float = Field(ge=0.0, le=2.0)
-    max_tokens: int = Field(ge=1)
+    temperature: float = Field(default=0.0, ge=0.0, le=2.0)
+    max_tokens: int | None = Field(default=None, ge=1)
     model_config = ConfigDict(extra='allow')
 
 

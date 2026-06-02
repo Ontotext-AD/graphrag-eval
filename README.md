@@ -44,10 +44,10 @@ To evaluate only correctness of final answers (system responses), you can clone 
 1. Prepare an input TSV file with columns `Question`, `Reference answer` and `Actual answer`
 1. Execute `poetry install --with llm`
 1. Execute
-   ```<LLM_ACCESS_VARIABLE>=<your_api_key> poetry run answer-correctness -i <input_file.tsv> -o <output_file.tsv>```
+   ```<LLM_ACCESS_VARIABLE>=<your_api_key> poetry run answer-correctness -i <input_file.tsv> -o <output_file.tsv> -c <config.yaml>```
   replacing `<LLM_ACCESS_VARIABLE>` by the variable used by your LLM provider to specify your LLM use key.
   Example:
-    ```OPENAI_API_KEY=XXX poetry run answer-correctness -i reference.tsv -o evaluations.tsv```
+    ```OPENAI_API_KEY=XXX poetry run answer-correctness -i reference.tsv -o evaluations.tsv -c conf.yaml```
 
 We plan to improve CLI support in future releases.
 
@@ -104,7 +104,7 @@ The configuration has two sections: `llm` and `custom_evaluation`. Example:
           * `base_url`: (str) base URL for the generation model, alternative to the provider's default URL
           * `api_key`: (str) API key for the generation model, alternative to setting the environment variable corresponding to the provider (e.g. `OPENAI_API_KEY` for OpenAI)
     * `embedding`: required for [`answer_relevance`](#output-keys).
-        * `provider`: (str) name of the organiation providing the embedding model
+        * `provider`: (str) name of the organization providing the embedding model
         * `model`: (str) name of the embedding model
 * `custom_evaluations`: (list of the following maps) required nonempty for [custom evaluation](#custom-evaluation-custom-metrics). Each map has keys:
     * `name`: (str) name of the evaluation
