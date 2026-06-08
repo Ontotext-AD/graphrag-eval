@@ -2,7 +2,7 @@
 
 The input to the evaluator consists of two datasets of corresponding entries:
 1. Reference dataset: questions and their reference answers
-1. Target reponses: the agent's answers and optionally executed steps
+1. Target responses: the agent's answers and optionally executed steps
 
 ## Reference Q&A data
 
@@ -34,7 +34,7 @@ The target data is a dict of `question_id` to a response dict. Each response dic
 - `question_id`: (required) Must equal `id` from the reference question; copied to the output
 - `actual_answer` (optional) Enables `answer_relevance` and, if `reference_answer` exists and LLM is configured, answer correctness metrics
 - `actual_steps` (optional list of dicts): Enables `steps_score` and retrieval step metrics if present ([§ Steps](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md)). Each actual step has:
-  - `id`: uniqe step identifier. Used to annotate matched reference steps with `matches`.
+  - `id`: unique step identifier. Used to annotate matched reference steps with `matches`.
   - `name`: Step type, used to match to a reference step for evaluation
   - `args` (optional dict): Arguments to a tool used in the step. Required for certain comparisons.
     - Retrieval steps (`name == "retrieval"`): must include `k` (the cutoff) so that ID-based recall@k can be computed against reference retrieval contexts.
@@ -43,10 +43,10 @@ The target data is a dict of `question_id` to a response dict. Each response dic
   - `output` (string): The actual output from the step
     - Retrieval: a JSON array of context objects. Each object should contain an `id` (required for ID-based recall@k). If you want text-based retrieval metrics (LLM-backed) to run, include the context text as well (e.g., `{"id": "...", "text": "..."}`).
     - SPARQL: a JSON object in SPARQL Results JSON format for `SELECT` or `ASK`.
-  - `execution_timestamp`: Required by `retrieve_data_points` step comparison. 
+  - `execution_timestamp`: Required for `retrieve_data_points` step comparison; used as the anchor for relative `start`/`end` times
   - `status` (optional): Required value `"success"` for matching and evaluating the step.
 - `error` (optional): Marks an agent internal error for this question. 
-- `input_tokens`, `output_tokens`, `total_tokens`, `elapsed_sec` (numbers, optional): copied to the output and included in aggregates compyted by function `aggregate_metrics()` ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/output.md)). Useful for analyzing your agent.
+- `input_tokens`, `output_tokens`, `total_tokens`, `elapsed_sec` (numbers, optional): copied to the output and included in aggregates computed by function `compute_aggregates()` ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md)). Useful for analyzing your agent.
 
 [Example actual answers dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/target.json).
 
