@@ -45,8 +45,8 @@ The target data is a dict of `question_id` to a response dict. Each response dic
     - SPARQL: a JSON object in SPARQL Results JSON format for `SELECT` or `ASK`.
   - `execution_timestamp`: Required by `retrieve_data_points` step comparison. 
   - `status` (optional): Required value `"success"` for matching and evaluating the step.
-  - `error` (optional): Marks an agent internal error for this question. 
-  - `input_tokens`, `output_tokens`, `total_tokens`, `elapsed_sec` (numbers, optional): copied to the output and included in aggregates compyted by function `aggregate_metrics()` ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/output.md)). Useful for analyzing your agent.
+- `error` (optional): Marks an agent internal error for this question. 
+- `input_tokens`, `output_tokens`, `total_tokens`, `elapsed_sec` (numbers, optional): copied to the output and included in aggregates compyted by function `aggregate_metrics()` ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/output.md)). Useful for analyzing your agent.
 
 [Example actual answers dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/target.json).
 
