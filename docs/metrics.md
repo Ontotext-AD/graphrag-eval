@@ -1,8 +1,8 @@
 # Metrics
 
-The library computes metrics for the quality of the answers. The groups of possible metrics are:
+The quality of the answers is evaluated by computing the following groups of metrics:
 1. **[RAGAS answer relevance](https://docs.ragas.io/en/v0.4.3/concepts/metrics/available_metrics/answer_relevance/)** (`answer_relevance`)
-1. **Answer correctness**: Recall, precision, F1 of claims extracted from the actual answer with respect to reference answer claims (`answer_recall`, `answer_precision`, `answer_f1`)
+1. **Answer correctness**: Recall, precision, F1 of claims of the actual answer with respect to the reference answer. The claims are extracted from each answer, counted and compared using a LLM. The counts are used to compute the metrics (`answer_recall`, `answer_precision`, `answer_f1`)
 1. **Steps score**: Correctness of the agent's steps in responding to a user query (`steps_score`) ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
 1. Vector retrieval
     1. **vs. reference answer**: Recall, precision, F1 of the retrieved context claims with respect to the reference answer claims (`retrieval_answer_recall`, `retrieval_answer_precision`, `retrieval_answer_f1`)
