@@ -22,7 +22,7 @@ Suppose there are 4 relevant documents for a given query. Suppose our system ret
 
 ```python
 recall_at_k(
-    relevant_docs={1, 3, 5, 6},
+    relevant_docs=[1, 3, 5, 6],
     retrieved_docs=[1, 4, 3, 5, 7],
     k=5
 )  # => 0.75
@@ -46,7 +46,7 @@ where:
 
 1. For each retrieved item, if it is relevant, record the precision at
     that index (i.e., `number of hits / current rank`).
-2. Summ all of these precision scores.
+2. Sum all of these precision scores.
 3. Divide the sum by the total number of relevant items.
 
 ### Example
@@ -57,13 +57,13 @@ Suppose:
 
 Computation:
 * Item at index 1 (item 1) is relevant. Precision@1 = 1/1
-* Item at index 3 (item 2) is relevant. Precision@3 = 2/3
+* Item at index 3 (item 3) is relevant. Precision@3 = 2/3
 * Item at index 4 (item 5) is relevant. Precision@4 = 3/4
 * AP = (1.0 + 2/3 + 3/4) / 4 = 0.60416...
 
 ```python
 average_precision(
-    relevant_docs={1, 3, 5, 6},
+    relevant_docs=[1, 3, 5, 6],
     retrieved_docs=[1, 4, 3, 5, 7]
 ) # ~=> 0.60416
 ```
