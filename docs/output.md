@@ -5,7 +5,7 @@ The output is a list of objects corresponding to questions from the reference Q&
 - `template_id`: the template id
 - `question_id`: the question id
 - `question_text`: the natural language query
-- `status`: "success" or "error", indicating whether the evaluation succeeded
+- `status`: `"success"` or `"error"`, indicating whether the target response contains an agent error
 - `reference_steps`: (optional) copy of the expected steps in the Q&A dataset, if specified there. Additional key "matches" is added to those steps which are matched.
 - `reference_answer`: (optional) copy of the expected answer text, if supplied in the reference data
 - `actual_answer`: (optional) copy of the response text, if supplied in the target data
@@ -19,14 +19,16 @@ The output is a list of objects corresponding to questions from the reference Q&
 - `answer_f1`: (optional) Harmonic mean of `answer_recall` and `answer_precision`
 - `answer_relevance`: (optional `float` in [0, 1]) answer relevance score
 - `answer_relevance_error`: (optional) error message if answer relevance evaluation failed
-- `actual_steps`: (optional) copy of the actual steps, if specified in the target data
+- `actual_steps`: copy of the actual steps, or `[]` if not specified in the target data
 - `steps_score`: (optional `float` in [0, 1]) steps score ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
 - `input_tokens`: (optional) input tokens usage
 - `output_tokens`: (optional) output tokens usage
 - `total_tokens`: (optional) total tokens usage
 - `elapsed_sec`: (optional) elapsed seconds
 
-All `actual_steps` with `name` "retrieval" contain the following keys:
+Custom evaluations add top-level fields to each output object. These fields are defined by `custom_evaluations[*].outputs`; see [§ Custom metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics).
+
+`actual_steps` with `name` "retrieval" can contain the following keys:
 - `retrieval_answer_recall`: (optional) recall of the retrieved context with respect to the reference answer, if evaluation succeeds
 - `retrieval_answer_recall_error`: (optional) error message if `retrieval_answer_recall` evaluation fails
 - `retrieval_answer_precision`: (optional) precision of the retrieved context with respect to the reference answer, if evaluation succeeds

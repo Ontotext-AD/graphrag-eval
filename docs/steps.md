@@ -1,10 +1,10 @@
 # Steps evaluation
 
-If a reference answer specifies reference steps and the target answer specifies the actual steps taken by the target agent, then the library tries to match steps in the two sets and computes match scores ([§ Steps matching](#steps-matching)). It outputs the matches and an overall `steps_score` for the question ([§ Steps score](#steps-score)).
+If a reference item includes reference steps and the corresponding target response includes actual steps, the library tries to match reference steps to actual steps one-to-one and computes match scores ([§ Steps matching](#steps-matching)). The output annotates matched reference steps with the matched actual step's ID and includes an overall `steps_score` for the item ([§ Steps score](#steps-score)).
 
-The matches are also used to compute quality metrics for "retrieval" steps if the necessary input variables are supplied ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)).
+Step matches are also used to compute quality metrics for "retrieval" steps if the needed inputs are supplied ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)).
 
-The reference can specify some constraints on step execution order. Specifically, reference steps are specified as an ordered list of "groups", while each group is not ordered, as illustrated below:
+The reference steps can express partial ordering constraints: they are specified as an ordered list of groups, while steps within a group are not ordered.
 
 <p align="center">
 <img alt="Steps matching" src="images/steps-matching.png" width="400">
@@ -38,16 +38,17 @@ The match score is determined by the first rule that applies:
 - If both steps are named `retrieval` and the reference step has key `output`:
   - match score = [recall@k](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/retrieval-ids.md#context-recallk)
 - If both steps are named `retrieve_time_series`:
-  - match score = 1 if the steps have the same sets of arguments, otherwise 0
+  - match score = [Time-series comparison](#time-series-comparison)
 - If both steps are named `retrieve_data_points`:
-  - match score = 1 if the steps have the same sets of arguments, otherwise 0
-- If the reference step name is `iri_discovery` and the actual step name is 
-`autocomplete_search` or `sparql_query`:
-  - match score = 1 if the reference (`iri_discovery`) `output` (an IRI) is present in the actual (`autocomplete_search`) step `output`, otherwise 0
-- If the step names are the same and the reference step `output_media_type` is
-  `application/json`:
+  - match score = [Data-points comparison](#data-points-comparison)
+- If the reference step name is `iri_discovery` and the actual step name is `autocomplete_search`:
+  - match score = 1 if the reference `output` IRI appears as a URI binding in the actual step's JSON `output`, otherwise 0
+- If the reference step name is `iri_discovery` and the actual step name is `sparql_query`:
+  - match score = 1 if the reference `output` IRI appears in the actual `output` string, otherwise 0
+- If the step names are the same and the reference step `output_media_type` is `application/json`:
   - match score = 1 if the JSON outputs are identical, otherwise 0
 - Match score = 1 if the outputs are identical, otherwise 0
+
 
 ## SPARQL queries comparison
 
@@ -75,6 +76,40 @@ where:
 - $\text{rows}$ = the set of rows in the actual result
 - $\text{cols}_\text{ref}$ = the set of columns in the reference result
 - $\text{cols}_\text{act}$ = the set of columns in the actual result
+
+
+## Time-series comparison
+
+For `retrieve_time_series` steps, the match score is either 1 or 0.
+
+If the reference step specifies `args.mrid`:
+- Compare `args.mrid` after converting string values to one-item lists and sorting lists.
+- If the reference step also specifies `args.limit`, compare `args.limit`.
+- The match score is 1 only if all compared fields match.
+
+If the reference step does not specify `args.mrid`:
+- The actual step must also omit `args.mrid`.
+- `args.limit` must match.
+- The match score is 1 only if both conditions hold.
+
+Otherwise, the match score is 0.
+
+
+## Data-points comparison
+
+Datapoints are compared using the following algorithm:
+- Compare:
+  - `args.external_id` (string or list) strings are converted to one-item lists, and lists are sorted
+  - `args.granularity` (unit-normalized; e.g. "15m" == "15minutes")
+  - `args.aggregates` (string or list) strings are converted to one-item lists, and lists are sorted
+  - `args.limit`
+- Compare `args.start` and `args.end` anchored to the actual steps' `execution_timestamp`:
+  - If the reference time is relative ("now", "Xs-ago"/"Xm-ago"/"Xh-ago"/"Xd-ago"/"Xw-ago", and their -ahead equivalents) and the actual time is absolute, resolve the reference against `execution_timestamp` and accept if within 60 seconds.
+  - If both are absolute, they must match exactly after conversion to UTC.
+  - If the reference is absolute and the actual is relative, match score = 0.
+
+Timezone handling: naive datetimes are treated as UTC; timezone-aware datetimes are normalized to UTC before comparison.
+
 
 ## Steps score
 

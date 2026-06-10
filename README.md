@@ -4,16 +4,17 @@
 
 # QA Evaluation
 
-This is a Python module for assessing the quality of question-answering systems such ones using LLM agents. The evaluation is based on a set of questions, their reference answers and reference steps (such as tool uses) with which the agent can reach the reference answer. This reference dataset is compared to the agent's actual answer and steps. The library provides built-in evaluation metrics ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)) and allows the user to define their own (custom) metrics. The library is agnostic to the agent implementation and LLM it uses. Its input format is versatile and expressive.
+This is a Python library for assessing the quality of question-answering systems such as systems with LLM-based agents. It is agnostic to the agent implementation and LLM it uses.
+
+The evaluation is based on a user-provided reference dataset containing questions, reference answers, and optional reference steps, such as expected tool uses. The evaluator compares these references to the agent's actual answers and executed steps. Reference steps can be grouped to allow some expected steps to occur in any order.
+
+The library provides built-in evaluation metrics and allows the user to define their own (custom) metrics ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)).
 
 ## Documentation
 
+- [Quickstart](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/quickstart.md)
 - [Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)
-- [Installation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/install.md)
-- [Usage](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/usage.md)
 - [Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md)
-- [LLM use in evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/llm.md)
-- [Custom evaluation (custom metrics)](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/custom.md)
 - [Input](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/input.md)
 - [Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md)
 

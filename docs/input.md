@@ -1,7 +1,7 @@
 # Inputs
 
 The input to the evaluator consists of two datasets of corresponding entries:
-1. Reference dataset: questions and their reference answers
+1. Reference dataset: questions with optional reference answers and reference steps
 1. Target responses: the agent's answers and optionally executed steps
 
 ## Reference Q&A data
@@ -24,7 +24,7 @@ A reference dataset is a list of question "template" dicts, each of which contai
     - `output_media_type`: (optional, one of: missing, `application/sparql-results+json`, `application/json`) Controls how `output` is parsed and compared to actual output
     - `ordered`: (optional; default `false`) For SPARQL `SELECT` steps, whether row order matters. `true`: the actual result rows must be in the same order; `false`: result rows are matched as a set. Ignored for other step types.
     - `required_columns`: (optional list) For SPARQL `SELECT` steps, binding names required for query results that must match
-    - `ignore_duplicates`: (optional list, defaults to `true`) For SPARQL `SELECT` results, whether duplicate rows are ignored when comparing actual vs. reference.
+    - `ignore_duplicates`: (optional bool, defaults to `true`) For SPARQL `SELECT` results, whether duplicate rows are ignored when comparing actual vs. reference.
 
 [Example reference dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/reference.yaml) with two templates and associated questions and steps.
 
@@ -44,7 +44,7 @@ The target data is a dict of `question_id` to a response dict. Each response dic
     - Retrieval: a JSON array of context objects. Each object should contain an `id` (required for ID-based recall@k). If you want text-based retrieval metrics (LLM-backed) to run, include the context text as well (e.g., `{"id": "...", "text": "..."}`).
     - SPARQL: a JSON object in SPARQL Results JSON format for `SELECT` or `ASK`.
   - `execution_timestamp`: Required for `retrieve_data_points` step comparison; used as the anchor for relative `start`/`end` times
-  - `status` (optional): Required value `"success"` for matching and evaluating the step.
+  - `status` (optional): Required value `"success"` for matching and the step.
 - `error` (optional): Marks an agent internal error for this question. 
 - `input_tokens`, `output_tokens`, `total_tokens`, `elapsed_sec` (numbers, optional): copied to the output and included in aggregates computed by function `compute_aggregates()` ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md)). Useful for analyzing your agent.
 
