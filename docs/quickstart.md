@@ -75,33 +75,40 @@ See also:
 #### Example code
 
 ```python
+import asyncio
 import yaml
+
 from graphrag_eval import run_evaluation, compute_aggregates
 
-# Read your reference items
-with open("my_reference_dataset.yaml") as f:
-    reference_data: list[dict] = yaml.safe_load(f)
 
-# Extract the question text from each reference item
-question_texts = [
-    question["question_text"]
-    for template in reference_data 
-    for question in template["questions"]
-]
+async def main():
+    with open("reference_data.yaml", encoding="utf-8") as f:
+        reference_data: list[dict] = yaml.safe_load(f)
 
-# Call your implementation to get target responses
-chat_responses: dict = my_agent(question_texts)
+    target_responses = {}
+    for template in reference_data:
+        for reference_item in template["questions"]:
+            question_id = reference_item["id"]
+            actual_answer = await agent(reference_item["question_text"])
+            target_responses[question_id] = {
+                "question_id": question_id,
+                "actual_answer": actual_answer,
+            }
 
-# Evaluate
-evaluation_results = await run_evaluation(
-    reference_data,
-    chat_responses,
-    config_file_path="my_project/eval_config.yaml"  # Optional
-)
-aggregates = compute_aggregates(
-    evaluation_results,
-    config_file_path="my_project/eval_config.yaml"  # Must be as run_evaluation(config_file_path=)
-)
+    config_file_path = "my_project/eval_config.yaml"  # Optional
+
+    evaluation_results = await run_evaluation(
+        reference_data,
+        target_responses,
+        config_file_path=config_file_path,
+    )
+    aggregates = compute_aggregates(
+        evaluation_results,
+        config_file_path=config_file_path,
+    )
+
+
+asyncio.run(main())
 ```
 
 Parameter `config_file_path` is optional ([§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md)). It allows you to configure an LLM ([§ LLM use in evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#llm-based-metrics)) and custom metrics ([§ Custom evaluation (custom metrics)](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics)).
