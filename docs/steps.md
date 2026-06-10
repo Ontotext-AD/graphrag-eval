@@ -2,7 +2,7 @@
 
 If a reference item includes reference steps and the corresponding target response includes actual steps, the library tries to match reference steps to actual steps one-to-one and computes match scores ([§ Steps matching](#steps-matching)). The output annotates matched reference steps with the matched actual step's ID and includes an overall `steps_score` for the item ([§ Steps score](#steps-score)).
 
-Step matches are also used to compute quality metrics for "retrieval" steps if the needed inputs are supplied ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)).
+Step matches are also used to compute quality metrics for "retrieval" steps if the needed reference item and target response fields are supplied ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)).
 
 The reference steps can express partial ordering constraints: they are specified as an ordered list of groups, while steps within a group are not ordered.
 
@@ -113,7 +113,7 @@ Timezone handling: naive datetimes are treated as UTC; timezone-aware datetimes 
 
 ## Steps score
 
-`steps_score` is a metric of the overall correctness of the steps the agent executed to respond to the user's query. It can be used to understand how to improve the agent.
+`steps_score` is a metric of the overall correctness of the actual steps in the target response relative to the reference item’s expected steps. It can be used to understand how to improve the agent.
 
 `steps_score` is a real number in the interval [0, 1] which indicates how closely the actual steps match the reference steps. A score of 1 indicates a perfect match.
 

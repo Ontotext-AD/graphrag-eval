@@ -1,11 +1,11 @@
 # Metrics
 
-Below are the categories of supported metrics. Each metric has required reference and target data fields; it is computed if those data are among the supplied reference answer data and the actual answer data. The output for each question includes keys for metrics and other data, listed in [§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md).
+Below are the categories of supported metrics. Each metric has required fields from the reference item and target response; it is computed if those fields are supplied. The output for each reference item includes keys for metrics and other data, listed in [§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md).
 
 
 ## Deterministic metrics
 
-- Steps score: Correctness of the agent's steps in responding to a user query ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
+- Steps score: Correctness of the target response’s actual steps relative to the reference item’s expected steps ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
   - `steps_score`
 
 
@@ -39,7 +39,7 @@ Supported LLM providers are all those supported by the [`litellm`](https://githu
 
 ## Custom metrics
 
-You (the user) can define your own metrics of system outputs to be evaluated using an LLM. To do this, specify its name, inputs, outputs and instructions in a YAML file and pass the file path as a parameter to `run_evaluation()`. This will return your output metrics alongside the standard metrics described in previous sections.
+You (the user) can define your own metrics of target responses to be evaluated using an LLM. To do this, specify its name, inputs, outputs and instructions in a YAML file and pass the file path as a parameter to `run_evaluation()`. This will return your output metrics alongside the standard metrics described in previous sections.
 
 One configuration file can define multiple custom evaluations, each of which will be done as a separate query to the LLM. Each evaluation can have multiple outputs. The format is shown in the example sections below.
 
@@ -78,9 +78,9 @@ If there is an error during evaluation:
 - There will be an additional key explaining the error. The key will be `{name}_error` where `name` is the custom evaluation name.
 
 There are three types of error:
-1. The reference input is missing keys requested in the custom evaluation configuration.
+1. The reference item is missing keys requested in the custom evaluation configuration.
   - Example: `custom_1_error: Reference missing key 'reference_steps'`
-1. The actual output to be evaluated is missing keys requested in the custom evaluation configuration.
+1. The target response is missing keys requested in the custom evaluation configuration.
   - Example: `custom_1_error: Actual output missing 'actual_steps'`
 1. The evaluating LLM output does not conform to the custom evaluation configuration.
   - Example: `custom_1_error: "Expected 6 tab-separated values, got: 0.1\tCustom answer reason"`

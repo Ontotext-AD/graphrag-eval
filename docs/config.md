@@ -29,7 +29,7 @@ The configuration has the following structure:
 - `custom_evaluations`: (list of the following maps) required nonempty for
 [custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics). Each map has keys:
     - `name`: (`str`) name of the evaluation
-    - `inputs`: (`list[str]`) list of input variables. Any combination of:
+    - `inputs`: (`list[str]`) list of input variables drawn from the reference item and target response. Any combination of:
       - `question`
       - `reference_answer`
       - `reference_steps`
