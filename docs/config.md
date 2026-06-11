@@ -1,5 +1,7 @@
 # Configuration
 
+[← README](../README.md)
+
 `run_evaluation()` and `compute_aggregates()` are configured using a YAML file whose path is passed as the optional parameter `config_file_path`. Example call:
 
 ```python

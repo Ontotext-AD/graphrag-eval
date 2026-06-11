@@ -1,5 +1,7 @@
 # Quickstart
 
+[← README](../README.md)
+
 ## Installation
 
 Choose a tier below.

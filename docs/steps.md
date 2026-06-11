@@ -1,5 +1,7 @@
 # Steps evaluation
 
+[← README](../README.md)
+
 If a reference item includes reference steps and the corresponding target response includes actual steps, the library tries to match reference steps to actual steps one-to-one and computes match scores ([§ Steps matching](#steps-matching)). The output annotates matched reference steps with the matched actual step's ID and includes an overall `steps_score` for the item ([§ Steps score](#steps-score)).
 
 Step matches are also used to compute quality metrics for `retrieval` steps if the needed reference item and target response fields are supplied ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)).

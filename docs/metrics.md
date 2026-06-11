@@ -1,5 +1,7 @@
 # Metrics
 
+[← README](../README.md)
+
 Below are the categories of supported metrics. Each metric has required fields from the reference item and target response; it is computed if those fields are supplied. The output for each reference item includes keys for metrics and other data, listed in [§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md).
 
 
