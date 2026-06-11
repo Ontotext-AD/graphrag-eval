@@ -2,12 +2,12 @@
 
 [← README](../README.md)
 
-Below are the categories of supported metrics. Each metric has required fields from the reference item and target response; it is computed if those fields are supplied. The output for each reference item includes keys for metrics and other data, listed in [§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md).
+Below are the categories of supported metrics. Each metric has required fields from the reference item and target response record; it is computed if those fields are supplied. The output for each reference item includes keys for metrics and other data, listed in [§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md).
 
 
 ## Deterministic metrics
 
-- Steps score: Correctness of the target response’s actual steps relative to the reference item’s expected steps ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
+- Steps score: Correctness of the target response record's actual steps relative to the reference item's expected steps ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
   - `steps_score`
 
 
@@ -18,7 +18,7 @@ All of the following metrics use an LLM. The LLM must be configured in a [config
 - [RAGAS answer relevance](https://docs.ragas.io/en/v0.4.3/concepts/metrics/available_metrics/answer_relevance/). Also requires an embedding config.
   - `answer_relevance`
 
-- Answer correctness: compare actual answer claims to reference answer claims. The claims are extracted from each answer, counted and compared using an LLM. The counts are used to compute the metrics.
+- Answer correctness: compare claims in `actual_answer` to claims in `reference_answer`. The claims are extracted from each final response text, counted and compared using an LLM. The counts are used to compute the metrics.
   - `answer_recall`
   - `answer_precision`
   - `answer_f1`
@@ -41,7 +41,7 @@ Supported LLM providers are all those supported by the [`litellm`](https://githu
 
 ## Custom metrics
 
-You can define your own metrics of target responses to be evaluated using an LLM. To do this, specify the metric name, inputs, outputs and instructions in a YAML file and pass the file path as a parameter to `run_evaluation()`. This will return your output metrics alongside the standard metrics described in previous sections.
+You can define your own metrics of target response records to be evaluated using an LLM. To do this, specify the metric name, inputs, outputs and instructions in a YAML file and pass the file path as a parameter to `run_evaluation()`. This will return your output metrics alongside the standard metrics described in previous sections.
 
 One configuration file can define multiple custom evaluations, each of which will be done as a separate query to the LLM. Each evaluation can have multiple outputs. The format is shown in the example sections below.
 
@@ -82,7 +82,7 @@ If there is an error during evaluation:
 There are three types of error:
 1. The reference item is missing keys requested in the custom evaluation configuration.
   - Example: `custom_1_error: Reference missing key 'reference_steps'`
-1. The target response is missing keys requested in the custom evaluation configuration.
+1. The target response record is missing keys requested in the custom evaluation configuration.
   - Example: `custom_1_error: Actual output missing 'actual_steps'`
 1. The evaluating LLM output does not conform to the custom evaluation configuration.
   - Example: `custom_1_error: "Expected 6 tab-separated values, got: 0.1\tCustom answer reason"`

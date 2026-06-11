@@ -4,11 +4,11 @@
 
 The input to the evaluator consists of two datasets of corresponding entries:
 1. Reference dataset: reference items
-1. Target data: target responses
+1. Target data: target response records
 
 Terminology:
 - A **reference item** is one evaluation unit in the reference dataset. It contains a question, an optional reference answer, and optional reference steps.
-- A **target response** is the evaluated system’s response for one reference item. It contains the actual answer, optional actual steps, optional metadata, or an error.
+- A **target response record** is the evaluated system’s structured output for one reference item. It contains final response text, optional actual steps, optional metadata, or an error.
 
 ## Reference items
 
@@ -16,9 +16,9 @@ A reference dataset is a list of question "template" dicts, each of which contai
 
 - `template_id`: Unique template identifier, copied to the evaluation output
 - `questions`: A list of reference items derived from this template, where each includes:
-  - `id`: Unique reference item identifier, matched to a target response and copied to the evaluation output
-  - `question_text`: The natural language query passed to the LLM
-  - `reference_answer`: (optional) The expected answer to the question
+  - `id`: Unique reference item identifier, matched to a target response record and copied to the evaluation output
+  - `question_text`: The natural language query or request text
+  - `reference_answer`: (optional) The expected final response text
   - `reference_steps`: (optional) A list of expected steps grouped by expected order of execution. All steps in a group can be executed in any order relative to each other, but after all steps in the previous group and before all steps in the next group. Each reference step dict can include:
     - `name`: The name of the step (e.g., `sparql_query`)
     - `args` (optional dict): Arguments to a tool used in the step. Examples:
@@ -34,11 +34,11 @@ A reference dataset is a list of question "template" dicts, each of which contai
 
 [Example reference dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/reference.yaml) with two templates and associated reference items.
 
-## Target responses
+## Target response records
 
-The target data is a dict mapping reference item `id` to target its response dict. Each target response dict contains:
+The target data is a dict mapping each reference item `id` to one response record. Each response record contains:
 - `question_id`: (required) Must equal `id` from the corresponding reference item; copied to the output
-- `actual_answer` (optional) Enables `answer_relevance` and, if `reference_answer` exists and LLM is configured, answer correctness metrics
+- `actual_answer` (optional): Final response text produced by the evaluated system. Enables `answer_relevance` and, if `reference_answer` exists and LLM is configured, answer correctness metrics
 - `actual_steps` (optional list of dicts): Enables `steps_score` and retrieval step metrics if present ([§ Steps](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md)). Each actual step has:
   - `id`: unique step identifier. Used to annotate matched reference steps with `matches`.
   - `name`: Step type, used to match to a reference step for evaluation
@@ -51,10 +51,10 @@ The target data is a dict mapping reference item `id` to target its response dic
     - SPARQL: a JSON object in SPARQL Results JSON format for `SELECT` or `ASK`.
   - `execution_timestamp`: Required for `retrieve_data_points` step comparison; used as the anchor for relative `start`/`end` times
   - `status` (optional): Required with value `"success"` for matching and the step.
-- `error` (optional): Marks an agent internal error for this target response.
+- `error` (optional): Marks an agent internal error for this response record.
 - `input_tokens`, `output_tokens`, `total_tokens`, `elapsed_sec` (numbers, optional): copied to the output and included in aggregates computed by function `compute_aggregates()` ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md)). Useful for analyzing your agent.
 
-[Example target responses dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/target.json).
+[Example response records dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/target.json).
 
 ## Notes and tips
 
