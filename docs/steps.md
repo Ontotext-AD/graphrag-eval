@@ -2,9 +2,9 @@
 
 If a reference item includes reference steps and the corresponding target response includes actual steps, the library tries to match reference steps to actual steps one-to-one and computes match scores ([§ Steps matching](#steps-matching)). The output annotates matched reference steps with the matched actual step's ID and includes an overall `steps_score` for the item ([§ Steps score](#steps-score)).
 
-Step matches are also used to compute quality metrics for "retrieval" steps if the needed reference item and target response fields are supplied ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)).
+Step matches are also used to compute quality metrics for `retrieval` steps if the needed reference item and target response fields are supplied ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)).
 
-The reference steps can express partial ordering constraints: they are specified as an ordered list of groups, while steps within a group are not ordered.
+Reference steps can express partial ordering constraints: they are specified as an ordered list of groups, while steps within a group are unordered.
 
 <p align="center">
 <img alt="Steps matching" src="images/steps-matching.png" width="400">
@@ -97,25 +97,25 @@ Otherwise, the match score is 0.
 
 ## Data-points comparison
 
-Datapoints are compared using the following algorithm:
+Data points are compared using the following algorithm:
 - Compare:
-  - `args.external_id` (string or list) strings are converted to one-item lists, and lists are sorted
-  - `args.granularity` (unit-normalized; e.g. "15m" == "15minutes")
-  - `args.aggregates` (string or list) strings are converted to one-item lists, and lists are sorted
+  - `args.external_id` (string or list; strings are converted to one-item lists, and lists are sorted)
+  - `args.granularity` (unit-normalized; e.g., `15m` equals `15minutes`)
+  - `args.aggregates` (string or list; strings are converted to one-item lists, and lists are sorted)
   - `args.limit`
-- Compare `args.start` and `args.end` anchored to the actual steps' `execution_timestamp`:
-  - If the reference time is relative ("now", "Xs-ago"/"Xm-ago"/"Xh-ago"/"Xd-ago"/"Xw-ago", and their -ahead equivalents) and the actual time is absolute, resolve the reference against `execution_timestamp` and accept if within 60 seconds.
+- Compare `args.start` and `args.end` anchored to the actual step's `execution_timestamp`:
+  - If the reference time is relative (`now`, `Xs-ago`/`Xm-ago`/`Xh-ago`/`Xd-ago`/`Xw-ago`, and their `-ahead` equivalents) and the actual time is absolute, resolve the reference against `execution_timestamp` and accept if within 60 seconds.
   - If both are absolute, they must match exactly after conversion to UTC.
-  - If the reference is absolute and the actual is relative, match score = 0.
+  - If the reference is absolute and the actual is relative, the match score is 0.
 
 Timezone handling: naive datetimes are treated as UTC; timezone-aware datetimes are normalized to UTC before comparison.
 
 
 ## Steps score
 
-`steps_score` is a metric of the overall correctness of the actual steps in the target response relative to the reference item’s expected steps. It can be used to understand how to improve the agent.
+`steps_score` is a metric of the overall correctness of the actual steps in the target response relative to the reference item’s expected steps. It can be used to understand how to improve the evaluated system.
 
-`steps_score` is a real number in the interval [0, 1] which indicates how closely the actual steps match the reference steps. A score of 1 indicates a perfect match.
+`steps_score` is a real number in the interval [0, 1] that indicates how closely the actual steps match the reference steps. A score of 1 indicates a perfect match.
 
 `steps_score` is computed as the macro mean of [match scores](#match-score) taken over the reference groups. That is, it is the sum of reference groups scores divided by the number of groups; each group score is the sum of scores of its matching steps divided by the number of steps in the group:
 

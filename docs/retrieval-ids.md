@@ -4,7 +4,7 @@ The following metrics are based on the IDs of retrieved document chunks.
 
 ## Context recall@k
 
-The fraction of relevant items among the top $k$ recommendations. It answers the question: "Of all items the user cares about, how many did we include in the first $k$ spots?"
+The fraction of the first $k$ relevant IDs that appear in the top $k$ retrieved IDs.
 
 ### Formula
 
@@ -14,7 +14,7 @@ $$
 
 ## Computation
 
-Count the number of relevant items in the top $k$ retrieved results; divide that by the first $k$ relevant items.
+Count how many IDs appear in both the first $k$ relevant IDs and the first $k$ retrieved IDs; divide by the number of relevant IDs considered, i.e., `min(k, len(relevant_ids))`.
 
 ### Example
 
@@ -22,13 +22,13 @@ Suppose there are 4 relevant documents for a given query. Suppose our system ret
 
 ```python
 recall_at_k(
-    relevant_docs=[1, 3, 5, 6],
-    retrieved_docs=[1, 4, 3, 5, 7],
-    k=5
+    relevant_ids=[1, 3, 5, 6],
+    retrieved_ids=[1, 4, 3, 5, 7],
+    k=5,
 )  # => 0.75
 ```
 
-## Average context precision
+## Average Precision (AP)
 
 Evaluates a ranked list of recommendations by looking at the precision at the position of each correctly retrieved item. It rewards systems for placing relevant items higher up in the list. It's more sophisticated than just looking at precision at a single cutoff because it considers the entire ranking.
 
@@ -63,7 +63,7 @@ Computation:
 
 ```python
 average_precision(
-    relevant_docs=[1, 3, 5, 6],
-    retrieved_docs=[1, 4, 3, 5, 7]
-) # ~=> 0.60416
+    relevant_ids=[1, 3, 5, 6],
+    retrieved_ids=[1, 4, 3, 5, 7],
+)  # ~=> 0.60416
 ```

@@ -5,8 +5,8 @@ The output is a list of objects, one for each reference item. Each output object
 - `template_id`: the template id
 - `question_id`: the reference item id
 - `question_text`: the natural language query from the reference item
-- `status`: `"success"` or `"error"`, indicating whether the target response contains an agent error
-- `reference_steps`: (optional) copy of the expected steps from the reference item, if specified there. Additional key "matches" is added to those steps which are matched.
+- `status`: `"success"` or `"error"`, indicating whether the target response had an `error` field
+- `reference_steps`: (optional) copy of the expected steps from the reference item, if specified there. Additional key `matches` is added to matched reference steps.
 - `reference_answer`: (optional) copy of the expected answer text, if supplied in the reference item
 - `actual_answer`: (optional) copy of the response text, if supplied in the target response
 - `answer_reference_claims_count`: (optional) number of claims extracted from the reference answer, if a reference answer and actual answer are supplied
@@ -28,7 +28,7 @@ The output is a list of objects, one for each reference item. Each output object
 
 Custom evaluations add top-level fields to each output object. These fields are defined by `custom_evaluations[*].outputs`; see [§ Custom metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics).
 
-`actual_steps` with `name` "retrieval" can contain the following keys:
+`actual_steps` with `name: "retrieval"` can contain the following keys:
 - `retrieval_answer_recall`: (optional) recall of the retrieved context with respect to the reference answer, if evaluation succeeds
 - `retrieval_answer_recall_error`: (optional) error message if `retrieval_answer_recall` evaluation fails
 - `retrieval_answer_precision`: (optional) precision of the retrieved context with respect to the reference answer, if evaluation succeeds
@@ -46,8 +46,8 @@ Function `compute_aggregates()` takes in the computed evaluation metrics and agg
 
 The aggregate metrics are organized as follows:
 - `per_template`: a dictionary mapping a question template identifier to the following statistics:
-  - `number_of_error_samples`: number of reference items of this template whose target response contained an error
-  - `number_of_success_samples`: number of reference items of this template whose target response was successful
+  - `number_of_error_samples`: number of target responses for this template that had an `error` field
+  - `number_of_success_samples`: number of target responses for this template that did not have an `error` field
   - `sum`, `mean`, `median`, `min` and `max` statistics of the following metrics (across the template's reference items where they exist):
     - `input_tokens`
     - `output_tokens`

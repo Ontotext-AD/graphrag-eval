@@ -65,8 +65,8 @@ To evaluate answers and/or steps:
      1. Set the environment variable for your LLM provider (e.g., `OPENAI_API_KEY`) to hold your LLM API key
 1. To evaluate steps ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md)):
   1. Include `reference_steps` in reference items and `actual_steps` in target responses
-1. Call function `run_evaluation()`, passing to it the reference dataset, target responses: [§ Example code](#example-code) and optionally a configuration file path
-1. Call function `compute_aggregates()`, passing the evaluation results and the path to the config file if you passed one to `run_evaluation()` ([§ Example code](#example-code), [§ Aggregate metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md#aggregate-metrics), [§ Example aggregate output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/aggregates.yaml))
+1. Call `run_evaluation()`, passing the reference dataset, target responses, and optionally a configuration file path ([§ Example code](#example-code))
+1. Call `compute_aggregates()`, passing the evaluation results and the config file path if you passed one to `run_evaluation()` ([§ Example code](#example-code), [§ Aggregate metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md#aggregate-metrics), [§ Example aggregate output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/aggregates.yaml))
 
 See also:
 - [Example reference dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/reference.yaml)
@@ -111,7 +111,7 @@ async def main():
 asyncio.run(main())
 ```
 
-Parameter `config_file_path` is optional ([§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md)). It allows you to configure an LLM ([§ LLM use in evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#llm-based-metrics)) and custom metrics ([§ Custom evaluation (custom metrics)](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics)).
+`config_file_path` is optional ([§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md)). Provide it to configure an LLM ([§ LLM use in evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#llm-based-metrics)) or custom metrics ([§ Custom evaluation (custom metrics)](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics)).
 
 The result `evaluation_results` is a list of objects, one for each reference item ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md)) as shown in this [Example output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/output.yaml).
 
@@ -128,7 +128,7 @@ To evaluate only correctness of final answers (system responses), you can clone 
    <LLM_ACCESS_VARIABLE>=<your_api_key> poetry run answer-correctness -i <input_file.tsv> -o <output_file.tsv>
    ```
    replacing `<LLM_ACCESS_VARIABLE>` by the variable used by your LLM provider
-   to specify your LLM use key.
+   to specify your LLM API key.
    Example:
    ```
    OPENAI_API_KEY=XXX poetry run answer-correctness -i reference.tsv -o evaluations.tsv

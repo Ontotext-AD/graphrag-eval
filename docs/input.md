@@ -34,7 +34,7 @@ A reference dataset is a list of question "template" dicts, each of which contai
 
 ## Target responses
 
-The target data is a dict mapping reference item `id` to target response dict. Each target response dict contains:
+The target data is a dict mapping reference item `id` to target its response dict. Each target response dict contains:
 - `question_id`: (required) Must equal `id` from the corresponding reference item; copied to the output
 - `actual_answer` (optional) Enables `answer_relevance` and, if `reference_answer` exists and LLM is configured, answer correctness metrics
 - `actual_steps` (optional list of dicts): Enables `steps_score` and retrieval step metrics if present ([§ Steps](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md)). Each actual step has:
@@ -48,8 +48,8 @@ The target data is a dict mapping reference item `id` to target response dict. E
     - Retrieval: a JSON array of context objects. Each object should contain an `id` (required for ID-based recall@k). If you want text-based retrieval metrics (LLM-backed) to run, include the context text as well (e.g., `{"id": "...", "text": "..."}`).
     - SPARQL: a JSON object in SPARQL Results JSON format for `SELECT` or `ASK`.
   - `execution_timestamp`: Required for `retrieve_data_points` step comparison; used as the anchor for relative `start`/`end` times
-  - `status` (optional): Required value `"success"` for matching and the step.
-- `error` (optional): Marks an agent internal error for this target response. 
+  - `status` (optional): Required with value `"success"` for matching and the step.
+- `error` (optional): Marks an agent internal error for this target response.
 - `input_tokens`, `output_tokens`, `total_tokens`, `elapsed_sec` (numbers, optional): copied to the output and included in aggregates computed by function `compute_aggregates()` ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md)). Useful for analyzing your agent.
 
 [Example target responses dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/target.json).
@@ -57,4 +57,4 @@ The target data is a dict mapping reference item `id` to target response dict. E
 ## Notes and tips
 
 - For matching `steps_score`, see [Steps](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md).
-- For output schema per reference-item and aggregate metrics, see [§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md)
+- For the per-reference-item output schema and aggregate metrics, see [§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md).

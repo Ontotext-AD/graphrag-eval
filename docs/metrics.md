@@ -39,7 +39,7 @@ Supported LLM providers are all those supported by the [`litellm`](https://githu
 
 ## Custom metrics
 
-You (the user) can define your own metrics of target responses to be evaluated using an LLM. To do this, specify its name, inputs, outputs and instructions in a YAML file and pass the file path as a parameter to `run_evaluation()`. This will return your output metrics alongside the standard metrics described in previous sections.
+You can define your own metrics of target responses to be evaluated using an LLM. To do this, specify the metric name, inputs, outputs and instructions in a YAML file and pass the file path as a parameter to `run_evaluation()`. This will return your output metrics alongside the standard metrics described in previous sections.
 
 One configuration file can define multiple custom evaluations, each of which will be done as a separate query to the LLM. Each evaluation can have multiple outputs. The format is shown in the example sections below.
 
@@ -88,7 +88,7 @@ There are three types of error:
 ### Recommendations
 
 To improve custom evaluation accuracy:
-1. Specify only several outputs in each evaluation
+1. Specify only a few outputs in each evaluation
 1. Specify outputs explaining any quantities that the LLM must count or estimate. You can request one explanation per quantity or one shared explanation for several quantities.
 
 
