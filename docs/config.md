@@ -6,8 +6,8 @@
 
 ```python
 evaluation_results = await run_evaluation(
-    reference_qa_dataset, 
-    chat_responses, 
+    reference_items, 
+    response_records, 
     "my_project/eval_config_defining_custom_eval.yaml"
 )
 ```

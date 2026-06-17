@@ -3,11 +3,11 @@
 [← README](../README.md)
 
 The input to the evaluator consists of two datasets of corresponding entries:
-1. Reference dataset: reference items
+1. Reference dataset: templates containing reference items
 1. Target data: target response records
 
 Terminology:
-- A **reference item** is one evaluation unit in the reference dataset. It contains a question, an optional reference answer, and optional reference steps.
+- A **reference item** is one evaluation unit in the reference dataset. It contains a query or request, optional reference response text, and optional reference steps.
 - A **target response record** is the evaluated system’s structured output for one reference item. It contains final response text, optional actual steps, optional metadata, or an error.
 
 ## Reference items
