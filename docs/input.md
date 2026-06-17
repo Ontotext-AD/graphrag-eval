@@ -50,7 +50,7 @@ The target data is a dict mapping each reference item `id` to one response recor
     - Retrieval: a JSON array of context objects. Each object should contain an `id` (required for ID-based recall@k). If you want text-based retrieval metrics (LLM-backed) to run, include the context text as well (e.g., `{"id": "...", "text": "..."}`).
     - SPARQL: a JSON object in SPARQL Results JSON format for `SELECT` or `ASK`.
   - `execution_timestamp`: Required for `retrieve_data_points` step comparison; used as the anchor for relative `start`/`end` times
-  - `status` (optional): Required with value `"success"` for matching and the step.
+  - `status` (optional): Required with value `"success"` for matching the step.
 - `error` (optional): Marks an agent internal error for this response record.
 - `input_tokens`, `output_tokens`, `total_tokens`, `elapsed_sec` (numbers, optional): copied to the output and included in aggregates computed by function `compute_aggregates()` ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md)). Useful for analyzing your agent.
 
