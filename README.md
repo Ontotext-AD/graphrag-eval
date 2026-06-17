@@ -6,7 +6,7 @@
 
 This is a Python library for assessing the quality of question-answering systems, such as systems built with LLM-based agents. It is agnostic to the agent implementation and the LLM it uses.
 
-The evaluation is based on a user-provided reference dataset containing queries, reference responses, and optional reference steps, such as expected tool uses. The evaluator compares these references to the agent's generated responses and executed steps. Reference steps can be grouped to allow some expected steps to occur in any order.
+The evaluation is based on a user-provided reference dataset containing queries, reference responses, and optional reference steps, such as expected tool uses. The evaluator compares these references with the agent's generated responses and executed steps. Reference steps can be grouped to allow some expected steps to occur in any order.
 
 The library provides built-in evaluation metrics and supports user-defined custom metrics ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)).
 
