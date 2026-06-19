@@ -54,7 +54,7 @@ The target data is a dict mapping each reference item `id` to one response recor
 - `error` (optional): Marks an agent internal error for this response record.
 - `input_tokens`, `output_tokens`, `total_tokens`, `elapsed_sec` (numbers, optional): copied to the output and included in aggregates computed by function `compute_aggregates()` ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md)). Useful for analyzing your agent.
 
-[Example response records dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/target.json).
+[Example target dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/target.json).
 
 ## Notes and tips
 

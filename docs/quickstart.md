@@ -72,7 +72,7 @@ To evaluate answers and/or steps:
 
 See also:
 - [Example reference dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/reference.yaml)
-- [Example response record](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/target.json)
+- [Example target dataset](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/target.json)
 
 #### Example code
 
