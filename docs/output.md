@@ -75,7 +75,7 @@ The aggregate metrics are organized as follows:
 - `micro`: statistics across reference items, regardless of template. It includes:
     - `number_of_error_samples`: number of target response records that had an `error` field
     - `number_of_success_samples`: number of target response records that did not have an `error` field
-    - `steps`: includes:
+    - `steps`:
         - `total`: a map of step type to the number of times it was executed
         - `once_per_sample`: a map of step type to the number of reference items for which it was executed
         - `empty_results`: a map of step type to the number of times the step was executed and returned empty results
