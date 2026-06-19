@@ -2,7 +2,7 @@
 
 [← README](../README.md)
 
-The input to the evaluator consists of two datasets of corresponding entries:
+The input to the evaluator consists of two datasets with corresponding entries:
 1. Reference dataset: templates containing reference items
 1. Target data: target response records
 

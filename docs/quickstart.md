@@ -129,7 +129,7 @@ To evaluate only correctness of final answers (system responses), you can clone 
    ```
    <LLM_ACCESS_VARIABLE>=<your_api_key> poetry run answer-correctness -i <input_file.tsv> -o <output_file.tsv>
    ```
-   replacing `<LLM_ACCESS_VARIABLE>` by the variable used by your LLM provider
+   replacing `<LLM_ACCESS_VARIABLE>` with the variable used by your LLM provider
    to specify your LLM API key.
    Example:
    ```
