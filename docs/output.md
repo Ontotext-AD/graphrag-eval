@@ -66,11 +66,11 @@ The aggregate metrics are organized as follows:
     - `retrieval_context_recall`
     - `retrieval_context_precision`
     - `retrieval_context_f1`
-    - `steps`:
-      - `total`: a map of step type to the number of times it was executed
-      - `once_per_sample`: a map of step type to the number of reference items for which it was executed
-      - `empty_results`: a map of step type to the number of times the step was executed and returned empty results
-      - `errors`: a map of step type to the number of times the step was executed and resulted in error
+  - `steps`:
+    - `total`: a map of step type to the number of times it was executed
+    - `once_per_sample`: a map of step type to the number of reference items for which it was executed
+    - `empty_results`: a map of step type to the number of times the step was executed and returned empty results
+    - `errors`: a map of step type to the number of times the step was executed and resulted in error
 - `micro`: statistics across reference items, regardless of template. It includes:
   - `number_of_error_samples`: number of target response records that had an `error` field
   - `number_of_success_samples`: number of target response records that did not have an `error` field
