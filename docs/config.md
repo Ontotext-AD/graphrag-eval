@@ -28,8 +28,8 @@ The configuration has the following structure:
       - `model`: (`str`) name of the embedding model
       - Optional keys: parameters to be passed to LiteLLM for embedding:
         - `api_base`: (`str`) base URL for the embedding model, alternative to the provider's default URL. Used for `answer_relevance`
-- `custom_evaluations`: (list of the following maps) required nonempty for
-[custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics). Each map has keys:
+        - `api_key`: (`str`) API key for the embedding model, alternative to setting the environment variable corresponding to the provider (e.g., `OPENAI_API_KEY` for OpenAI, `AZURE_OPENAI_API_KEY` for Azure, etc.)
+  - `custom_evaluations`: (list of the following maps) required nonempty for [custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics). Each map has keys:
     - `name`: (`str`) name of the evaluation
     - `inputs`: (`list[str]`) list of input variables drawn from the reference item and target response record. Any combination of:
       - `question`
