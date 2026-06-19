@@ -82,7 +82,7 @@ def match_group(
     reference_group = reference_groups[group_idx]
     for reference_idx, reference_step in reversed(list(enumerate(reference_group))):
         for actual_idx, actual_step in reversed(list(enumerate(actual_steps[:search_upto]))):
-            if actual_idx in used_actual_indices or actual_step.get("status") != "success":
+            if actual_idx in used_actual_indices or actual_step["status"] != "success":
                 continue
 
             score = compare_steps(reference_step, actual_step)
