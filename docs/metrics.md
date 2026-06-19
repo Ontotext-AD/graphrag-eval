@@ -67,10 +67,10 @@ With the [example custom metrics configuration](https://github.com/Ontotext-AD/g
 
 ```yaml
   my_answer_relevance: 0.9
-  my_answer_relevance_eval_reason: The answer contains relevant information except for the sentence about total revenue
+  my_answer_relevance_reason: The answer contains relevant information except for the sentence about total revenue
   sparql_recall: 0.75
   sparql_precision: 0.6
-  sparql_eval_reason: The reference answer has 4 claims; there are 5 SPARQL results; 3 claims match
+  sparql_reason: The reference answer has 4 claims; there are 5 SPARQL results; 3 claims match
 ```
 
 ### Output in case of evaluation error
