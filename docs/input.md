@@ -58,5 +58,5 @@ The target data is a dict mapping each reference item `id` to one response recor
 
 ## Notes and tips
 
-- For matching `steps_score`, see [Steps](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md).
+- For matching `steps_score`, see [§ Steps](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md).
 - For the per-reference-item output schema and aggregate metrics, see [§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md).
