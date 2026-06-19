@@ -46,11 +46,11 @@ The target data is a dict mapping each reference item `id` to one response recor
     - Retrieval steps (`name == "retrieval"`): must include `k` (the cutoff) so that ID-based recall@k can be computed against reference retrieval contexts.
     - Time series (`name == "retrieve_time_series"`): typically includes `mrid`, `limit`.
     - Data points (`name == "retrieve_data_points"`): typically includes `external_id`, `granularity`, `aggregates`, `start`, `end`, `limit`.
-  - `output` (string): The actual output from the step
+  - `status` (string): Required for step matching and step aggregation. Steps with `status == "success"` are eligible for matching; steps with `status == "error"` are counted as step errors in aggregate metrics.
+  - `output` (string): The actual output from the step. Required for successful steps that may be matched; ignored for steps with `status == "error"`
     - Retrieval: a JSON array of context objects. Each object should contain an `id` (required for ID-based recall@k). If you want text-based retrieval metrics (LLM-backed) to run, include the context text as well (e.g., `{"id": "...", "text": "..."}`).
     - SPARQL: a JSON object in SPARQL Results JSON format for `SELECT` or `ASK`.
   - `execution_timestamp`: Required for `retrieve_data_points` step comparison; used as the anchor for relative `start`/`end` times
-  - `status` (string): Value `"success"` causes the evaluator to try to match the step.
 - `error` (optional): Marks an agent internal error for this response record.
 - `input_tokens`, `output_tokens`, `total_tokens`, `elapsed_sec` (numbers, optional): copied to the output and included in aggregates computed by function `compute_aggregates()` ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md)). Useful for analyzing your agent.
 
