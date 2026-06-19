@@ -81,11 +81,11 @@ If there is an error during evaluation:
 
 There are three types of error:
 1. The reference item is missing keys requested in the custom evaluation configuration.
-  - Example: `custom_1_error: Reference missing key 'reference_steps'`
-1. The target response record is missing keys requested in the custom evaluation configuration.
-  - Example: `custom_1_error: Actual output missing 'actual_steps'`
-1. The evaluating LLM output does not conform to the custom evaluation configuration.
-  - Example: `custom_1_error: "Expected 6 tab-separated values, got: 0.1\tCustom answer reason"`
+    - Example: `custom_1_error: Reference missing key 'reference_steps'`
+2. The target response record is missing keys requested in the custom evaluation configuration.
+    - Example: `custom_1_error: Actual output missing 'actual_steps'`
+3. The evaluating LLM output does not conform to the custom evaluation configuration.
+    - Example: `custom_1_error: "Expected 6 tab-separated values, got: 0.1\tCustom answer reason"`
 
 ### Recommendations
 
