@@ -65,7 +65,7 @@ Checking whether an actual SPARQL query matches a reference SPARQL query is done
   - If the reference `output_media_type` is `application/sparql-results+json` and the outputs can be parsed as JSON:
     - the output boolean values must equal
 - In all other cases (e.g., `DESCRIBE` queries, `output_media_type` is not `application/sparql-results+json`, actual output cannot be parsed as JSON):
-    - output strings must be identical
+  - output strings must be identical
 
 The algorithm has average time complexity
 
