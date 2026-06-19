@@ -27,7 +27,7 @@ graphrag-eval = "*"
 
 ### Full
 
-Includes metrics that use an LLM ([§ Metrics using LLM](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#llm-based-metrics)):
+Includes metrics that use an LLM ([§ LLM-based metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#llm-based-metrics)):
 - answer relevance
 - answer correctness
 - retrieval steps
@@ -60,7 +60,7 @@ To evaluate answers and/or steps:
             1. Include `actual_answer` in the target response record
         1. For answer correctness metrics ([§ Metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md)):
             1. Include `reference_answer` in the reference item and `actual_answer` in the target response record
-        1. For custom metrics ([§ Custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics)):
+        1. For custom metrics ([§ Custom metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics)):
             1. Define the metrics ([§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md))
             1. Include the reference item and target response record fields specified in the definitions
     1. Configure the LLM ([§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md))
@@ -113,7 +113,7 @@ async def main():
 asyncio.run(main())
 ```
 
-`config_file_path` is optional ([§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md)). Provide it to configure an LLM ([§ LLM use in evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#llm-based-metrics)) or custom metrics ([§ Custom evaluation (custom metrics)](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics)).
+`config_file_path` is optional ([§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md)). Provide it to configure an LLM ([§ LLM use in evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#llm-based-metrics)) or custom metrics ([§ Custom metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics)).
 
 The result `evaluation_results` is a list of objects, one for each reference item ([§ Output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md)) as shown in this [Example output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/output.yaml).
 
