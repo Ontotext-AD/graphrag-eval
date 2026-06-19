@@ -61,7 +61,7 @@ aggregates = compute_aggregates(
 )
 ```
 
-### Example output for custom SPARQL evaluation
+### Example output for custom metrics
 
 With the [example custom metrics configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md#example-configuration-file-with-custom-evaluations), the output is as for [§ Example evaluation results](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/output.yaml), except that it has the following additional keys and example values:
 
