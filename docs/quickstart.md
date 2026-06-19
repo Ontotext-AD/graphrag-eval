@@ -66,7 +66,7 @@ To evaluate answers and/or steps:
      1. Configure the LLM ([§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md))
      1. Set the environment variable for your LLM provider (e.g., `OPENAI_API_KEY`) to hold your LLM API key
 1. To evaluate steps ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md)):
-  1. Include `reference_steps` in reference items and `actual_steps` in target response records
+    1. Include `reference_steps` in reference items and `actual_steps` in target response records
 1. Call `run_evaluation()`, passing the reference dataset, target response records, and optionally a configuration file path ([§ Example code](#example-code))
 1. Call `compute_aggregates()`, passing the evaluation results and the config file path if you passed one to `run_evaluation()` ([§ Example code](#example-code), [§ Aggregate metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/output.md#aggregate-metrics), [§ Example aggregate output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/aggregates.yaml))
 
