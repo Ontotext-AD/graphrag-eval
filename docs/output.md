@@ -6,7 +6,7 @@ The output is a list of objects, one for each reference item. Each output object
 
 - `template_id`: the template id
 - `question_id`: the reference item id
-- `question_text`: the natural language query or request from the reference item
+- `question_text`: the natural language query or request text from the reference item
 - `status`: `"success"` or `"error"`, indicating whether the target response record had an `error` field
 - `error`: (optional) error message copied from the response record, if it had an `error` field
 - `reference_steps`: (optional) copy of the expected steps from the reference item, if specified there. Additional key `matches` is added to matched reference steps.
