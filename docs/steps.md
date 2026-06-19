@@ -19,7 +19,7 @@ Matching considers only actual steps with `status == "success"`. The library tri
 - Each reference step matches a unique actual step
 - The actual step was successful (i.e., it didn’t result in an error)
 - The actual step occurred before all steps matching later groups
-  - Within a reference group, actual steps can be matched regardless of the order in which they were executed.
+    - Within a reference group, actual steps can be matched regardless of the order in which they were executed.
  
 The matching algorithm is as follows:
 
@@ -36,19 +36,19 @@ The match score quantifies how well a reference step aligns with an actual step,
 The match score is determined by the first rule that applies:
 
 - If both steps are named `sparql_query` and the reference step's `output_media_type` is `application/sparql-results+json`:
-  - match score = [SPARQL queries comparison](#sparql-queries-comparison)
+    - match score = [SPARQL queries comparison](#sparql-queries-comparison)
 - If both steps are named `retrieval` and the reference step has key `output`:
-  - match score = [recall@k](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/retrieval-ids.md#context-recallk)
+    - match score = [recall@k](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/retrieval-ids.md#context-recallk)
 - If both steps are named `retrieve_time_series`:
-  - match score = [Time-series comparison](#time-series-comparison)
+    - match score = [Time-series comparison](#time-series-comparison)
 - If both steps are named `retrieve_data_points`:
-  - match score = [Data-points comparison](#data-points-comparison)
+    - match score = [Data-points comparison](#data-points-comparison)
 - If the reference step name is `iri_discovery` and the actual step name is `autocomplete_search`:
-  - match score = 1 if the reference `output` IRI appears as a URI binding in the actual step's JSON `output`, otherwise 0
+    - match score = 1 if the reference `output` IRI appears as a URI binding in the actual step's JSON `output`, otherwise 0
 - If the reference step name is `iri_discovery` and the actual step name is `sparql_query`:
-  - match score = 1 if the reference `output` IRI appears in the actual `output` string, otherwise 0
+    - match score = 1 if the reference `output` IRI appears in the actual `output` string, otherwise 0
 - If the step names are the same and the reference step `output_media_type` is `application/json`:
-  - match score = 1 if the JSON outputs are identical, otherwise 0
+    - match score = 1 if the JSON outputs are identical, otherwise 0
 - Match score = 1 if the outputs are identical, otherwise 0
 
 
@@ -56,16 +56,16 @@ The match score is determined by the first rule that applies:
 
 Checking whether an actual SPARQL query matches a reference SPARQL query is done as follows.
 - If both queries are `SELECT`, then compare their outputs as sets:
-  - If the reference output has $n$ columns, consider all subsets of $n$ columns in the actual output
-  - For each subset and for each column in it, look for its matching reference column by comparing each reference column listed under `required_columns`
-    - Two columns match if all rows have matching values
-      - Floating-point numbers must match up to 8 decimal points
-      - Text values and special types such as duration must match exactly
+    - If the reference output has $n$ columns, consider all subsets of $n$ columns in the actual output
+    - For each subset and for each column in it, look for its matching reference column by comparing each reference column listed under `required_columns`
+        - Two columns match if all rows have matching values
+            - Floating-point numbers must match up to 8 decimal points
+            - Text values and special types such as duration must match exactly
 - If both queries are `ASK`:
-  - If the reference `output_media_type` is `application/sparql-results+json` and the outputs can be parsed as JSON:
-    - the output boolean values must equal
+    - If the reference `output_media_type` is `application/sparql-results+json` and the outputs can be parsed as JSON:
+        - the output boolean values must equal
 - In all other cases (e.g., `DESCRIBE` queries, `output_media_type` is not `application/sparql-results+json`, actual output cannot be parsed as JSON):
-  - output strings must be identical
+    - output strings must be identical
 
 The algorithm has average time complexity
 
@@ -101,14 +101,14 @@ Otherwise, the match score is 0.
 
 Data points are compared using the following algorithm:
 - Compare:
-  - `args.external_id` (string or list; strings are converted to one-item lists, and lists are sorted)
-  - `args.granularity` (unit-normalized; e.g., `15m` equals `15minutes`)
-  - `args.aggregates` (string or list; strings are converted to one-item lists, and lists are sorted)
-  - `args.limit`
+    - `args.external_id` (string or list; strings are converted to one-item lists, and lists are sorted)
+    - `args.granularity` (unit-normalized; e.g., `15m` equals `15minutes`)
+    - `args.aggregates` (string or list; strings are converted to one-item lists, and lists are sorted)
+    - `args.limit`
 - Compare `args.start` and `args.end` anchored to the actual step's `execution_timestamp`:
-  - If the reference time is relative (`now`, `Xs-ago`/`Xm-ago`/`Xh-ago`/`Xd-ago`/`Xw-ago`, and their `-ahead` equivalents) and the actual time is absolute, resolve the reference against `execution_timestamp` and accept if within 60 seconds.
-  - If both are absolute, they must match exactly after conversion to UTC.
-  - If the reference is absolute and the actual is relative, the match score is 0.
+    - If the reference time is relative (`now`, `Xs-ago`/`Xm-ago`/`Xh-ago`/`Xd-ago`/`Xw-ago`, and their `-ahead` equivalents) and the actual time is absolute, resolve the reference against `execution_timestamp` and accept if within 60 seconds.
+    - If both are absolute, they must match exactly after conversion to UTC.
+    - If the reference is absolute and the actual is relative, the match score is 0.
 
 Timezone handling: naive datetimes are treated as UTC; timezone-aware datetimes are normalized to UTC before comparison.
 

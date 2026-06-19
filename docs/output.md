@@ -48,38 +48,54 @@ Function `compute_aggregates()` takes in the computed evaluation metrics and agg
 
 The aggregate metrics are organized as follows:
 - `per_template`: a dictionary mapping a question template identifier to the following statistics:
-  - `number_of_error_samples`: number of target response records for this template that had an `error` field
-  - `number_of_success_samples`: number of target response records for this template that did not have an `error` field
-  - `sum`, `mean`, `median`, `min` and `max` statistics of the following metrics (across the template's reference items where they exist):
-    - `input_tokens`
-    - `output_tokens`
-    - `total_tokens`
-    - `elapsed_sec`
-    - `answer_recall`
-    - `answer_precision`
-    - `answer_f1`
-    - `answer_relevance`
-    - `steps_score`
-    - `retrieval_answer_recall`
-    - `retrieval_answer_precision`
-    - `retrieval_answer_f1`
-    - `retrieval_context_recall`
-    - `retrieval_context_precision`
-    - `retrieval_context_f1`
-  - `steps`:
-    - `total`: a map of step type to the number of times it was executed
-    - `once_per_sample`: a map of step type to the number of reference items for which it was executed
-    - `empty_results`: a map of step type to the number of times the step was executed and returned empty results
-    - `errors`: a map of step type to the number of times the step was executed and resulted in error
+    - `number_of_error_samples`: number of target response records for this template that had an `error` field
+    - `number_of_success_samples`: number of target response records for this template that did not have an `error` field
+    - `sum`, `mean`, `median`, `min` and `max` statistics of the following metrics (across the template's reference items where they exist):
+        - `input_tokens`
+        - `output_tokens`
+        - `total_tokens`
+        - `elapsed_sec`
+        - `answer_recall`
+        - `answer_precision`
+        - `answer_f1`
+        - `answer_relevance`
+        - `steps_score`
+        - `retrieval_answer_recall`
+        - `retrieval_answer_precision`
+        - `retrieval_answer_f1`
+        - `retrieval_context_recall`
+        - `retrieval_context_precision`
+        - `retrieval_context_f1`
+    - `steps`:
+        - `total`: a map of step type to the number of times it was executed
+        - `once_per_sample`: a map of step type to the number of reference items for which it was executed
+        - `empty_results`: a map of step type to the number of times the step was executed and returned empty results
+        - `errors`: a map of step type to the number of times the step was executed and resulted in error
 - `micro`: statistics across reference items, regardless of template. It includes:
-  - `number_of_error_samples`: number of target response records that had an `error` field
-  - `number_of_success_samples`: number of target response records that did not have an `error` field
-  - `steps`: includes:
-      - `total`: a map of step type to the number of times it was executed
-      - `once_per_sample`: a map of step type to the number of reference items for which it was executed
-      - `empty_results`: a map of step type to the number of times the step was executed and returned empty results
-      - `errors`: a map of step type to the number of times the step was executed and resulted in error
-  - `sum`, `mean`, `median`, `min` and `max` statistics of the following metrics (across reference items where they exist):
+    - `number_of_error_samples`: number of target response records that had an `error` field
+    - `number_of_success_samples`: number of target response records that did not have an `error` field
+    - `steps`: includes:
+        - `total`: a map of step type to the number of times it was executed
+        - `once_per_sample`: a map of step type to the number of reference items for which it was executed
+        - `empty_results`: a map of step type to the number of times the step was executed and returned empty results
+        - `errors`: a map of step type to the number of times the step was executed and resulted in error
+    - `sum`, `mean`, `median`, `min` and `max` statistics of the following metrics (across reference items where they exist):
+        - `input_tokens`
+        - `output_tokens`
+        - `total_tokens`
+        - `elapsed_sec`
+        - `answer_recall`
+        - `answer_precision`
+        - `answer_f1`
+        - `answer_relevance`
+        - `retrieval_answer_recall`
+        - `retrieval_answer_precision`
+        - `retrieval_answer_f1`
+        - `retrieval_context_recall`
+        - `retrieval_context_precision`
+        - `retrieval_context_f1`
+        - `steps_score`
+- `macro`: averages across templates, i.e., the mean of each metric per template, averaged. It includes the following means:
     - `input_tokens`
     - `output_tokens`
     - `total_tokens`
@@ -95,21 +111,5 @@ The aggregate metrics are organized as follows:
     - `retrieval_context_precision`
     - `retrieval_context_f1`
     - `steps_score`
-- `macro`: averages across templates, i.e., the mean of each metric per template, averaged. It includes the following means:
-  - `input_tokens`
-  - `output_tokens`
-  - `total_tokens`
-  - `elapsed_sec`
-  - `answer_recall`
-  - `answer_precision`
-  - `answer_f1`
-  - `answer_relevance`
-  - `retrieval_answer_recall`
-  - `retrieval_answer_precision`
-  - `retrieval_answer_f1`
-  - `retrieval_context_recall`
-  - `retrieval_context_precision`
-  - `retrieval_context_f1`
-  - `steps_score`
 
 See [example aggregate output](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/examples/aggregates.yaml).

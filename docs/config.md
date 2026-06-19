@@ -15,34 +15,33 @@ evaluation_results = await run_evaluation(
 The configuration has the following structure:
 
 - `llm`: required for [LLM-based metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#llm-based-metrics). Keys:
-  - `generation`: required. The following keys are required:
-    - `provider`: (`str`) name of the organization providing the generation model, as supported by LiteLLM
-    - `model`: (`str`) name of the generation model
-    - `temperature`: (`float` in the range [0.0, 2.0]) sampling temperature for generation
-    - `max_tokens`: (`int` > 0) maximum number of tokens to generate
-    - Optional keys: parameters to be passed to LiteLLM for generation; used in [answer correctness metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md) and [custom metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics). Examples:
-      - `base_url`: (`str`) base URL for the generation model, alternative to the provider's default URL
-      - `api_key`: (`str`) API key for the generation model, alternative to setting the environment variable corresponding to the provider (e.g., `OPENAI_API_KEY` for OpenAI, `AZURE_OPENAI_API_KEY` for Azure, etc.)
-  - `embedding`: required for [`answer_relevance`](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md).
-      - `provider`: (`str`) name of the organization providing the embedding model
-      - `model`: (`str`) name of the embedding model
-      - Optional keys: parameters to be passed to LiteLLM for embedding:
-        - `api_base`: (`str`) base URL for the embedding model, alternative to the provider's default URL. Used for `answer_relevance`
-        - `api_key`: (`str`) API key for the embedding model, alternative to setting the environment variable corresponding to the provider (e.g., `OPENAI_API_KEY` for OpenAI, `AZURE_OPENAI_API_KEY` for Azure, etc.)
+    - `generation`: required. The following keys are required:
+        - `provider`: (`str`) name of the organization providing the generation model, as supported by LiteLLM
+        - `model`: (`str`) name of the generation model
+        - `temperature`: (`float` in the range [0.0, 2.0]) sampling temperature for generation
+        - `max_tokens`: (`int` > 0) maximum number of tokens to generate
+        - Optional keys: parameters to be passed to LiteLLM for generation; used in [answer correctness metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md) and [custom metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics). Examples:
+            - `base_url`: (`str`) base URL for the generation model, alternative to the provider's default URL
+            - `api_key`: (`str`) API key for the generation model, alternative to setting the environment variable corresponding to the provider (e.g., `OPENAI_API_KEY` for OpenAI, `AZURE_OPENAI_API_KEY` for Azure, etc.)
+    - `embedding`: required for [`answer_relevance`](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md).
+        - `provider`: (`str`) name of the organization providing the embedding model
+        - `model`: (`str`) name of the embedding model
+        - `api_base`: (`str`, optional) base URL for the embedding model, alternative to the provider's default URL. Used for `answer_relevance`
+        - `api_key`: (`str`, optional) API key for the embedding model, alternative to setting the environment variable corresponding to the provider (e.g., `OPENAI_API_KEY` for OpenAI, `AZURE_OPENAI_API_KEY` for Azure, etc.)
 - `custom_evaluations`: (list of the following maps) required nonempty for [custom evaluation](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics). Each map has keys:
-  - `name`: (`str`) name of the evaluation
-  - `inputs`: (`list[str]`) list of input variables drawn from the reference item and target response record. Any combination of:
-    - `question`
-    - `reference_answer`
-    - `reference_steps`
-    - `actual_answer`
-    - `actual_steps`
-  - `steps_keys`: (`list[str]`; required if `inputs` contains `actual_steps` or `reference_steps`) one or both of:
-    - `args`
-    - `output`
-  - `steps_name`: (`str`; required if `inputs` contains `actual_steps` or `reference_steps`) the type (name) of steps to include in the evaluation
-  - `instructions`: (`str`) instructions for the evaluation
-  - `outputs`: (`map[str,str]`) output variable names and descriptions
+    - `name`: (`str`) name of the evaluation
+    - `inputs`: (`list[str]`) list of input variables drawn from the reference item and target response record. Any combination of:
+        - `question`
+        - `reference_answer`
+        - `reference_steps`
+        - `actual_answer`
+        - `actual_steps`
+    - `steps_keys`: (`list[str]`; required if `inputs` contains `actual_steps` or `reference_steps`) one or both of:
+        - `args`
+        - `output`
+    - `steps_name`: (`str`; required if `inputs` contains `actual_steps` or `reference_steps`) the type (name) of steps to include in the evaluation
+    - `instructions`: (`str`) instructions for the evaluation
+    - `outputs`: (`map[str,str]`) output variable names and descriptions
 
 ## Example configuration file with LLM configuration
 
@@ -102,8 +101,8 @@ custom_evaluations:
   -
     name: my_answer_relevance
     inputs:
-      - question
-      - actual_answer
+            - question
+            - actual_answer
     instructions: |
       Evaluate how relevant is the answer to the question.
     outputs:
@@ -112,18 +111,18 @@ custom_evaluations:
   -
     name: sparql_llm_evaluation
     inputs:
-      - question
-      - reference_answer
-      - actual_steps
+            - question
+            - reference_answer
+            - actual_steps
     steps_keys:
-      - output
+            - output
     steps_name: sparql
     instructions: |
       Divide the reference answer into claims and try to match each claim to the
       SPARQL query results. Count the:
-      - reference claims
-      - SPARQL results
-      - matching claims
+            - reference claims
+            - SPARQL results
+            - matching claims
     outputs:
       sparql_recall: Number of matching claims as a fraction of reference claims (fraction 0-1)
       sparql_precision: Number of matching claims as a fraction of SPARQL results (fraction 0-1)

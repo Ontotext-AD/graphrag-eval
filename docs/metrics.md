@@ -8,7 +8,7 @@ Below are the categories of supported metrics. Each metric has required fields f
 ## Deterministic metrics
 
 - Steps score: Correctness of the target response record's actual steps relative to the reference item's expected steps ([§ Steps score](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/steps.md#steps-score))
-  - `steps_score`
+    - `steps_score`
 
 
 ## LLM-based metrics
@@ -16,23 +16,23 @@ Below are the categories of supported metrics. Each metric has required fields f
 All of the following metrics use an LLM. The LLM must be configured in a [configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md) file and its path passed as parameter `config_file_path=` to `run_evaluation()`. Specifically, all LLM-based metrics require a generation config.
 
 - [RAGAS answer relevance](https://docs.ragas.io/en/v0.4.3/concepts/metrics/available_metrics/answer_relevance/). Also requires an embedding config.
-  - `answer_relevance`
+    - `answer_relevance`
 
 - Answer correctness: compare claims in `actual_answer` to claims in `reference_answer`. The claims are extracted from each final response text, counted and compared using an LLM. The counts are used to compute the metrics.
-  - `answer_recall`
-  - `answer_precision`
-  - `answer_f1`
+    - `answer_recall`
+    - `answer_precision`
+    - `answer_f1`
 
 - Vector retrieval: compare retrieved context claims to reference claims, as with answer correctness:
-  - **vs. reference answer**:
-    - `retrieval_answer_recall`
-    - `retrieval_answer_precision`
-    - `retrieval_answer_f1`
+    - **vs. reference answer**:
+        - `retrieval_answer_recall`
+        - `retrieval_answer_precision`
+        - `retrieval_answer_f1`
 
-  - **vs. reference context**:
-    - `retrieval_context_recall`
-    - `retrieval_context_precision`
-    - `retrieval_context_f1`
+    - **vs. reference context**:
+        - `retrieval_context_recall`
+        - `retrieval_context_precision`
+        - `retrieval_context_f1`
 
 - [custom metrics](#custom-metrics)
 
