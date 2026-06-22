@@ -26,7 +26,7 @@ A reference dataset is a list of question "template" dicts, each of which contai
             - Retrieval: tool-specific arguments
             - Time-series: keys such as `mrid`, `limit`
             - Data points: keys such as `external_id`, `granularity`, `aggregates`, `start`, `end`, `limit`
-        - `output` (string): Expected output. For steps that compare structured results, provide a JSON-encoded string of the structure (e.g., SPARQL JSON results, retrieval contexts).
+        - `output` (`str`): Expected output. For steps that compare structured results, provide a JSON-encoded string of the structure (e.g., SPARQL JSON results, retrieval contexts).
         - `output_media_type`: (optional, one of: missing, `application/sparql-results+json`, `application/json`) Controls how `output` is parsed and compared to actual output
         - `ordered`: (optional; default `false`) For SPARQL `SELECT` steps, whether row order matters. `true`: the actual result rows must be in the same order; `false`: result rows are matched as a set. Ignored for other step types.
         - `required_columns`: (optional list) For SPARQL `SELECT` steps, binding names required for query results that must match
@@ -46,8 +46,8 @@ The target data is a dict mapping each reference item `id` to one response recor
         - Retrieval steps (`name == "retrieval"`): must include `k` (the cutoff) so that ID-based recall@k can be computed against reference retrieval contexts.
         - Time series (`name == "retrieve_time_series"`): typically includes `mrid`, `limit`.
         - Data points (`name == "retrieve_data_points"`): typically includes `external_id`, `granularity`, `aggregates`, `start`, `end`, `limit`.
-    - `status` (string): Required for step matching and step aggregation. Steps with `status == "success"` are eligible for matching; steps with `status == "error"` are counted as step errors in aggregate metrics.
-    - `output` (string): The actual output from the step. Required for successful steps that may be matched; ignored for steps with `status == "error"`
+    - `status` (`str`): Required for step matching and step aggregation. Steps with `status == "success"` are eligible for matching; steps with `status == "error"` are counted as step errors in aggregate metrics.
+    - `output` (`str`): The actual output from the step. Required for successful steps that may be matched; ignored for steps with `status == "error"`
         - Retrieval: a JSON array of context objects. Each object should contain an `id` (required for ID-based recall@k). If you want text-based retrieval metrics (LLM-backed) to run, include the context text as well (e.g., `{"id": "...", "text": "..."}`).
         - SPARQL: a JSON object in SPARQL Results JSON format for `SELECT` or `ASK`.
     - `execution_timestamp`: Required for `retrieve_data_points` step comparison; used as the anchor for relative `start`/`end` times
