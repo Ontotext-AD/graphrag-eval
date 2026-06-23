@@ -27,7 +27,7 @@ The matching algorithm is as follows:
 - If all steps in the group are matched, then proceed to the previous group, matching actual steps executed before the earliest actual step already matched for the current group.
 - If some steps in the group are not matched, then stop matching and compute the score from the matches found so far.
 
-The output contains section `reference_steps` structured as the input `reference_steps`. Each matched reference step includes the additional key `matches` (string) containing `<actual_step.id>` of the matching actual step.
+The output contains section `reference_steps` structured as the input `reference_steps`. Each matched reference step includes the additional key `matches` (`str`) containing `<actual_step.id>` of the matching actual step.
 
 ## Match score
 
@@ -101,9 +101,9 @@ Otherwise, the match score is 0.
 
 Data points are compared using the following algorithm:
 - Compare:
-    - `args.external_id` (string or list; strings are converted to one-item lists, and lists are sorted)
-    - `args.granularity` (unit-normalized; e.g., `15m` equals `15minutes`)
-    - `args.aggregates` (string or list; strings are converted to one-item lists, and lists are sorted)
+    - `args.external_id` (`str` or `list`; strings are converted to one-item lists, and lists are sorted)
+    - `args.granularity` (`str`; unit-normalized; e.g., `15m` equals `15minutes`)
+    - `args.aggregates` (`str` or `list`; strings are converted to one-item lists, and lists are sorted)
     - `args.limit`
 - Compare `args.start` and `args.end` anchored to the actual step's `execution_timestamp`:
     - If the reference time is relative (`now`, `Xs-ago`/`Xm-ago`/`Xh-ago`/`Xd-ago`/`Xw-ago`, and their `-ahead` equivalents) and the actual time is absolute, resolve the reference against `execution_timestamp` and accept if within 60 seconds.
