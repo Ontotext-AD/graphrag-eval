@@ -135,3 +135,27 @@ To evaluate only correctness of final answers (system responses), you can clone 
    ```
    OPENAI_API_KEY=XXX poetry run answer-correctness -i reference.tsv -o evaluations.tsv -c conf.yaml
    ```
+where the `conf.yaml` file content is:
+```yaml
+llm:
+  generation:
+    provider: openai
+    model: gpt-5.4-2026-03-05
+```
+
+or
+
+```yaml
+llm:
+  generation:
+    provider: openai
+    model: gpt-5.4-2026-03-05
+answer_correctness:
+  prompt: Some instructions here which specify the
+    # Output format
+    <v1><tab><v2><tab><v3><tab><v4>
+```
+
+if you want to override the default prompt.
+For more details about the format, check [§ Configuration](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/config.md),
+but keep in mind only answer correctness metric is calculated from this script.

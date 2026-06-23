@@ -18,12 +18,11 @@ CONFIG_FILE_PATH = DATA_DIR / "config-openai.yaml"
 def mock_answer_correctness_evaluator(monkeypatch):
     from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
 
-    async def mock_agenerate_correctness(self):
+    async def mock_agenerate_correctness(self, prompt):
         return "2\t2\t2\tanswer correctness reason"
 
-    evaluator_instance = AnswerCorrectnessEvaluator(llm=MagicMock())
     monkeypatch.setattr(
-        evaluator_instance,
+        AnswerCorrectnessEvaluator,
         "_agenerate",
         mock_agenerate_correctness
     )

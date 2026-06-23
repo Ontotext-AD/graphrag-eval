@@ -1,54 +1,210 @@
-import builtins
-import io
-from unittest.mock import MagicMock
+import csv
+from unittest.mock import MagicMock, AsyncMock, patch
 
 import pytest
 
-from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
-from graphrag_eval.cli import answer_correctness
+from graphrag_eval.answer_correctness import InvalidPromptException
+from graphrag_eval.cli.answer_correctness import evaluate_and_write, run
 
 
 @pytest.mark.asyncio
-async def test_evaluate_answers(monkeypatch, tmp_path):
-    mock_prompt_content = "Prompt with {question} {reference_answer} {actual_answer}"
-    mock_input_content = "Question\tReference answer\tActual answer\nQ1\tRef\tAns\n"
+async def test_evaluate_and_write_success(tmp_path):
+    input_file = tmp_path / "input.tsv"
+    output_file = tmp_path / "output.tsv"
 
-    prompt_file_path = "prompt_file_path"
-    in_file_path = "in_file_path"
-    out_file_path = tmp_path / "out_file_name"
+    input_headers = ["Question", "Reference answer", "Actual answer"]
+    input_rows = [
+        {
+            "Question": "What is Python?",
+            "Reference answer": "A language.",
+            "Actual answer": "A programming language."
+        },
+        {
+            "Question": "What is 2+2?",
+            "Reference answer": "4",
+            "Actual answer": "4"
+        },
+        {
+            "Question": "Is Sofia the capital of Bulgaria?",
+            "Reference answer": "Yes",
+            "Actual answer": ""
+        },
+        {
+            "Question": "Why is the sky blue?",
+            "Reference answer": "In Rayleigh scattering, shorter wavelengths are scattered more",
+            "Actual answer": "Gases scatter sunlight"
+        },
+    ]
 
-    # Mock open()
-    real_open = builtins.open
+    with open(input_file, "w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=input_headers, delimiter="\t")
+        writer.writeheader()
+        writer.writerows(input_rows)
 
-    def mock_open(path, *args, **kwargs):
-        str_path = str(path)
-        if str_path == prompt_file_path:
-            return io.StringIO(mock_prompt_content)
-        elif str_path == in_file_path:
-            return io.StringIO(mock_input_content)
-        return real_open(path, *args, **kwargs)
+    mock_evaluator = MagicMock()
 
-    monkeypatch.setattr(builtins, "open", mock_open)
-    answer_correctness_evaluator = AnswerCorrectnessEvaluator(llm=MagicMock()).__class__
+    mock_evaluator.evaluate_answer = AsyncMock()
+    mock_evaluator.evaluate_answer.side_effect = [
+        ("1", "1", "1", "Good match"),
+        ("1", "1", "1", "Perfect match"),
+        ValueError("The question of the reference or the actual answer is a blank string!"),
+        Exception("LLM Timeout Error"),
+    ]
 
-    async def mock_agenerate(self, prompt):
-        return "2\t2\t2\treason"
-
-    monkeypatch.setattr(
-        answer_correctness_evaluator,
-        "_agenerate",
-        mock_agenerate
+    await evaluate_and_write(
+        input_tsv_file_path=input_file,
+        output_tsv_file_path=output_file,
+        evaluator=mock_evaluator
     )
-    monkeypatch.setattr(answer_correctness, "tqdm", lambda x: x)
 
-    # Run
-    await answer_correctness.evaluate_and_write(
-        in_file_path,
-        out_file_path,
-        evaluator=AnswerCorrectnessEvaluator(llm=MagicMock())
+    assert mock_evaluator.evaluate_answer.call_count == 4
+    mock_evaluator.evaluate_answer.assert_any_call(
+        "What is Python?",
+        "A language.",
+        "A programming language."
+    )
+    mock_evaluator.evaluate_answer.assert_any_call(
+        "What is 2+2?",
+        "4",
+        "4"
+    )
+    mock_evaluator.evaluate_answer.assert_any_call(
+        "Is Sofia the capital of Bulgaria?",
+        "Yes",
+        ""
+    )
+    mock_evaluator.evaluate_answer.assert_any_call(
+        "Why is the sky blue?",
+        "In Rayleigh scattering, shorter wavelengths are scattered more",
+        "Gases scatter sunlight"
     )
 
-    # Verify output file content
-    written = out_file_path.read_text().splitlines()
-    assert written[0].split("\t") == ["#Reference", "#PTarget", "#Matching", "Reasoning", "Error"]
-    assert written[1].split("\t") == ["2", "2", "2", "reason", ""]
+    with open(output_file, "r", encoding="utf-8") as f:
+        reader = csv.reader(f, delimiter="\t")
+        output_data = list(reader)
+
+    expected_headers = ["#Reference", "#PTarget", "#Matching", "Reasoning", "Error"]
+    assert output_data[0] == expected_headers
+    assert output_data[1] == ["1", "1", "1", "Good match", ""]
+    assert output_data[2] == ["1", "1", "1", "Perfect match", ""]
+    assert output_data[3] == [
+        "", "", "", "", "The question of the reference or the actual answer is a blank string!"
+    ]
+    assert output_data[4] == ["", "", "", "", "LLM Timeout Error"]
+
+
+@pytest.mark.asyncio
+async def test_evaluate_and_write_wrong_input_format(tmp_path):
+    input_file = tmp_path / "corrupted_input.tsv"
+    output_file = tmp_path / "output.tsv"
+
+    wrong_headers = ["Question", "WrongColumn1", "WrongColumn2"]
+    wrong_rows = [
+        {"Question": "What is Python?", "WrongColumn1": "Some data", "WrongColumn2": "More data"}
+    ]
+
+    with open(input_file, "w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=wrong_headers, delimiter="\t")
+        writer.writeheader()
+        writer.writerows(wrong_rows)
+
+    mock_evaluator = MagicMock()
+    mock_evaluator.evaluate_answer = AsyncMock()
+
+    with pytest.raises(ValueError, match="Unexpected input format!"):
+        await evaluate_and_write(
+            input_tsv_file_path=input_file,
+            output_tsv_file_path=output_file,
+            evaluator=mock_evaluator
+        )
+
+    mock_evaluator.evaluate_answer.assert_not_called()
+
+    with open(output_file, "r", encoding="utf-8") as f:
+        reader = csv.reader(f, delimiter="\t")
+        output_data = list(reader)
+
+    assert len(output_data) == 1
+    assert output_data[0] == ["#Reference", "#PTarget", "#Matching", "Reasoning", "Error"]
+
+
+@patch("graphrag_eval.cli.answer_correctness.llm_factory.create_llm")
+def test_run_with_custom_prompt(mock_create_llm, tmp_path):
+    config_path = tmp_path / "config.yaml"
+    input_path = tmp_path / "input.tsv"
+    output_path = tmp_path / "output.tsv"
+
+    custom_prompt = """You are an expert evaluator assessing factual criteria...
+{question}
+{reference_answer}
+{actual_answer}
+"""
+    with open(config_path, "w", encoding="utf-8") as f:
+        f.write(f"answer_correctness:\n")
+        f.write(f"  prompt: \"{custom_prompt}\"\n")
+
+    with open(input_path, "w", encoding="utf-8", newline="") as f:
+        writer = csv.writer(f, delimiter="\t")
+        writer.writerow(["Question", "Reference answer", "Actual answer"])
+        writer.writerow(["What is 1+1?", "2", "3"])
+
+    mock_response = MagicMock()
+    mock_response.choices = [
+        MagicMock(message=MagicMock(content="1\t1\t1\tThe response matches perfectly."))
+    ]
+
+    mock_llm = MagicMock()
+    mock_llm.agenerate = AsyncMock(return_value=mock_response)
+    mock_create_llm.return_value = mock_llm
+
+    run(
+        config_yaml_file_path=config_path,
+        input_tsv_file_path=input_path,
+        output_tsv_file_path=output_path
+    )
+
+    mock_create_llm.assert_called_once()
+    called_prompt = mock_llm.agenerate.call_args[0][0]
+    assert ("""You are an expert evaluator assessing factual criteria... What is 1+1? 2 3 """ ==
+            called_prompt)
+
+    assert output_path.exists()
+    with open(output_path, "r", encoding="utf-8") as f:
+        reader = csv.reader(f, delimiter="\t")
+        output_data = list(reader)
+
+    assert output_data[0] == ["#Reference", "#PTarget", "#Matching", "Reasoning", "Error"]
+    assert output_data[1] == ["1", "1", "1", "The response matches perfectly.", ""]
+
+
+@patch("graphrag_eval.cli.answer_correctness.llm_factory.create_llm")
+def test_run_with_invalid_prompt(mock_create_llm, tmp_path):
+    config_path = tmp_path / "config.yaml"
+    input_path = tmp_path / "input.tsv"
+    output_path = tmp_path / "output.tsv"
+
+    custom_prompt = "You are an expert evaluator assessing factual criteria...\\n{unexpected}\\n"
+
+    with open(config_path, "w", encoding="utf-8") as f:
+        f.write("answer_correctness:\n")
+        f.write(f"  prompt: \"{custom_prompt}\"\n")
+
+    with open(input_path, "w", encoding="utf-8", newline="") as f:
+        writer = csv.writer(f, delimiter="\t")
+        writer.writerow(["Question", "Reference answer", "Actual answer"])
+        writer.writerow(["What is 1+1?", "2", "3"])
+
+    mock_llm = MagicMock()
+    mock_create_llm.return_value = mock_llm
+
+    with pytest.raises(InvalidPromptException,
+                       match="Invalid prompt template. Must only contain placeholders: "
+                             "{question}, {reference_answer}, and {actual_answer}. Original "
+                             "error: 'unexpected'"):
+        run(
+            config_yaml_file_path=config_path,
+            input_tsv_file_path=input_path,
+            output_tsv_file_path=output_path
+        )
+
+    mock_llm.agenerate.assert_not_called()

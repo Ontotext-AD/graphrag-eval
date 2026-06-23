@@ -43,8 +43,15 @@ The configuration has the following structure:
     - `instructions`: (`str`) instructions for the evaluation
     - `outputs`: (`map[str,str]`) output variable names and descriptions
 - `answer_correctness`
-    - `prompt`: (`str`) instructions for the LLM on how to calculate the 
-    - `prompt`: (`str`, default [here](https://github.com/Ontotext-AD/graphrag-eval/blob/main/graphrag_eval/prompts/template.md)) Template for instructions to the LLM on how to compute the answer correctness. Must contain placeholders `{question}`, `{reference_answer}` and `{actual_answer}` and no others. To include `{` or `}` in the final prompt, use `{{` and `}}` in the template.
+    - `prompt`: (`str`, default [here](https://github.com/Ontotext-AD/graphrag-eval/blob/main/graphrag_eval/prompts/template.md)) 
+    Template for instructions to the LLM on how to compute the answer correctness. 
+    Must contain placeholders `{question}`, `{reference_answer}` and `{actual_answer}` and no others. 
+    To include `{` or `}` in the final prompt, use `{{` and `}}` in the template.
+    The template must include instructions to the LLM on how to format the output, e.g.: 
+```md
+# Output format
+<v1><tab><v2><tab><v3><tab><v4>
+```
 
 ## Example configuration file with LLM configuration
 

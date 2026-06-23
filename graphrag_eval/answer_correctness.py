@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-from graphrag_eval.util import compute_f1, singleton
+from graphrag_eval.util import compute_f1
 
 
 def load_default_prompt() -> str:
@@ -14,7 +14,12 @@ class AnswerCorrectnessConfig(BaseModel):
     prompt: str = Field(default_factory=load_default_prompt)
 
 
-@singleton
+class InvalidPromptException(Exception):
+    def __init__(self, message="The prompt template is invalid and cannot be formatted."):
+        self.message = message
+        super().__init__(self.message)
+
+
 class AnswerCorrectnessEvaluator:
     def __init__(
         self,
@@ -22,8 +27,24 @@ class AnswerCorrectnessEvaluator:
         config: AnswerCorrectnessConfig | None = None,
     ):
         self.config = config or AnswerCorrectnessConfig()
+        self.__validate_prompt_template(self.config.prompt)
         self.prompt_template = self.config.prompt
         self.llm = llm
+
+    @staticmethod
+    def __validate_prompt_template(prompt_template: str):
+        try:
+            prompt_template.format(
+                question="Q?",
+                reference_answer="R",
+                actual_answer="A",
+            )
+        except Exception as exc:
+            raise InvalidPromptException(
+                "Invalid prompt template. Must only contain placeholders: "
+                "{question}, {reference_answer}, and {actual_answer}. "
+                f"Original error: {exc}"
+            ) from exc
 
     async def _agenerate(self, prompt):
         """Wrapper method for easier testing"""

@@ -12,27 +12,56 @@ from graphrag_eval.evaluation import Config
 
 
 def parse_args() -> argparse.Namespace:
-    parser = ArgumentParser()
-    parser.add_argument("-i", "--in-file", type=str, required=True)
-    parser.add_argument("-o", "--out-file", type=str, required=True)
-    parser.add_argument("-c", "--config-path", type=Path, required=True)
+    parser = ArgumentParser(
+        description="Calculates answer correctness over the entries from the input tsv file and "
+                    "stores the output in the output tsv file.",
+    )
+    parser.add_argument(
+        "-i",
+        "--input-tsv-file-path",
+        type=Path,
+        required=True,
+        help="Input tsv file path with columns `Question`, `Reference answer` and `Actual answer`",
+    )
+    parser.add_argument(
+        "-o",
+        "--output-tsv-file-path",
+        type=Path,
+        required=True,
+        help="Output tsv file path with columns `#Reference`, `#PTarget`, `#Matching`, "
+             "`Reasoning`, `Error`",
+    )
+    parser.add_argument(
+        "-c",
+        "--config-yaml-file-path",
+        type=Path,
+        required=True,
+        help="Config yaml file path with definition of the LLM to use and optionally a custom "
+             "prompt.",
+    )
     return parser.parse_args()
 
 
 async def evaluate_and_write(
-    in_file_path: str | Path,
-    out_file_path: str | Path,
+    input_tsv_file_path: Path,
+    output_tsv_file_path: Path,
     evaluator: AnswerCorrectnessEvaluator,
 ) -> None:
-    with open(in_file_path, encoding="utf-8") as f:
+    with open(input_tsv_file_path, encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
         rows = [row for row in reader]
-    print(f"Writing results to {out_file_path}")
-    Path(out_file_path).parent.mkdir(parents=True, exist_ok=True)
-    with open(out_file_path, "w", encoding="utf-8") as f:
+    print(f"Writing results to {output_tsv_file_path}")
+    output_tsv_file_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_tsv_file_path, "w", encoding="utf-8") as f:
         writer = csv.writer(f, delimiter="\t")
         writer.writerow(["#Reference", "#PTarget", "#Matching", "Reasoning", "Error"])
+
         for row in tqdm(rows):
+            if "Question" not in row or \
+                "Reference answer" not in row or \
+                "Actual answer" not in row:
+                raise ValueError("Unexpected input format!")
+
             try:
                 vals = await evaluator.evaluate_answer(
                     row["Question"],
@@ -46,16 +75,31 @@ async def evaluate_and_write(
             f.flush()
 
 
-def main():
-    args = parse_args()
-    config = Config.parse(args.config_path)
+def run(
+    config_yaml_file_path: Path,
+    input_tsv_file_path: Path,
+    output_tsv_file_path: Path,
+):
+    config = Config.parse(config_yaml_file_path)
     ragas_llm = llm_factory.create_llm(config)
     if ragas_llm is None:
         raise ValueError("LLM must be configured to calculate the answer correctness!")
     else:
-        evaluator = AnswerCorrectnessEvaluator(llm=ragas_llm)
+        evaluator = AnswerCorrectnessEvaluator(
+            llm=ragas_llm,
+            config=config.answer_correctness,
+        )
         asyncio.run(evaluate_and_write(
-            args.in_file,
-            args.out_file,
+            input_tsv_file_path,
+            output_tsv_file_path,
             evaluator,
         ))
+
+
+def main():
+    args = parse_args()
+    run(
+        args.config_yaml_file_path,
+        args.input_tsv_file_path,
+        args.output_tsv_file_path,
+    )
