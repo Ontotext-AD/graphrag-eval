@@ -12,7 +12,7 @@ async def test_retrieval_answer():
     with open(path, encoding="utf-8") as f:
         config_dict = yaml.safe_load(f)
     config = Config(**config_dict)
-    ragas_llm = llm_factory.create_llm(config)
+    ragas_llm = llm_factory.create_llm(config.llm)
 
     evaluator = Evaluator(ragas_llm)
     result = await evaluator.get_retrieval_evaluation_dict(

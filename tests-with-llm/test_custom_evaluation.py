@@ -1,16 +1,18 @@
-import os
 from copy import deepcopy
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import yaml
+from ragas.embeddings.base import BaseRagasEmbedding
+from ragas.llms.base import InstructorBaseRagasLLM
 
 from graphrag_eval import (
     compute_aggregates,
     run_evaluation,
 )
 from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+from graphrag_eval.answer_relevance import AnswerRelevanceEvaluator
 from graphrag_eval.custom_evaluation import CustomEvaluator
 from tests.util import read_responses
 
@@ -29,23 +31,46 @@ def mock_answer_correctness_evaluator(monkeypatch):
     )
 
 
-@pytest.fixture(scope="session", autouse=True)
-def set_env():
-    os.environ["OPENAI_API_KEY"] = "fake-key"
-
-
 def _mock_common_calls(monkeypatch):
+    async_mock = AsyncMock(return_value=MagicMock(value=0.9))
+
+    from ragas.metrics.collections import AnswerRelevancy
+    monkeypatch.setattr(AnswerRelevancy, "ascore", async_mock)
+
     from graphrag_eval.steps.retrieval_answer import (
         ContextRecall,
         ContextPrecision
     )
-    from graphrag_eval.answer_relevance import AnswerRelevancy
-
-    mock = AsyncMock(return_value=MagicMock(value=0.9))
-    monkeypatch.setattr(AnswerRelevancy, "ascore", mock)
-    monkeypatch.setattr(ContextRecall, "ascore", mock)
-    monkeypatch.setattr(ContextPrecision, "ascore", mock)
+    monkeypatch.setattr(ContextRecall, "ascore", async_mock)
+    monkeypatch.setattr(ContextPrecision, "ascore", async_mock)
     mock_answer_correctness_evaluator(monkeypatch)
+
+    def mock_init_evaluators(config_path):
+        mock_llm = MagicMock(spec=InstructorBaseRagasLLM)
+        evaluators = []
+        answer_relevance_evaluator = AnswerRelevanceEvaluator(
+            mock_llm,
+            MagicMock(spec=BaseRagasEmbedding)
+        )
+        evaluators.append(answer_relevance_evaluator)
+        answer_correctness_evaluator = AnswerCorrectnessEvaluator(
+            ragas_llm=mock_llm
+        )
+        evaluators.append(answer_correctness_evaluator)
+        config = evaluation.Config.parse(config_path)
+        custom_evaluators = CustomEvaluator.from_config(
+            mock_llm, config.custom_evaluations
+        )
+        evaluators.extend(custom_evaluators)
+
+        return evaluators, mock_llm
+
+    from graphrag_eval import evaluation
+    monkeypatch.setattr(
+        evaluation,
+        "parse_config_and_init_evaluators",
+        mock_init_evaluators
+    )
 
 
 @pytest.mark.asyncio
@@ -69,8 +94,8 @@ async def test_run_custom_evaluation_ok(monkeypatch):
             return "0.5\t0.67\tThere are 4 reference claims and 3 actual " \
                    "claims; 2 claims match"
         if i == 3:
-            return "0.75\t0.6\tThe reference answer has 4 claims; there are 5 " \
-                   "SPARQL results; 3 claims match"
+            return "0.75\t0.6\tThe reference answer has 4 claims; " \
+                   "there are 5 SPARQL results; 3 claims match"
         return "0.0\tDefault mock fallback response"
 
     monkeypatch.setattr(CustomEvaluator, "_agenerate", mock_agenerate)
@@ -145,8 +170,8 @@ async def test_run_custom_evaluation_config_error(monkeypatch):
         file_path = DATA_DIR / f"evaluation_{i}.yaml"
         with open(file_path) as f:
             eval_dicts = yaml.safe_load(f)
-        for eval in eval_dicts:
-            reserved_keys |= eval.keys()
+        for eval_dict in eval_dicts:
+            reserved_keys |= eval_dict.keys()
     for key in reserved_keys:
         error_config = deepcopy(correct_config)
         error_config["custom_evaluations"][0]["outputs"][key] = "invalid"

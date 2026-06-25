@@ -1,13 +1,13 @@
 import json
-import yaml
 from collections import defaultdict
 from collections.abc import Sequence
 from pathlib import Path
 from statistics import mean, median
 from typing import Any, Collection, Iterable
 
-from . import evaluation
+import yaml
 
+from . import evaluation
 
 METRICS = [
     "answer_recall",
@@ -155,7 +155,7 @@ def compute_micro_stats(
 ) -> dict:
     if custom_metrics is None:
         custom_metrics = []
-    
+
     values = number_of_samples_per_template_by_status.values()
     micro_summary = defaultdict(dict, {
         "number_of_error_samples": sum(v["error"] for v in values),
@@ -197,7 +197,7 @@ def compute_macro_stats(
 ) -> dict:
     if custom_metrics is None:
         custom_metrics = []
-    
+
     macro_summary = defaultdict(dict)
     for metric in METRICS + custom_metrics:
         means = [

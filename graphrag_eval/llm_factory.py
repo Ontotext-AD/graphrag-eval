@@ -1,6 +1,12 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field
+
+if TYPE_CHECKING:
+    from ragas.llms.base import InstructorBaseRagasLLM
+    from ragas.embeddings.base import BaseRagasEmbeddings, BaseRagasEmbedding
 
 
 class GenerationConfig(BaseModel):
@@ -17,18 +23,20 @@ class EmbeddingConfig(BaseModel):
     model_config = ConfigDict(extra='allow')
 
 
-class Config(BaseModel):
+class LLMConfig(BaseModel):
     generation: GenerationConfig
     embedding: EmbeddingConfig | None = None
 
 
-def create_llm(config: "evaluation.Config") -> Optional["InstructorBaseRagasLLM"]:
-    if config.llm:
+def create_llm(
+    config: LLMConfig | None
+) -> InstructorBaseRagasLLM | None:
+    if config:
         import litellm
         from ragas.llms import llm_factory
 
         litellm.drop_params = True  # Remove unsupported params from requests
-        params = config.llm.generation.model_dump()
+        params = config.generation.model_dump()
         ragas_llm = llm_factory(
             provider="litellm",
             model=f"{params.pop('provider')}/{params.pop('model')}",
@@ -40,13 +48,15 @@ def create_llm(config: "evaluation.Config") -> Optional["InstructorBaseRagasLLM"
     return None
 
 
-def create_embedder(config: "evaluation.Config") -> Optional["BaseRagasEmbedding"]:
-    if config.llm and config.llm.embedding:
+def create_embedder(
+    config: LLMConfig | None
+) -> BaseRagasEmbeddings | BaseRagasEmbedding | None:
+    if config and config.embedding:
         import litellm
         from ragas.embeddings.base import embedding_factory
 
         litellm.drop_params = True  # Remove unsupported params from requests
-        params = config.llm.embedding.model_dump()
+        params = config.embedding.model_dump()
         ragas_embedder = embedding_factory(
             provider="litellm",
             model=f"{params.pop('provider')}/{params.pop('model')}",

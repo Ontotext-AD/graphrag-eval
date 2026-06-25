@@ -4,7 +4,7 @@ import pytest
 import yaml
 
 from graphrag_eval import llm_factory
-from graphrag_eval.answer_relevance import Evaluator
+from graphrag_eval.answer_relevance import AnswerRelevanceEvaluator
 from graphrag_eval.evaluation import Config
 
 
@@ -17,13 +17,13 @@ async def test_answer_relevance():
     config_dict["llm"]["generation"]["api_key"] = os.getenv("AZURE_OPENAI_GENERATION_KEY")
     config_dict["llm"]["embedding"]["api_key"] = os.getenv("AZURE_OPENAI_EMBEDDING_KEY")
     config = Config(**config_dict)
-    ragas_llm = llm_factory.create_llm(config)
-    ragas_embedder = llm_factory.create_embedder(config)
+    ragas_llm = llm_factory.create_llm(config.llm)
+    ragas_embedder = llm_factory.create_embedder(config.llm)
 
-    evaluator = Evaluator(ragas_llm, ragas_embedder)
-    result = await evaluator.get_relevance_dict(
-        question_text="Why is the sky blue?",
-        actual_answer="Oxygen makes it blue",
+    evaluator = AnswerRelevanceEvaluator(ragas_llm, ragas_embedder)
+    result = await evaluator.evaluate(
+        {"question_text": "Why is the sky blue?"},
+        {"actual_answer": "Oxygen makes it blue"},
     )
     assert "answer_relevance_error" not in result
     assert "answer_relevance" in result

@@ -50,6 +50,9 @@ See [§ Example configuration file with custom evaluation](https://github.com/On
 ### Example call to evaluate using custom metrics
 
 ```python
+from graphrag_eval import run_evaluation, compute_aggregates
+
+
 evaluation_results = await run_evaluation(
     reference_qa_dataset, 
     chat_responses, 

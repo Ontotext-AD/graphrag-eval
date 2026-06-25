@@ -12,7 +12,7 @@ async def test_answer_correctness():
     with open(config_path, encoding="utf-8") as f:
         config_dict = yaml.safe_load(f)
     config = Config(**config_dict)
-    ragas_llm = llm_factory.create_llm(config)
+    ragas_llm = llm_factory.create_llm(config.llm)
 
     reference = {
         "template_id": "geography",
@@ -25,8 +25,8 @@ async def test_answer_correctness():
         "actual_answer": "The capital of Bulgaria is Sofia"
     }
 
-    evaluator = AnswerCorrectnessEvaluator(llm=ragas_llm)
-    result = await evaluator.get_correctness_dict(reference, actual)
+    evaluator = AnswerCorrectnessEvaluator(ragas_llm=ragas_llm)
+    result = await evaluator.evaluate(reference, actual)
     assert isinstance(result["answer_recall"], float)
     assert isinstance(result["answer_precision"], float)
     assert isinstance(result["answer_f1"], float)

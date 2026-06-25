@@ -18,7 +18,7 @@ The output is a list of objects, one for each reference item. Each output object
 - `answer_recall`: (optional) `answer_matching_claims_count / answer_reference_claims_count`
 - `answer_precision`: (optional) `answer_matching_claims_count / answer_actual_claims_count`
 - `answer_correctness_reason`: (optional) LLM reasoning in extracting and matching claims from `reference_answer` and `actual_answer`
-- `answer_eval_error`: (optional) error message if answer evaluation failed
+- `answer_correctness_error`: (optional) error message if answer correctness evaluation failed
 - `answer_f1`: (optional) Harmonic mean of `answer_recall` and `answer_precision`
 - `answer_relevance`: (optional `float` in [0, 1]) answer relevance score
 - `answer_relevance_error`: (optional) error message if answer relevance evaluation failed
