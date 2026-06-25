@@ -18,8 +18,8 @@ The configuration has the following structure:
     - `generation`: required. The following keys are required:
         - `provider`: (`str`) name of the organization providing the generation model, as supported by LiteLLM
         - `model`: (`str`) name of the generation model
-        - `temperature`: (`float` in the range [0.0, 2.0]) sampling temperature for generation
-        - `max_tokens`: (`int` > 0) maximum number of tokens to generate
+        - `temperature`: (`float` in the range [0.0, 2.0], default=0.0) sampling temperature for generation
+        - `max_tokens`: (`int` > 0, defaults to None) maximum number of tokens to generate
         - Optional keys: parameters to be passed to LiteLLM for generation; used in [answer correctness metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md) and [custom metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md#custom-metrics). Examples:
             - `base_url`: (`str`) base URL for the generation model, alternative to the provider's default URL
             - `api_key`: (`str`) API key for the generation model, alternative to setting the environment variable corresponding to the provider (e.g., `OPENAI_API_KEY` for OpenAI, `AZURE_OPENAI_API_KEY` for Azure, etc.)
@@ -42,6 +42,16 @@ The configuration has the following structure:
     - `steps_name`: (`str`; required if `inputs` contains `actual_steps` or `reference_steps`) the type (name) of steps to include in the evaluation
     - `instructions`: (`str`) instructions for the evaluation
     - `outputs`: (`map[str,str]`) output variable names and descriptions
+- `answer_correctness`
+    - `prompt`: (`str`, default [here](https://github.com/Ontotext-AD/graphrag-eval/blob/main/graphrag_eval/prompts/template.md)) 
+    Template for instructions to the LLM on how to compute the answer correctness. 
+    Must contain placeholders `{question}`, `{reference_answer}` and `{actual_answer}` and no others. 
+    To include `{` or `}` in the final prompt, use `{{` and `}}` in the template.
+    The template must include instructions to the LLM on how to format the output, e.g.: 
+```md
+# Output format
+<v1><tab><v2><tab><v3><tab><v4>
+```
 
 ## Example configuration file with LLM configuration
 

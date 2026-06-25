@@ -10,7 +10,7 @@ Below are a query, a reference response and a candidate response to it.
 {reference_answer}
 
 # Candidate response
-{candidate_answer}
+{actual_answer}
 
 # Output values
 * v1: Count of reference response claims
