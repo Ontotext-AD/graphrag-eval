@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import csv
+import sys
 from argparse import ArgumentParser
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -55,6 +56,8 @@ async def evaluate_and_write(
     output_tsv_file_path: Path,
     evaluator: AnswerCorrectnessEvaluator,
 ) -> None:
+    csv.field_size_limit(sys.maxsize)
+
     with open(input_tsv_file_path, encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
         rows = [row for row in reader]
