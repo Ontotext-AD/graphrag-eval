@@ -5,6 +5,9 @@
 `run_evaluation()` and `compute_aggregates()` are configured using a YAML file whose path is passed as the optional parameter `config_file_path`. Example call:
 
 ```python
+from graphrag_eval import run_evaluation
+
+
 evaluation_results = await run_evaluation(
     reference_dataset, 
     target_dataset, 
@@ -43,6 +46,7 @@ The configuration has the following structure:
     - `instructions`: (`str`) instructions for the evaluation
     - `outputs`: (`map[str,str]`) output variable names and descriptions
 - `answer_correctness`
+    - `enabled` (`bool`, default: `True`) - if `False`, then [answer correctness metrics](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md) won't be calculated.
     - `prompt`: (`str`, default [here](https://github.com/Ontotext-AD/graphrag-eval/blob/main/graphrag_eval/prompts/template.md)) 
     Template for instructions to the LLM on how to compute the answer correctness. 
     Must contain placeholders `{question}`, `{reference_answer}` and `{actual_answer}` and no others. 
@@ -52,6 +56,8 @@ The configuration has the following structure:
 # Output format
 <v1><tab><v2><tab><v3><tab><v4>
 ```
+- `answer_relevance`
+    - `enabled` (`bool`, default: `True`) - if `False`, then [answer relevance metric](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md) won't be calculated.
 
 ## Example configuration file with LLM configuration
 

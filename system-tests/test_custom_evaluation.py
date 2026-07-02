@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pytest
 
 from graphrag_eval.evaluation import run_evaluation
@@ -26,7 +24,7 @@ async def test_custom_evaluation():
                 "actual_answer": "Nein"
             }
         },
-        Path("system-tests/config/legal-config.yaml"),
+        "system-tests/config/legal-config.yaml",
     )
     assert len(evaluation_results) == 1
     assert "legal_recall" in evaluation_results[0]

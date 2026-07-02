@@ -10,7 +10,7 @@ from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
 
 def test_extract_response_values_expected_case():
     response = "2\t3\t1\treason"
-    result = AnswerCorrectnessEvaluator(llm=MagicMock()).extract_response_values(response)
+    result = AnswerCorrectnessEvaluator(ragas_llm=MagicMock()).extract_response_values(response)
     assert result == (2, 3, 1, "reason")
 
 
@@ -37,7 +37,7 @@ async def test_evaluate_answer_empty_strings(
 ):
     with raises(ValueError, match="The question of the reference or the actual answer is a blank "
                                   "string!"):
-        await AnswerCorrectnessEvaluator(llm=MagicMock()).evaluate_answer(
+        await AnswerCorrectnessEvaluator(ragas_llm=MagicMock()).evaluate_answer(
             question, reference_answer, actual_answer
         )
 
@@ -57,7 +57,7 @@ def test_extract_response_values_invalid_values(n_ref: int, n_actual: int, n_mat
     response = f"{n_ref}\t{n_actual}\t{n_matching}\treason"
     with raises(ValueError,
                 match=f"Invalid claims counts combination: {n_ref}\t{n_actual}\t{n_matching}"):
-        AnswerCorrectnessEvaluator(llm=MagicMock()).extract_response_values(response)
+        AnswerCorrectnessEvaluator(ragas_llm=MagicMock()).extract_response_values(response)
 
 
 @pytest.mark.parametrize(
@@ -79,16 +79,16 @@ def test_extract_response_values_non_int(n_ref: Any, n_actual: Any, n_matching: 
                     f"Claims counts should be ints: ['{n_ref}', '{n_actual}', '{n_matching}', "
                     f"'reason']"
                 )):
-        AnswerCorrectnessEvaluator(llm=MagicMock()).extract_response_values(response)
+        AnswerCorrectnessEvaluator(ragas_llm=MagicMock()).extract_response_values(response)
 
 
 def test_extract_response_values_too_few_values():
     response = "2\t2\treason"
     with raises(ValueError, match=f"Expected 4 tab-separated values: {response}"):
-        AnswerCorrectnessEvaluator(llm=MagicMock()).extract_response_values(response)
+        AnswerCorrectnessEvaluator(ragas_llm=MagicMock()).extract_response_values(response)
 
 
 def test_extract_response_values_too_many_values():
     response = "2\t2\t2\treason\textra"
-    result = AnswerCorrectnessEvaluator(llm=MagicMock()).extract_response_values(response)
+    result = AnswerCorrectnessEvaluator(ragas_llm=MagicMock()).extract_response_values(response)
     assert result == (2, 2, 2, "reason")

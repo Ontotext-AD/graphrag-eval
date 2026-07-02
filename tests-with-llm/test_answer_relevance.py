@@ -1,9 +1,10 @@
 import os
 from unittest.mock import AsyncMock, MagicMock
 
+import pytest
 from ragas.llms.base import InstructorBaseRagasLLM
 
-import pytest
+from graphrag_eval.answer_relevance import AnswerRelevanceEvaluator
 
 
 def get_ragas_llm() -> InstructorBaseRagasLLM:
@@ -15,8 +16,8 @@ def get_ragas_llm() -> InstructorBaseRagasLLM:
 
 def get_ragas_embedder():
     from openai import AsyncOpenAI
-    from ragas.embeddings.base import embedding_factory    
-    
+    from ragas.embeddings.base import embedding_factory
+
     return embedding_factory("openai", client=AsyncOpenAI())
 
 
@@ -26,15 +27,15 @@ def set_env():
 
 
 @pytest.mark.asyncio
-async def test_get_relevance_dict_eval_success(monkeypatch):
-    from graphrag_eval.answer_relevance import AnswerRelevancy, Evaluator
-    
-    relevance_mock = AsyncMock(return_value=MagicMock(value=0.9))
-    monkeypatch.setattr(AnswerRelevancy, 'ascore', relevance_mock)
-    evaluator = Evaluator(get_ragas_llm(), get_ragas_embedder())
-    eval_result_dict = await evaluator.get_relevance_dict(
-        "Why is the sky blue?",
-        "Because of the oxygen in the air",
+async def test_evaluate_answer_relevance_success(monkeypatch):
+    async_mock = AsyncMock(return_value=MagicMock(value=0.9))
+    from ragas.metrics.collections import AnswerRelevancy
+    monkeypatch.setattr(AnswerRelevancy, "ascore", async_mock)
+
+    evaluator = AnswerRelevanceEvaluator(get_ragas_llm(), get_ragas_embedder())
+    eval_result_dict = await evaluator.evaluate(
+        {"question_text": "Why is the sky blue?"},
+        {"actual_answer": "Because of the oxygen in the air"},
     )
     assert eval_result_dict == {
         "answer_relevance": 0.9
@@ -42,14 +43,15 @@ async def test_get_relevance_dict_eval_success(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_get_relevance_dict_eval_error(monkeypatch):
-    from graphrag_eval.answer_relevance import AnswerRelevancy, Evaluator
-    relevance_mock = AsyncMock(side_effect=Exception("some error"))
-    monkeypatch.setattr(AnswerRelevancy, 'ascore', relevance_mock)
-    evaluator = Evaluator(get_ragas_llm(), get_ragas_embedder())
-    eval_result_dict = await evaluator.get_relevance_dict(
-        "Why is the sky blue?",
-        "Because of the oxygen in the air",
+async def test_evaluate_answer_relevance_error(monkeypatch):
+    async_mock = AsyncMock(side_effect=Exception("some error"))
+    from ragas.metrics.collections import AnswerRelevancy
+    monkeypatch.setattr(AnswerRelevancy, 'ascore', async_mock)
+
+    evaluator = AnswerRelevanceEvaluator(get_ragas_llm(), get_ragas_embedder())
+    eval_result_dict = await evaluator.evaluate(
+        {"question_text": "Why is the sky blue?"},
+        {"actual_answer": "Because of the oxygen in the air"},
     )
     assert eval_result_dict == {
         "answer_relevance_error": "some error"

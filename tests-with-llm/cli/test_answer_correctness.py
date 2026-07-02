@@ -2,6 +2,7 @@ import csv
 from unittest.mock import MagicMock, AsyncMock, patch
 
 import pytest
+import yaml
 
 from graphrag_eval.answer_correctness import InvalidPromptException
 from graphrag_eval.cli.answer_correctness import evaluate_and_write, run
@@ -79,7 +80,7 @@ async def test_evaluate_and_write_success(tmp_path):
         "Gases scatter sunlight"
     )
 
-    with open(output_file, "r", encoding="utf-8") as f:
+    with open(output_file, encoding="utf-8") as f:
         reader = csv.reader(f, delimiter="\t")
         output_data = list(reader)
 
@@ -120,7 +121,7 @@ async def test_evaluate_and_write_wrong_input_format(tmp_path):
 
     mock_evaluator.evaluate_answer.assert_not_called()
 
-    with open(output_file, "r", encoding="utf-8") as f:
+    with open(output_file, encoding="utf-8") as f:
         reader = csv.reader(f, delimiter="\t")
         output_data = list(reader)
 
@@ -139,9 +140,13 @@ def test_run_with_custom_prompt(mock_create_llm, tmp_path):
 {reference_answer}
 {actual_answer}
 """
+    config_data = {
+        "llm": {"generation": {"provider": "openai", "model": "gpt-4o-mini"}},
+        "answer_correctness": {"prompt": custom_prompt}
+    }
+
     with open(config_path, "w", encoding="utf-8") as f:
-        f.write(f"answer_correctness:\n")
-        f.write(f"  prompt: \"{custom_prompt}\"\n")
+        yaml.dump(config_data, f)
 
     with open(input_path, "w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f, delimiter="\t")
@@ -165,11 +170,14 @@ def test_run_with_custom_prompt(mock_create_llm, tmp_path):
 
     mock_create_llm.assert_called_once()
     called_prompt = mock_llm.agenerate.call_args[0][0]
-    assert ("""You are an expert evaluator assessing factual criteria... What is 1+1? 2 3 """ ==
-            called_prompt)
+    assert ("""You are an expert evaluator assessing factual criteria...
+What is 1+1?
+2
+3
+""" == called_prompt)
 
     assert output_path.exists()
-    with open(output_path, "r", encoding="utf-8") as f:
+    with open(output_path, encoding="utf-8") as f:
         reader = csv.reader(f, delimiter="\t")
         output_data = list(reader)
 
@@ -184,10 +192,13 @@ def test_run_with_invalid_prompt(mock_create_llm, tmp_path):
     output_path = tmp_path / "output.tsv"
 
     custom_prompt = "You are an expert evaluator assessing factual criteria...\\n{unexpected}\\n"
+    config_data = {
+        "llm": {"generation": {"provider": "openai", "model": "gpt-4o-mini"}},
+        "answer_correctness": {"prompt": custom_prompt}
+    }
 
     with open(config_path, "w", encoding="utf-8") as f:
-        f.write("answer_correctness:\n")
-        f.write(f"  prompt: \"{custom_prompt}\"\n")
+        yaml.dump(config_data, f)
 
     with open(input_path, "w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f, delimiter="\t")

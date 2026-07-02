@@ -1,13 +1,21 @@
+from __future__ import annotations
+
 import json
 import logging
 from collections import defaultdict
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from .iri_discovery import do_iri_discovery_steps_equal
 from .retrieval_context_ids import recall_at_k
 from .sparql import compare_sparql_results
-from .timeseries import do_retrieve_time_series_steps_equal, do_retrieve_data_points_steps_equal
+from .timeseries import (
+    do_retrieve_time_series_steps_equal,
+    do_retrieve_data_points_steps_equal,
+)
+
+if TYPE_CHECKING:
+    from ragas.llms.base import InstructorBaseRagasLLM
 
 logger = logging.getLogger(__name__)
 
@@ -140,7 +148,7 @@ def calculate_steps_score(
 async def evaluate_steps(
     reference: dict,
     actual: dict,
-    ragas_llm: "InstructorBaseRagasLLM",
+    ragas_llm: InstructorBaseRagasLLM | None,
 ) -> dict:
     eval_result = {}
     actual_steps = actual.get("actual_steps", [])

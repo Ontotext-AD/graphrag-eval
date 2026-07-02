@@ -1,9 +1,14 @@
+from __future__ import annotations
+
 import json
-from typing import Literal
+from typing import Literal, Self, TYPE_CHECKING, Any
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from graphrag_eval.llm_factory import create_llm
+from .evaluator import Evaluator
+
+if TYPE_CHECKING:
+    from ragas.llms.base import InstructorBaseRagasLLM
 
 RESERVED_KEYS = {
     "template_id",
@@ -43,7 +48,7 @@ Inputs = Literal[
 StepsKey = Literal["args", "output"]
 
 
-class Config(BaseModel):
+class EvaluatorConfig(BaseModel):
     model_config = ConfigDict(extra='forbid')
     name: str
     inputs: list[Inputs] = Field(..., min_length=1)
@@ -53,7 +58,7 @@ class Config(BaseModel):
     steps_keys: set[StepsKey] | None = Field(default=None, min_length=1)
 
     @model_validator(mode='after')
-    def validate_step_dependencies(self) -> 'Config':
+    def validate_step_dependencies(self) -> Self:
         if set(self.inputs) & {"reference_steps", "actual_steps"}:
             suffix = "is required when steps are in inputs"
             for var_name in ["steps_name", "steps_keys"]:
@@ -62,7 +67,7 @@ class Config(BaseModel):
         return self
 
     @model_validator(mode='after')
-    def validate_name_and_outputs(self) -> 'Config':
+    def validate_name_and_outputs(self) -> Self:
         if self.name + "_error" in RESERVED_KEYS:
             raise ValueError(f"Name {self.name} is reserved")
         conflicting_keys = set(self.outputs.keys()) & RESERVED_KEYS
@@ -76,7 +81,7 @@ def create_input_template(input_key: str) -> str:
     return f"# {header}\n{{{input_key}}}"
 
 
-def create_prompt_template(config: Config, output_variables: list[str]) -> str:
+def create_prompt_template(config: EvaluatorConfig, output_variables: list[str]) -> str:
     """
     Return a template for the LLM prompt, with placeholders for the inputs, 
     instructions, outputs etc. We use this template at evaluation time to
@@ -99,8 +104,8 @@ def create_prompt_template(config: Config, output_variables: list[str]) -> str:
 class CustomEvaluator:
     def __init__(
         self,
-        config: Config,
-        eval_config: "evaluation.Config",
+        ragas_llm: InstructorBaseRagasLLM,
+        config: EvaluatorConfig,
     ):
         self.name = config.name
         self.input_variables = config.inputs
@@ -111,11 +116,24 @@ class CustomEvaluator:
             config,
             self.output_variables
         )
-        self.llm = create_llm(eval_config)
+        self.ragas_llm = ragas_llm
+
+    @classmethod
+    def from_config(
+        cls,
+        ragas_llm: InstructorBaseRagasLLM | None,
+        evaluation_configs: list[EvaluatorConfig] | None
+    ) -> list[Self]:
+        if ragas_llm and evaluation_configs:
+            return [
+                cls(ragas_llm, evaluation_config)
+                for evaluation_config in evaluation_configs
+            ]
+        return []
 
     async def _agenerate(self, prompt: str) -> str:
         """Wrapper method for easier testing"""
-        return (await self.llm.agenerate(prompt, None)).choices[0].message.content
+        return (await self.ragas_llm.agenerate(prompt, None)).choices[0].message.content
 
     def format_steps(self, steps: list) -> str:
         steps_formatted = []
@@ -157,7 +175,11 @@ class CustomEvaluator:
             return result
         return self.error(f"Expected {n_exp} tab-separated values, got: {response}")
 
-    async def evaluate(self, reference: dict, actual: dict) -> dict[str, str | None]:
+    async def evaluate(
+        self,
+        reference: dict[str, Any],
+        actual: dict[str, Any]
+    ) -> dict[str, Any]:
         inputs = {}
         if "question" in self.input_variables:
             if "question_text" not in reference:
@@ -195,10 +217,4 @@ class CustomEvaluator:
         return self.parse_outputs(response)
 
 
-def create_evaluators(config: "evaluation.Config") -> list[CustomEvaluator]:
-    if config.custom_evaluations and config.llm:
-        return [
-            CustomEvaluator(custom_evaluation_config, config)
-            for custom_evaluation_config in config.custom_evaluations
-        ]
-    return []
+_: Evaluator = CustomEvaluator
