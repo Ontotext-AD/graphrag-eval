@@ -3,7 +3,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Self, TYPE_CHECKING
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+if TYPE_CHECKING:
+    from ragas.llms.base import InstructorBaseRagasLLM
 
 from graphrag_eval.util import compute_f1
 from .evaluator import Evaluator
@@ -23,6 +26,27 @@ def load_default_prompt() -> str:
 class AnswerCorrectnessConfig(BaseModel):
     enabled: bool = Field(default=True)
     prompt: str = Field(default_factory=load_default_prompt)
+
+
+class AnswerCorrectnessResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    reference_claims_count: int = Field(ge=1)
+    actual_claims_count: int = Field(ge=1)
+    matching_claims_count: int = Field(ge=0)
+    reason: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_claim_counts(self) -> "AnswerCorrectnessResult":
+        if (
+            self.matching_claims_count > self.reference_claims_count or
+            self.matching_claims_count > self.actual_claims_count
+        ):
+            raise ValueError(
+                "matching_claims_count must be less than or equal to both "
+                "reference_claims_count and actual_claims_count"
+            )
+        return self
 
 
 class InvalidPromptException(Exception):
@@ -73,15 +97,21 @@ class AnswerCorrectnessEvaluator:
                 f"Original error: {exc}"
             ) from exc
 
-    async def _agenerate(self, prompt):
+    async def _agenerate(self, prompt: str) -> AnswerCorrectnessResult:
         """Wrapper method for easier testing"""
+<<<<<<< HEAD
         return (await self.ragas_llm.agenerate(prompt, None)).choices[0].message.content
+=======
+        response = await self.llm.agenerate(prompt, AnswerCorrectnessResult)
+        return AnswerCorrectnessResult.model_validate(response)
+>>>>>>> 01e96e5 (answer_correctness to output JSON)
 
     async def evaluate_answer(
         self,
         question: str,
         reference_answer: str,
         actual_answer: str
+<<<<<<< HEAD
     ) -> tuple[int, int, int, str]:
         if any(
             not s.strip() for s in [question, reference_answer, actual_answer]
@@ -90,13 +120,18 @@ class AnswerCorrectnessEvaluator:
                 "The question of the reference or the actual answer is a blank "
                 "string!"
             )
+=======
+    ) -> AnswerCorrectnessResult:
+        if any(not s.strip() for s in [question, reference_answer, actual_answer]):
+            raise ValueError("The question of the reference or the actual answer is a blank "
+                             "string!")
+>>>>>>> 01e96e5 (answer_correctness to output JSON)
         prompt = self.prompt_template.format(
             question=question,
             reference_answer=reference_answer,
             actual_answer=actual_answer,
         )
-        response_str = await self._agenerate(prompt)
-        return self.extract_response_values(response_str)
+        return await self._agenerate(prompt)
 
     async def evaluate(
         self,
@@ -107,20 +142,21 @@ class AnswerCorrectnessEvaluator:
             return {}
         result = {}
         try:
-            num_ref_claims, num_actual_claims, num_matching_claims, reason = \
-                await self.evaluate_answer(
-                    reference["question_text"],
-                    reference["reference_answer"],
-                    actual["actual_answer"],
-                )
+            correctness = await self.evaluate_answer(
+                reference["question_text"],
+                reference["reference_answer"],
+                actual["actual_answer"],
+            )
             result.update({
-                "answer_reference_claims_count": num_ref_claims,
-                "answer_actual_claims_count": num_actual_claims,
-                "answer_matching_claims_count": num_matching_claims,
-                "answer_correctness_reason": reason,
+                "answer_reference_claims_count": correctness.reference_claims_count,
+                "answer_actual_claims_count": correctness.actual_claims_count,
+                "answer_matching_claims_count": correctness.matching_claims_count,
+                "answer_correctness_reason": correctness.reason,
             })
             recall, precision, f1 = self.compute_recall_precision_f1(
-                num_ref_claims, num_actual_claims, num_matching_claims
+                correctness.reference_claims_count,
+                correctness.actual_claims_count,
+                correctness.matching_claims_count,
             )
             if recall is not None:
                 result["answer_recall"] = recall
@@ -146,6 +182,7 @@ class AnswerCorrectnessEvaluator:
             precision = n_true_pos / n_pred_pos
         return recall, precision, compute_f1(recall, precision)
 
+<<<<<<< HEAD
     @staticmethod
     def extract_response_values(
         response: str
@@ -174,3 +211,5 @@ class AnswerCorrectnessEvaluator:
 
 
 _: Evaluator = AnswerCorrectnessEvaluator
+=======
+>>>>>>> 01e96e5 (answer_correctness to output JSON)

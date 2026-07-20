@@ -1,7 +1,7 @@
 Below are a query, a reference response and a candidate response to it.
-1. Extract all claims from each response
+1. Extract all claims from each response.
 2. Find matching claims between responses. Matching claims have the same meaning and details such as subjects, names, locations, amounts, IDs, commands and paths.
-3. Output the values listed below (all and only those).
+3. Output one JSON object only. Do not include Markdown, code fences, or any text outside the JSON object.
 
 # Query
 {question}
@@ -12,15 +12,20 @@ Below are a query, a reference response and a candidate response to it.
 # Candidate response
 {actual_answer}
 
-# Output values
-* v1: Count of reference response claims
-* v2: Count of candidate response claims
-* v3: Count of matching claims
-* v4: Explanation of v1-v3 in English
+# JSON fields
+* reference_claims_count: Count of reference response claims
+* actual_claims_count: Count of candidate response claims
+* matching_claims_count: Count of matching claims
+* reason: Explanation of the counts in English
 
 # Value checks
-* 1 <= v1, v2
-* 0 <= v3 <= v1, v2
+* 1 <= reference_claims_count, actual_claims_count
+* 0 <= matching_claims_count <= reference_claims_count, actual_claims_count
 
 # Output format
-<v1><tab><v2><tab><v3><tab><v4>
+{{
+  "reference_claims_count": 1,
+  "actual_claims_count": 1,
+  "matching_claims_count": 1,
+  "reason": "The reference and candidate responses contain the same single claim."
+}}

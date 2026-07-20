@@ -51,10 +51,15 @@ The configuration has the following structure:
     Template for instructions to the LLM on how to compute the answer correctness. 
     Must contain placeholders `{question}`, `{reference_answer}` and `{actual_answer}` and no others. 
     To include `{` or `}` in the final prompt, use `{{` and `}}` in the template.
-    The template must include instructions to the LLM on how to format the output, e.g.: 
+    The evaluator requests structured JSON output from the LLM. If you override the prompt, it should describe the required JSON fields: `reference_claims_count`, `actual_claims_count`, `matching_claims_count`, and `reason`. If the template includes literal `{` or `}` characters, escape them as `{{` and `}}`, e.g.:
 ```md
 # Output format
-<v1><tab><v2><tab><v3><tab><v4>
+{{
+  "reference_claims_count": 1,
+  "actual_claims_count": 1,
+  "matching_claims_count": 1,
+  "reason": "Explanation of the counts in English"
+}}
 ```
 - `answer_relevance`
     - `enabled` (`bool`, default: `True`) - if `False`, then [answer relevance metric](https://github.com/Ontotext-AD/graphrag-eval/blob/main/docs/metrics.md) won't be calculated.

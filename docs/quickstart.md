@@ -151,9 +151,8 @@ llm:
     provider: openai
     model: gpt-5.4-2026-03-05
 answer_correctness:
-  prompt: Some instructions here which specify the
-    # Output format
-    <v1><tab><v2><tab><v3><tab><v4>
+  prompt: Some instructions here which specify the JSON fields
+    reference_claims_count, actual_claims_count, matching_claims_count, and reason.
 ```
 
 if you want to override the default prompt.
