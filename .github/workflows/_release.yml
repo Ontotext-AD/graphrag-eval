@@ -11,9 +11,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7.0.0
 
-      - name: Set up Miniconda
+      - name: Set up Miniforge
         uses: conda-incubator/setup-miniconda@v4.0.1
         with:
+          miniforge-version: latest
           activate-environment: graphrag-eval
           environment-file: environment.yml
           auto-activate-base: false
