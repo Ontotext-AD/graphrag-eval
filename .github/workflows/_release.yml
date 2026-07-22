@@ -11,67 +11,46 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7.0.0
 
-      - name: Set up Miniconda
-        uses: conda-incubator/setup-miniconda@v4.0.1
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          activate-environment: graphrag-eval
-          environment-file: environment.yml
-          auto-activate-base: false
+          python-version: "3.12"
+          cache: poetry
+
+      - name: Install Poetry
+        run: pipx install "poetry==2.1.*"
 
       - name: Install dependencies with Poetry
-        shell: bash -l {0}
-        run: |
-          conda activate graphrag-eval
-          poetry install --no-interaction --with test
+        run: poetry install --no-interaction --with test
 
       - name: Run tests that do not use LLMs
-        shell: bash -l {0}
-        run: |
-          conda activate graphrag-eval
-          poetry run pytest --cov=graphrag_eval --cov-report=term-missing tests/
+        run: poetry run pytest --cov=graphrag_eval --cov-report=term-missing tests/
 
       - name: Install dependencies, including LLM and Ragas dependencies, using Poetry
-        shell: bash -l {0}
-        run: |
-          conda activate graphrag-eval
-          poetry install --no-interaction --with llm
+        run: poetry install --no-interaction --with llm
 
       - name: Run tests that use LLMs
-        shell: bash -l {0}
-        run: |
-          conda activate graphrag-eval
-          poetry run pytest --cov=graphrag_eval --cov-report=term-missing tests-with-llm/
+        run: poetry run pytest --cov=graphrag_eval --cov-report=term-missing tests-with-llm/
 
       - name: Run system tests that use LLMs
-        shell: bash -l {0}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           AZURE_OPENAI_GENERATION_KEY: ${{ secrets.AZURE_OPENAI_GENERATION_KEY }}
           AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
           AZURE_OPENAI_EMBEDDING_KEY: ${{ secrets.AZURE_OPENAI_EMBEDDING_KEY }}
-        run: |
-          conda activate graphrag-eval
-          poetry run pytest system-tests/*.py
+        run: poetry run pytest system-tests/*.py
 
       - name: Build package
-        shell: bash -l {0}
-        run: |
-          conda activate graphrag-eval
-          poetry build
+        run: poetry build
 
       - name: Publish to TestPyPI
-        shell: bash -l {0}
         env:
           TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
         run: |
-          conda activate graphrag-eval
           poetry config repositories.testpypi https://test.pypi.org/legacy/
           poetry publish -r testpypi --no-interaction --username __token__ --password $TEST_PYPI_TOKEN
 
       - name: Publish to PyPI
-        shell: bash -l {0}
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: |
-          conda activate graphrag-eval
-          poetry publish --no-interaction --username __token__ --password $PYPI_TOKEN
+        run: poetry publish --no-interaction --username __token__ --password $PYPI_TOKEN
