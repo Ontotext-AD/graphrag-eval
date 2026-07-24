@@ -28,7 +28,7 @@ async def test_evaluate_answer_uses_structured_output_model():
         reason="One claim matches.",
     )
     llm = FakeLLM(response)
-    evaluator = AnswerCorrectnessEvaluator(llm=llm)
+    evaluator = AnswerCorrectnessEvaluator(ragas_llm=llm)
 
     result = await evaluator.evaluate_answer(
         question="What happened?",
@@ -43,16 +43,16 @@ async def test_evaluate_answer_uses_structured_output_model():
 
 
 @pytest.mark.asyncio
-async def test_get_correctness_dict_maps_structured_output_to_metrics():
+async def test_evaluate_maps_structured_output_to_metrics():
     llm = FakeLLM({
         "reference_claims_count": 2,
         "actual_claims_count": 4,
         "matching_claims_count": 1,
         "reason": "One claim matches.",
     })
-    evaluator = AnswerCorrectnessEvaluator(llm=llm)
+    evaluator = AnswerCorrectnessEvaluator(ragas_llm=llm)
 
-    result = await evaluator.get_correctness_dict(
+    result = await evaluator.evaluate(
         reference={
             "question_text": "What happened?",
             "reference_answer": "A and B happened.",
@@ -61,7 +61,6 @@ async def test_get_correctness_dict_maps_structured_output_to_metrics():
     )
 
     assert result == {
-        "reference_answer": "A and B happened.",
         "answer_reference_claims_count": 2,
         "answer_actual_claims_count": 4,
         "answer_matching_claims_count": 1,

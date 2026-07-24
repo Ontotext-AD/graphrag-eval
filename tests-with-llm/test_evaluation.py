@@ -10,7 +10,7 @@ from graphrag_eval import (
     compute_aggregates,
     run_evaluation,
 )
-from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator, AnswerCorrectnessResult
 from graphrag_eval.answer_relevance import AnswerRelevanceEvaluator
 from tests.util import read_responses
 
@@ -19,11 +19,6 @@ CONFIG_FILE_PATH = DATA_DIR / "config-openai.yaml"
 
 
 def mock_answer_correctness_evaluator(monkeypatch):
-<<<<<<< HEAD
-=======
-    from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator, AnswerCorrectnessResult
-
->>>>>>> 01e96e5 (answer_correctness to output JSON)
     async def mock_agenerate_correctness(self, prompt):
         return AnswerCorrectnessResult(
             reference_claims_count=2,

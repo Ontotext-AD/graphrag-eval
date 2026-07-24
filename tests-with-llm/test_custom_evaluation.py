@@ -11,12 +11,8 @@ from graphrag_eval import (
     compute_aggregates,
     run_evaluation,
 )
-<<<<<<< HEAD
-from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
-from graphrag_eval.answer_relevance import AnswerRelevanceEvaluator
-=======
 from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator, AnswerCorrectnessResult
->>>>>>> 01e96e5 (answer_correctness to output JSON)
+from graphrag_eval.answer_relevance import AnswerRelevanceEvaluator
 from graphrag_eval.custom_evaluation import CustomEvaluator
 from tests.util import read_responses
 

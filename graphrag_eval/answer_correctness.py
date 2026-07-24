@@ -5,9 +5,6 @@ from typing import Any, Self, TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-if TYPE_CHECKING:
-    from ragas.llms.base import InstructorBaseRagasLLM
-
 from graphrag_eval.util import compute_f1
 from .evaluator import Evaluator
 
@@ -99,20 +96,15 @@ class AnswerCorrectnessEvaluator:
 
     async def _agenerate(self, prompt: str) -> AnswerCorrectnessResult:
         """Wrapper method for easier testing"""
-<<<<<<< HEAD
-        return (await self.ragas_llm.agenerate(prompt, None)).choices[0].message.content
-=======
-        response = await self.llm.agenerate(prompt, AnswerCorrectnessResult)
+        response = await self.ragas_llm.agenerate(prompt, AnswerCorrectnessResult)
         return AnswerCorrectnessResult.model_validate(response)
->>>>>>> 01e96e5 (answer_correctness to output JSON)
 
     async def evaluate_answer(
         self,
         question: str,
         reference_answer: str,
         actual_answer: str
-<<<<<<< HEAD
-    ) -> tuple[int, int, int, str]:
+    ) -> AnswerCorrectnessResult:
         if any(
             not s.strip() for s in [question, reference_answer, actual_answer]
         ):
@@ -120,12 +112,6 @@ class AnswerCorrectnessEvaluator:
                 "The question of the reference or the actual answer is a blank "
                 "string!"
             )
-=======
-    ) -> AnswerCorrectnessResult:
-        if any(not s.strip() for s in [question, reference_answer, actual_answer]):
-            raise ValueError("The question of the reference or the actual answer is a blank "
-                             "string!")
->>>>>>> 01e96e5 (answer_correctness to output JSON)
         prompt = self.prompt_template.format(
             question=question,
             reference_answer=reference_answer,
@@ -182,34 +168,5 @@ class AnswerCorrectnessEvaluator:
             precision = n_true_pos / n_pred_pos
         return recall, precision, compute_f1(recall, precision)
 
-<<<<<<< HEAD
-    @staticmethod
-    def extract_response_values(
-        response: str
-    ) -> tuple[int, int, int, str]:
-        vals = response.split("\t")
-        n = len(vals)
-        if n < 4:
-            raise ValueError(f"Expected 4 tab-separated values: {response}")
-        vals = vals[:4]
-        try:
-            n_ref, n_actual, n_matching = map(int, vals[:3])
-        except ValueError:
-            raise ValueError(f"Claims counts should be ints: {vals}")
-        if any([
-            n_ref < 1,
-            n_actual < 1,
-            n_matching < 0,
-            n_matching > n_ref,
-            n_matching > n_actual
-        ]):
-            raise ValueError(
-                "Invalid claims counts combination: "
-                f"{n_ref}\t{n_actual}\t{n_matching}"
-            )
-        return n_ref, n_actual, n_matching, vals[3]
-
 
 _: Evaluator = AnswerCorrectnessEvaluator
-=======
->>>>>>> 01e96e5 (answer_correctness to output JSON)
