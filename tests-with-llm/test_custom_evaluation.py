@@ -11,7 +11,7 @@ from graphrag_eval import (
     compute_aggregates,
     run_evaluation,
 )
-from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator
+from graphrag_eval.answer_correctness import AnswerCorrectnessEvaluator, AnswerCorrectnessResult
 from graphrag_eval.answer_relevance import AnswerRelevanceEvaluator
 from graphrag_eval.custom_evaluation import CustomEvaluator
 from tests.util import read_responses
@@ -22,7 +22,12 @@ CONFIG_FILE_PATH = DATA_DIR / "config-openai-and-custom-evaluations.yaml"
 
 def mock_answer_correctness_evaluator(monkeypatch):
     async def mock_agenerate_correctness(self, prompt):
-        return "2\t2\t2\tanswer correctness reason"
+        return AnswerCorrectnessResult(
+            reference_claims_count=2,
+            actual_claims_count=2,
+            matching_claims_count=2,
+            reason="answer correctness reason",
+        )
 
     monkeypatch.setattr(
         AnswerCorrectnessEvaluator,

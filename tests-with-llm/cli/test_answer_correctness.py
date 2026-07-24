@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, AsyncMock, patch
 import pytest
 import yaml
 
-from graphrag_eval.answer_correctness import InvalidPromptException
+from graphrag_eval.answer_correctness import AnswerCorrectnessResult, InvalidPromptException
 from graphrag_eval.cli.answer_correctness import evaluate_and_write, run
 
 
@@ -46,8 +46,18 @@ async def test_evaluate_and_write_success(tmp_path):
 
     mock_evaluator.evaluate_answer = AsyncMock()
     mock_evaluator.evaluate_answer.side_effect = [
-        ("1", "1", "1", "Good match"),
-        ("1", "1", "1", "Perfect match"),
+        AnswerCorrectnessResult(
+            reference_claims_count=1,
+            actual_claims_count=1,
+            matching_claims_count=1,
+            reason="Good match",
+        ),
+        AnswerCorrectnessResult(
+            reference_claims_count=1,
+            actual_claims_count=1,
+            matching_claims_count=1,
+            reason="Perfect match",
+        ),
         ValueError("The question of the reference or the actual answer is a blank string!"),
         Exception("LLM Timeout Error"),
     ]
@@ -153,13 +163,13 @@ def test_run_with_custom_prompt(mock_create_llm, tmp_path):
         writer.writerow(["Question", "Reference answer", "Actual answer"])
         writer.writerow(["What is 1+1?", "2", "3"])
 
-    mock_response = MagicMock()
-    mock_response.choices = [
-        MagicMock(message=MagicMock(content="1\t1\t1\tThe response matches perfectly."))
-    ]
-
     mock_llm = MagicMock()
-    mock_llm.agenerate = AsyncMock(return_value=mock_response)
+    mock_llm.agenerate = AsyncMock(return_value=AnswerCorrectnessResult(
+        reference_claims_count=1,
+        actual_claims_count=1,
+        matching_claims_count=1,
+        reason="The response matches perfectly.",
+    ))
     mock_create_llm.return_value = mock_llm
 
     run(

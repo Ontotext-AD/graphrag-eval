@@ -76,13 +76,18 @@ async def evaluate_and_write(
                 raise ValueError("Unexpected input format!")
 
             try:
-                vals = await evaluator.evaluate_answer(
+                correctness = await evaluator.evaluate_answer(
                     row["Question"],
                     row["Reference answer"],
                     row["Actual answer"]
                 )
-                vals = vals + ("",)
-                writer.writerow(vals)
+                writer.writerow([
+                    correctness.reference_claims_count,
+                    correctness.actual_claims_count,
+                    correctness.matching_claims_count,
+                    correctness.reason,
+                    "",
+                ])
             except Exception as exc:
                 writer.writerow(["", "", "", "", str(exc)])
             f.flush()
