@@ -1,4 +1,5 @@
 import json
+import logging
 from collections import defaultdict
 from collections.abc import Sequence
 from pathlib import Path
@@ -8,6 +9,8 @@ from typing import Any, Collection, Iterable
 import yaml
 
 from . import evaluation
+
+logger = logging.getLogger(__name__)
 
 METRICS = [
     "answer_recall",
@@ -103,7 +106,9 @@ def update_steps_summary(
                 if isinstance(res, dict) and "results" in res and "bindings" in res["results"]:
                     if not res["results"]["bindings"]:
                         template_steps_summary["empty_results"][name] += 1
-            except json.decoder.JSONDecodeError:
+            except (json.decoder.JSONDecodeError, TypeError) as e:
+                logger.warning("Failed to parse step output as json",
+                               exc_info=e)
                 pass
 
 

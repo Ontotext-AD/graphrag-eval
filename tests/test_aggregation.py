@@ -16,3 +16,14 @@ def test_compute_aggregates_doesnt_throw_exception():
     with open(evaluation_results_file, encoding="utf-8") as yaml_file:
         per_question_eval = yaml.safe_load(yaml_file)
         compute_aggregates(per_question_eval)
+
+
+def test_compute_aggregates_doesnt_throw_type_error():
+    """
+    Check that `compute_aggregates()` works when the step output is an empty
+    list.
+    """
+    evaluation_results_file = DATA_DIR / f"evaluation_7.yaml"
+    with open(evaluation_results_file, encoding="utf-8") as yaml_file:
+        per_question_eval = yaml.safe_load(yaml_file)
+        compute_aggregates(per_question_eval)
