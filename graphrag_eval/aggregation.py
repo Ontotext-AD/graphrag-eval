@@ -93,23 +93,37 @@ def update_steps_summary(
 ):
     seen = set()
     for step in sample.get("actual_steps", []):
-        name = step["name"]
+        name = step.get("name")
+        if not name:
+            continue
         template_steps_summary["total"][name] += 1
-        if step["status"] == "error":
+        status = step.get("status")
+        if status == "error":
             template_steps_summary["errors"][name] += 1
         if name not in seen:
             seen.add(name)
             template_steps_summary["once_per_sample"][name] += 1
-        if step["status"] != "error":
-            try:
-                res = json.loads(step["output"])
-                if isinstance(res, dict) and "results" in res and "bindings" in res["results"]:
-                    if not res["results"]["bindings"]:
-                        template_steps_summary["empty_results"][name] += 1
-            except (json.decoder.JSONDecodeError, TypeError) as e:
-                logger.warning("Failed to parse step output as json",
-                               exc_info=e)
-                pass
+        if status != "error":
+            raw_output = step.get("output")
+            if isinstance(raw_output, dict):
+                res = raw_output
+            elif isinstance(raw_output, (str, bytes, bytearray)):
+                try:
+                    res = json.loads(raw_output)
+                except (json.decoder.JSONDecodeError, TypeError) as e:
+                    logger.warning("Failed to parse step output as json",
+                                   exc_info=e)
+                    res = None
+            else:
+                res = None
+
+            if (
+                isinstance(res, dict)
+                and isinstance(res.get("results"), dict)
+                and "bindings" in res["results"]
+            ):
+                if not res["results"]["bindings"]:
+                    template_steps_summary["empty_results"][name] += 1
 
 
 def compute_per_template_stats(
