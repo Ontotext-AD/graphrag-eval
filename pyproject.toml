@@ -16,26 +16,26 @@ repository = "https://github.com/Ontotext-AD/graphrag-eval"
 
 [tool.poetry.dependencies]
 python-dateutil = "2.9.0.post0"
-ragas = { version = "0.4.3", optional = true }
-pydantic = "2.14.1"
+ragas = { version = "0.4.4", optional = true }
+pydantic = "2.14.4"
 
 [tool.poetry.extras]
 llm = ["ragas", "litellm", "pyyaml"]
 
 [tool.poetry.group.llm.dependencies]
-ragas = "0.4.3"
-litellm = "1.105.1"
-pyyaml = "6.0.3"
+ragas = "0.4.4"
+litellm = "1.110.2"
+pyyaml = "6.0.4"
 
 [tool.poetry.group.llm]
 optional = true
 
 [tool.poetry.group.test.dependencies]
-pytest = "<10,>=9.1.1"
-pytest-asyncio = "<2,>=1.4.0"
+pytest = "<10,>=9.2.0"
+pytest-asyncio = "<2,>=1.5.0"
 pytest-cov = "<8,>=7.1.0"
 jsonlines = "4.0.0"
-pyyaml = "6.0.3"
+pyyaml = "6.0.4"
 
 [tool.poetry.group.test]
 optional = true
